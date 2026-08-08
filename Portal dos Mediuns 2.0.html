@@ -551,6 +551,7 @@
                 <li class="menu-item"><button class="menu-btn" id="btn-rituais" onclick="carregar('rituais')">11. Rituais e Pontos Riscados</button></li>
                 <li class="menu-item"><button class="menu-btn" id="btn-caridade" onclick="carregar('caridade')">12. A Caridade e a Ética</button></li>
                 <li class="menu-item"><button class="menu-btn" id="btn-glossario" onclick="carregar('glossario')">13. Glossário de Termos</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-pontosCasa" onclick="carregar('pontosCasa')">14. Pontos da Casa</button></li>
             </ul>
         </nav>
 
@@ -654,7 +655,7 @@
                 const li = document.createElement('li');
                 li.className = 'menu-item';
                 li.id = 'menu-log-admin';
-                li.innerHTML = `<button class="menu-btn" id="btn-logsAdmin" onclick="carregar('logsAdmin')">14. Registros de Acesso</button>`;
+                li.innerHTML = `<button class="menu-btn" id="btn-logsAdmin" onclick="carregar('logsAdmin')">15. Registros de Acesso</button>`;
                 menuList.appendChild(li);
             }
         }
@@ -759,7 +760,791 @@ Amém.</div>`,
 <li><strong>Terreiro:</strong> O espaço físico sagrado onde se realizam os rituais.</li>
 </ul>
 </div>`,
-            'logsAdmin': `<h1>14. Registros de Acesso</h1><div class="box-conteudo"><p>Histórico de conexões de médiuns e administradores registradas nesta sessão:</p><table><tr><th>Nome do Médium</th><th>Data</th><th>Horário</th></tr>${historicoAcessosAdmin.map(log => `<tr><td>${log.medium}</td><td>${log.data}</td><td>${log.hora}</td></tr>`).join('')}</table></div>`
+            'pontosCasa': `<h1>14. Pontos da Casa</h1><div class="box-conteudo" style="white-space: pre-line;"><h2>Hino da Umbanda</h2><p>Refletiu a luz divina
+Com todo seu esplendor
+É do reino de Oxalá
+Onde há paz e amor</p><p>Luz que refletiu na terra
+Luz que refletiu no mar
+Luz que veio de Aruanda
+Para tudo iluminar</p><p>A Umbanda é paz e amor
+É um mundo cheio de luz
+É a força que nos dá vida
+E a grandeza nos conduz</p><p>Avante filhos de fé
+Como a nossa lei não há
+Levamos ao mundo inteiro
+A bandeira de Oxalá</p><h2 style="margin-top: 50px; padding-bottom: 10px; border-bottom: 1px solid var(--dourado); font-size: 1.7rem;">Liturgia</h2><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Bater Cabeça</h3><p>Eu fui no terreiro um dia
+Que o senhor Ogum mandou
+Eu fui bater cabeça aos pés de nosso senhor</p><p>Vai, vai, vai
+Aos pés de nosso senhor
+Vai bater cabeça que Oxalá mandou</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Bate cabeça, filhos de umbanda
+Salve Oxalá, salve a nossa banda</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Babá, sua coroa brilha,
+Brilha no reino de Oxalá</p><p>Bate cabeça Babá pra Oxalá,
+Bate cabeça pros seus filhos não tombar</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Defumação</h3><p>Nossa Senhora incensou a Jesus Cristo
+Jesus Cristo incensou aos filhos seus
+Eu incenso, eu incenso essa casa
+Na fé de Oxóssi, de Ogum e Oxalá</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Tô incensando, tô defumando
+A casa do Bom Jesus da Lapa</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Olha a mata queimou, cheirou a guiné
+Vamos defumar os filhos de fé</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Defuma eu, Babalaô
+Defuma eu, Babalaô</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ô com incenso e benjoim,
+Alecrim e alfazema
+Ô defumar filhos de fé
+Com as ervas da Jurema
+Ô corre gira pai Ogum
+Filho quer se defumar
+Ô Umbanda tem fundamentos
+É preciso preparar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Defuma com as ervas da Jurema
+Defuma com arruda e guiné</p><p>Com alecrim, benjoim e alfazema
+Vamos defumar filhos de fé</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Defuma, defumador
+Essa casa de nosso Senhor</p><p>Leva pras ondas do mar
+O mal que aqui possa estar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vamos defumar a Umbanda
+Com os nove anjos do céu</p><p>A Umbanda cheira a rosa
+A rosa cheira a guiné</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Nessas matas, tem folhas
+Tem rosário de nossa senhora</p><p>Aruê, meu São Benedito
+São Benedito nos valha nessa hora</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Abertura</h3><p>Abrimos a nossa gira
+Pedimos a proteção
+Ao nosso pai Oxalá
+Para cumprir nossa missão</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu abro nossa gira com Deus e nossa Senhora (Pais no Santo)
+Eu abro nossa gira, sandorê pemba de Angola (Corrente)</p><p>Está aberta a nossa gira com Deus e nossa Senhora (Pais no Santo)
+Está aberta a nossa gira, sandorê pemba de Angola (Corrente)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vou abrir minha Jurema, vou abrir meu Juremá (Pais no Santo)
+Vou abrir minha Jurema, vou abrir meu Juremá (Corrente)</p><p>Com a licença de mamãe Oxum e de nosso pai Oxalá (Pais no Santo)
+Com a licença de mamãe Oxum e de nosso pai Oxalá (Corrente)</p><p>Já abri minha Jurema, já abri meu Juremá (Pais no Santo)
+Já abri minha Jurema, já abri meu Juremá (Corrente)</p><p>Com a licença de mamãe Oxum e de nosso pai Oxalá (Pais no Santo)
+Com a licença de mamãe Oxum e de nosso pai Oxalá (Corrente)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Fechamento</h3><p>Eu fecho a nossa gira com Deus e nossa Senhora (Pais no Santo)
+Eu fecho a nossa gira, sandorê pemba de Angola (Corrente)</p><p>Está fechada a nossa gira com Deus e nossa Senhora (Pais no Santo)
+Está fechada a nossa gira sandorê pemba de Angola (Corrente)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vou fechar minha Jurema, vou fechar meu Juremá (Pais no Santo)
+Vou fechar minha Jurema, vou fechar meu Juremá (Corrente)</p><p>Com a licença de mamãe Oxum e de nosso pai Oxalá (Pais no Santo)
+Com a licença de mamãe Oxum e de nosso pai Oxalá (Corrente)</p><p>Já fechei minha Jurema, já fechei meu Juremá (Pais no Santo)
+Já fechei minha Jurema, já fechei meu Juremá (Corrente)</p><p>Com a licença de mamãe Oxum e de nosso pai Oxalá (Pais no Santo)
+Com a licença de mamãe Oxum e de nosso pai Oxalá (Corrente)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>7 Linhas da Umbanda</h3><p>Sete linhas da Umbanda,
+Sete linhas pra vencer
+É a lei de Oxalá,
+Todos podem merecer</p><p>Tem Oxum nas cachoeiras,
+Iemanjá deusa do mar
+Iansã pra defender,
+Cosme e Damião para ajudar</p><p>Rei da demanda é Ogum Megê,
+Quem rola as pedras é Xangô Kaô
+Flecha de Oxóssi é certeira é,
+Ééé, Oxalá é o meu senhor, ôôô</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Salve a linha das almas,
+Salve Ogum, salve Iemanjá,
+Salve Oxóssi, Iansã,
+Oxumarê, Xangô e Oxalá</p><p>Salve a linha das almas,
+Que vem rondar,
+Salve a linha das almas,
+Que vem trabalhar</p></div><h2>Oxalá</h2><p>Salve Oxalá, Grande Senhor da Luz divina.
+Grande Mestre da Umbanda.
+Dai-nos sua paciência, tolerância e amor,
+disciplina e criação.</p><p style="text-align: right;"><strong>Saudação: Oxalá Babá</strong></p><p>Oxalá meu pai,
+Tem pena de nós, tem dó
+Se as voltas do mundo é grande,
+Seus poderes são maior</p><p>Oxalá meu pai,
+Aceite essa romaria,
+Dos filhos que moram longe, meu pai,
+Não podem vir todo dia</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Oxaguian, Oxalufan,
+Valha-me, valha-me Deus</p><p>Valha-me, valha-me Deus,
+Valha-me, valha-me Deus</p><p>Igbín é wunló, (<em>Ìgbín ẹ wunlọ́</em>)
+Babá Orixá, xirê lodê (<em>Bàbá òriṣá ṣiré lodé</em>)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Pombinho branco,
+Mensageiro de Oxalá</p><p>Leva essa mensagem,
+De todo coração, até Jesus,</p><p>E diga que somos,
+Soldados de Aruanda,
+Trabalhamos na Umbanda,
+Espalhando a vossa luz</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Uoô, quando o tempo fecha,
+Uoô é hora de rezar
+Uoô, pai Oxalá vai mandar água,
+Pra lavar</p><p>Vamos olhar pro céu,
+E pedir nossa proteção
+Pra tirar o mau olhado,
+Receber nossa benção.</p><h2>Iemanjá</h2><p>Iodociaba nossa mãe, senhora de todas as cabeças.
+Que seu amor possa transbordar por nossas mãos, assim como transborda de seu peito alimentando a todos os seus filhos.</p><p style="text-align: right;"><strong>Saudação: Odociaba Mãezinha</strong></p><p>Iê, Iemanjá,
+Iê, Iemanjá</p><p>Rainha das ondas
+Sereia do mar</p><p>Como é lindo o canto de Iemanjá
+Faz até o pescador chorar
+Quem escuta a mãe d'água cantar
+Vai com ela pro fundo do mar
+Iê, Iemanjá,
+Iê, Iemanjá
+Seu canto é bonito em noite de luar</p><p>Como é lindo o canto de Iemanjá
+Faz até o pescador chorar
+Quem escuta a mãe d'água cantar
+Vai com ela pro fundo do mar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Odô, Odô,
+Odô, Odô, Odô Iyá</p><p>Iemanjá, sai do mar
+Vem buscar a sua Yaô</p><p>Santa do azul, dona do mar
+Olha seus filhos, Iemanjá</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Iêêêêê, Iemanjá,
+Ela é, ela é a rainha do mar</p><p>Traz pente, traz espelho, oooo,
+Pra ela se enfeitar, oooo
+Traz flores, traz perfume enfeita todo o mar</p><p>Retira a jangada do mar,
+Mãe d'água mandou avisar,
+Que hoje não pode pescar,
+Pois hoje tem festa no mar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu vou jogar,
+Vou jogar flores no mar, eu vou jogar</p><p>Uma promessa eu fiz, para a deusa do mar
+Meu pedido atendeu, prometi, vou pagar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu fui pedir,
+A mamãe sereia
+A Iemanjá,
+Para nunca mais chorar</p><p>Foi na areia,
+Em noite de lua branca no mar</p><p>A lua lá no céu iluminou,
+O seu divino manto</p><p>O rainha do mar, sereia
+Rainha do mar, sereia
+Rainha do mar, sereia</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eram duas ventarolas,
+Duas ventarolas
+Navegando sobre o mar</p><p>Uma era Iansã (Eparrey),
+A outra era Iemanjá (Odocia)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Com licença mãe das águas,
+Tomai conta dos seus filhos
+Que eu também já fui do mar</p><p>Hoje estou velho e acabado
+Nem no remo sei pegar</p><p>Tomai conta dos seus filhos
+Quem me dera ir ao mar, ai ai
+Iemanjá, ia, Iemanjá ia.</p><p>No dia de sua festa
+Pescador velho promete
+Pescador velho vai dar</p><p>O presente mais bonito
+Pra rainha Iemanjá</p><h2>Obaluayê e Omulu</h2><p>Atoto Obaluayê, salve o senhor da pipoca,
+o senhor da palha, o senhor da cura,
+salve o grande senhor da vida e da morte, do branco e do negro.
+Salve o senhor de todos os antagonismos, senhor de nossas cabeças, senhor da medicina para todos os homens.</p><p style="text-align: right;"><strong>Saudação: Atoto Obaluayê, Atoto Omulu</strong></p><p>Obaluayê, meu senhor do Bonfim
+Traga sua paz, não me deixe assim</p><p>Se ver um velho no caminho pede a benção
+Oi pede a benção, oi pede a benção</p><p>Benção de Deus, Benção de Deus,
+Benção de Deus Obaluayê
+Benção de Deus</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Rei das Almas de Oxalá
+Essas almas, que me traz
+Ela apareceu um dia
+Ao romper da escuridão
+Linda com seu manto todo branco
+Em meio a procissão
+E o que ela queria era amor e compreensão</p><p>Meu pai Oxalá é o rei, venha me valer
+Se o velho é Omolu, Atoto Obaluayê (Bis)</p><p>Ô Atoto Obaluayê, atoto Babá
+Atoto Obaluayê, atoto é Orixá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Omolu com a sua muleta,
+Com sua bengala também samba (Bis)</p><p>Samba, samba, Omolu,
+Quando pisa na Umbanda (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Omolu na pere de sudã
+Elu, Elu, Elu (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Joga a palha, meu pai,
+Joga a palha
+Joga a palha até a costa do mar</p><p>Obaluayê que já vai embora
+E volta quando precisar (Bis)</p><h2>Oxóssi</h2><p>Okê Oxóssi, grande senhor desta terra, nos traga a sua liberdade e poder de conhecimento e entendimento de todas as coisas, do céu, da terra, do ar, do mar. Traga suas folhas para que possamos curar o mundo.</p><p style="text-align: right;"><strong>Saudação: Okê Oxóssi</strong></p><p>Oxóssi ê, Oxóssi á,
+Oxóssi ê, maiangolê, maiangolá. (Bis)</p><p>Quem é aquele que vem lá de Aruanda
+Montado em seu cavalo com seu chapéu de banda</p><p>Ele é Oxóssi de Aruanda ê,
+Ele é Oxóssi de Aruanda (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Atira, atira eu atirei
+Umbanda vou atirar (Bis)</p><p>Oxóssi na mata é caçador
+Veado na mata é corredor
+Veado na mata é corredor
+Oxóssi na mata é caçador.</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Arreia capangueiros,
+Capangueiros da jurema
+Arreia capangueiros,
+Capangueiros juremá (Bis)</p><p>Se meu pai é Oxóssi,
+Quero ver balancear (Bis)</p><p>Arreia, arreia, capangueiros da jurema
+Ô juremá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu vi chover, eu vi relampear
+Mas mesmo assim o céu estava azul</p><p>Samborê pemba folha de Jurema
+Oxóssi reina de norte a sul</p><h2>Xangô</h2><p>Kaô Kabecile Xangô, senhor dos raios e trovões, senhor de minha cabeça. Grande mestre da justiça, que seus Oxês possam mostrar sempre as duas direções de qualquer atitude, nos trazer o direcionamento, a oratória, a compaixão e a justiça sobre o mundo.</p><p style="text-align: right;"><strong>Saudação: Kaô Kabecile Xangô</strong></p><p>Kaô Kabecile
+É de musunsun
+É como ele vem (Bis)</p><p>É de musunsun
+É como ele vem (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Xangô mora nas pedreiras
+Quem mandou relampear
+Saravá cabecinha branca
+Saravá Xangô, Saravá Xangô (Bis)</p><p>Ooo, oo, oo, oo (bis)
+Valei-me meu pai,
+Valei-me Xangô (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Pedra rolou pai Xangô,
+Lá nas pedreiras
+Afirma ponto meu pai,
+Nas cachoeiras (Bis)</p><p>Eu tenho o corpo fechado
+Xangô é meu protetor
+Afirma ponto meu filho
+Pai de cabeça chegou (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Kenguelê, guelê, Xangô
+Ele é filho da cobra coral (Bis)</p><p>Olha o preto está trabalhando
+Olha o branco está só olhando (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ele vem de Aruanda,
+Ele vem trabalhar
+Ele vence demanda,
+Ele é seu Airá! (Bis)</p><p>Kaô, kaô,
+Kaô, kaô (Bis)</p><p>A justiça chegou,
+Xangô (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Dizem que Xangô,
+Mora nas pedreiras
+Mas não é lá
+Sua morada verdadeira (Bis)</p><p>Xangô mora numa cidade de luz
+Onde moram Santa Bárbara,
+Oxumaré e Jesus (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Xangô é rei,
+É rei Nagô (Bis)</p><p>Ô bate palma
+Pra coroa de Xangô (Bis)</p><h2>Iansã (Oyá)</h2><p>Eparrey Oyá, Eparrey Iansã. Salve a grande senhora dos ventos, salve a Orixá Menina. Que o seu relâmpago clareie as nossas vidas, nos dê a impulsão e a curiosidade para conhecer o mundo e conquistá-lo. Nos traga a força do perdão e da justiça.</p><p style="text-align: right;"><strong>Saudação: Eparrey Iansã.</strong></p><p>Ô Iansã,
+Tem um leque que venta
+Pra se abanar
+Em dia de calor (Bis)</p><p>Ô Iansã,
+Mora nas pedreiras
+Eu quero ver, meu pai Xangô (Bis)</p><p>Ó minha Santa Barbara,
+Dos cabelos longos (Bis)</p><p>Ela vem girando,
+Girando na kalunga,
+Com pedras de ouro (Bis)</p><p>Ventou,
+Mas que ventania (Bis)</p><p>Iansã é nossa mãe,
+Iansã é nossa guia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Oyá, Oyá,  Oyá eeee
+Oyá matamba de Kakoroká zinguê ô</p><p>Oyá, Oyá, Oyá eeee oooo
+Oyá matamba de Kakoroká zinguê ô! Oyá! (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eparrey dindinha,
+Eparrey dindá
+Oyá matamba de aruê
+Oyá matamba de aruá (Bis)
+Olha que o céu clareou
+Quando o dia raiou
+Fez o filho pensar</p><p>A mãe do tempo mandou
+A nova era chegou
+Agora vamos plantar</p><p>Do Humaitá Ogum bradou
+Senhor Oxossi atinou
+Iansã vai chegar</p><p>O ogã já firmou
+Atabaque afinou
+Agora vamos cantar</p><p>Ah! Eparrey!
+Ela é Oyá! Ela é Oyá!
+Ah! Eparrey!
+É Iansã! É Iansã!
+Ah! Eparrey!
+Quando Iansã vai pra batalha
+Todos cavaleiros param
+Só pra ver ela passar.(Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Iansã é uma moça bonita
+Ela é rainha do seu Jacutá (Bis)</p><p>Ô eparrey, ô eparrey, ô eparrey
+Ela vem de Aruanda,
+Segura o terreiro
+Que eu quero ver (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eram duas ventarolas,
+Duas ventarolas
+Navegando sobre o mar (Bis)</p><p>Uma era Iansã, ô eparrey
+A outra era Iemanjá, iodociá (Bis)</p><h2>Oxum</h2><p>Oraiêiê mamãe Oxum, salve a senhora do ouro, da geração, da fertilidade e da riqueza. Que seu poder de geração, possa dentro de nós, fazer prosperar todas as nossas belezas, todas as nossas forças. Que sejamos prósperos, na saúde, no riso e no amor.</p><p style="text-align: right;"><strong>Saudação: Oraiêiê Mamãe Oxum.</strong></p><p>Eu vi mamãe Oxum nas cachoeiras
+Sentada na beira do rio (Bis)</p><p>Colhendo lírio, ô lírio ê
+Colhendo lírio, ô lírio a
+Colhendo lírios pra enfeitar nosso Congá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Mamãe Oxum,
+Dos cabelos longos
+No mar tem água,
+Na sua aldeia tem ouro (Bis)</p><p>Eu vou pedir permissão a Oxalá
+Pra banhar nas cachoeiras
+E pra todo mal levar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Oromi má, (<em>Olómí máaiọ́</em>)
+Oromi maió (<em>Olómi máaiọ́</em>)
+Oromi maió, (<em>Olómi máaiọ́</em>)
+Iyabadô ô yêyê ô (Bis) (<em>Iyábá odó ó yéyé ó</em>)</p><p>Ala D´Oxum,
+Oxum mirê rê o (Bis)</p><p>Ela é mina ni kayodó (Bis).</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A egué, a egué (<em>A egẹ́, a egẹ́</em>)
+Oromi sisi (Bis) (<em>Olómí sísí</em>)</p><p>A egué, ayewi (<em>A egẹ́, aiyé wi</em>)</p><p>Iyalode ialo, (<em>Iyálòdè iyá ló</em>)
+Orum o yeye o (<em>Òrún ó yéyé ó</em>)
+Lealode loko,  (<em>Iyálòdè ló kó</em>)
+Oxum agueô. (<em>Oṣún agé ó</em>)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu fui ao Gantois,
+Fazer promessa só
+Levei ouro maior,
+A uma deusa, iê iê ô</p><p>Ora deusa,
+Minha prece é verdadeira
+Desce, vem me ajudar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O palácio de mamãe é debaixo d´água (Bis)</p><p>Debaixo d´água, em cima da areia (Bis)</p><p>Tem ouro, tem prata
+Tem diamante que nos alumeia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Aiê iê,
+Aiê iê, mamãe Oxum (Bis)</p><p>Ora iêiê Mamãe Oxum,
+Mamãezinha da cobra coral (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Nhen nhen nhen (<em>Orè yéyé</em>)
+Oxum oxorodô (Bis) (<em>Yéyé ṣoró odó</em>)</p><p>É o má, é o má (<em>ṣoró wa, ṣoró omọ́</em>)
+Fefé Xorodô (Bis) (<em>A fẹ́fẹ́, ṣoró odó</em>)</p><h2>Nanã</h2><p>Saluba Nanã! A mais velha de todas as velhas, a grande avó da humanidade. Da sua lama nasceram os homens, das teias de sua aranha foram tecidos todos os destinos da humanidade. Dai-nos a sua bênção, a sua sagacidade, a sua inteligência e sabedoria, junto com o seu carinho de avó.</p><p style="text-align: right;"><strong>Saudação: Saluba Nanã.</strong></p><p>Atraca, atraca que aí vem Nanã, ê ê
+Atraca, atraca que ai vem Nanã, ê á (Bis)</p><p>É Nanã, é Oxum, é rainha do mar, ê ê
+É Nanã, é Oxum, ela vem trabalhar ê á (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O Nanã gire, O Nanã gira (Bis)
+Nanã Buroko, já vem do mar (Bis)</p><p>O Nanã me conhece, menina do mar
+Valei-me Nanã, na fé de Oxalá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ei Nanã, embala eu Nanã
+Abraça eu Nanã, tem dó de mim (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu olhei pro céu, pedi a Oxalá
+Que me desse as estrelas, para iluminar
+Foi quando eu vi um anjo, que veio me dizer
+Sou de Nanã Ewa, Ewa, Ewa ê (Bis)</p><h2>Ogum</h2><p>Patacori Ogum, Ogum Iê, meu pai. Salve o grande senhor dos caminhos, que sua espada esteja sempre brilhando à minha frente e ao alto, apontada a São Jorge na lua, mostrando a humanidade o crescimento e a prosperidade.</p><p style="text-align: right;"><strong>Saudação: Ogum Iê</strong></p><p>Oi na lei de Umbanda,
+Orixá que comanda é Ogum
+Ogum Iê meu pai (Fazer a saudação a Ogum)</p><p>Se ele é o guerreiro,
+oi segura o terreiro Ogum (Bis)</p><p>Saravá Ogum Iara,
+Ogum Beira Mar,
+Auê Ogum Rompe Mato,
+Ogum Dele,
+Quem está de ronda é Ogum Megê. (Bis)</p><p>Quem está de roda é São Jorge
+Deixa São Jorge rondar (Bis)</p><p>Oi, São Jorge é guerreiro,
+Oi, quem manda na terra,
+oi quem manda no mar (Bis)</p><p>Saravá meu pai,
+Saravá meu pai
+Oi girar é bom, girar é bom,
+girar é bom, é bom girar (Bis) (rodar acompanhando a música).</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Zum zum zum bateu na porta
+São Miguel foi ver quem é (Bis)</p><p>É Ogum cavaleiro de Zambi
+Que vem lá de Nazaré (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Saravá Ogum Iara,
+Ogum Rompe Mato,
+Ogum Beira Mar (Bis)</p><p>Se ele trabalha na areia meu pai
+Ele trabalha no mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Beira rio, Beira rio, Beira Mar
+O que se ganha de Ogum,
+só Ogum pode tirar (Bis)</p><p>Seu Ogum de ronda,
+Ele vem girar
+Vem trazendo forças,
+Pra descarregar (Bis).</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A primeira espada quem ganhou, foi ele (Bis)</p><p>Mas ele é, ele é Ogum Megê
+Ele vem lá de Aruanda
+Pra seus filhos proteger, Ogum Iê (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu tenho Seu 7 Espadas pra me defender
+Eu tenho Ogum em minha companhia (Bis)</p><p>Ogum é meu pai,
+Ogum é meu guia
+Ogum vai vencer,
+Junto de Deus e da Virgem Maria. (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Se meu pai é Ogum,
+Não me deixe sofrer tanto assim (Bis)</p><p>Quando eu morrer,
+Vou passar lá na Aruanda
+Saravá Ogum,
+Saravá Seu 7 Ondas (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Se meu pai é Ogum,
+Vencedor de demanda
+Se ele vem de Aruanda
+É pra salvar filhos de Umbanda (Bis)</p><p>Ogum, Ogum, Ogum Iara (Bis)</p><p>Salve os campos de batalha,
+Salve as sereias do mar</p><p>Ogum, Ogum, Ogum Iara (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum jurou bandeira,
+Ogum tocou clarim (Bis)</p><p>Com seu exército branco,
+ele cuidou de mim (Bis)</p><p>Na beira da praia,
+Ogum 7 Ondas,
+Ogum Beira Mar (Bis)</p><p>Rondou de madrugada,
+Saravá Seu Beira Mar,
+Saravá Seu Matinata</p><p>Ele rodopiou,
+Rondou de madrugada
+Saravá Seu Beira Mar,
+Saravá Seu Matinata</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum, comandante guerreiro, Ogum Iê
+Soldado mor, capitão,
+Da capitania de minha cabeça,
+Mandai a alforria pro meu coração (Oração cantada)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum é tata coió oooo,
+Ogum é meu Orixá (Bis)</p><p>É sentinela de Oxum,
+É remador de Iemanjá
+É general de Olorum,
+Ele é Ogum Beira Mar</p><p>Beira Mar auê,
+Beira Mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum Dele,
+Quem manda é Zambi (Bis)</p><p>Oi corre, corre,
+Oi corre gira
+Pra salvar filhos de fé</p><p>Lá vem o sol,
+Lá vem a lua,
+Ele vai girar</p><p>Ele vai girar, na gira de Umbanda,
+Ele vai girar (Bis)</p><p>Ele vai girar,
+Ele vai girar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum é chefe de cavalaria,
+Guerreou dez anos na infantaria (Bis)</p><p>Por sua crença ele chegou a major,
+Foi ordenança da Virgem Maria (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ogum já venceu,
+Já venceu, já venceu (Bis)</p><p>Ogum vem de Aruanda
+Quem lhe manda é Deus (Bis)</p><p>Ele vem beirando o rio,
+ele vem beirando o mar (Bis)</p><p>Salve Santo Antônio da calunga,
+Benedito e Beira Mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A benção meu pai,
+Se precisar eu chamo (Bis)</p><p>Se Zambi trouxe,
+Zambi vai levar</p><p>Cadê sua espada de ouro, meu pai,
+Ogum mandou deixar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Selei, selei,
+Meu cavalo, selei (Bis)</p><p>Papai Ogum já vai embora,
+Meu cavalo, selei (Bis)</p><h2>Oxumarê</h2><p>Salve Oxumarê, Arroboboi! Salve o orixá da vida, o grande arco íris. Aquele que é o começo e o fim de todas as coisas, o oroboros, a serpente que engole a si mesma para fazer novas todas as coisas. Que a sua força nos dê renovação em todos os momentos de dificuldades. Onde quer que nossa fé estremeça e nossa luz queira se apagar, que o seu raio de luz faça brilhar sobre nós a direção e o caminho.</p><p style="text-align: right;"><strong>Saudação: Arroboboi Oxumarê</strong></p><p>Oxumarê, Oxumarê,
+Lelê malê</p><p>Oxumarê, lelê malê,
+Odara</p><p>O lelê malê</p><h2 style="margin-top: 50px; padding-bottom: 10px; border-bottom: 1px solid var(--dourado); font-size: 1.7rem;">Os Guias da Umbanda</h2><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Erês</h3><p style="text-align: right;"><strong>Saudação: As minhas criancinhas</strong></p><p>Papai, me mande um balão,
+Com todas as crianças que têm lá no céu (Bis)</p><p>Tem doce papai, tem doce papai,
+Tem doce lá no jardim (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu quero doce,
+Eu quero bala
+Eu quero açúcar
+Pra passar na sua cara (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Cosme, Damião,
+Oh Doum</p><p>Crispim, crispiniano,
+São os filhos de Ogum</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá no céu tem três estrelas,
+Todas as três em carreirinha (Bis)</p><p>Uma é Cosme e Damião,
+A outra é Mariazinha (Bis) (Pode-se chamar o nome de outros Erês)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu vi Doum
+Na beira d'água
+Comendo arroz,
+Bebendo água. (Bis) (Chamar todos os erês)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá vão as criancinhas,
+Subindo pro céu,
+Com nossa Senhora
+Cobrindo com véu (Bis)</p><p>Ave, ave, ave Maria (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Andorinha que voa,
+Voa, andorinha,
+Leva as crianças pro céu, andorinha (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Caboclo</h3><p style="text-align: right;"><strong>Saudação: Okê Caboclo</strong></p><p>Portão da aldeia abriu,
+Para todos os caboclos passar (Bis)</p><p>É hora, é hora, é hora
+Dos caboclos da Jurema, trabalhar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Caboclos não tem caminhos para caminhar (Bis)</p><p>Eles caminham por cima de pau,
+Por baixo de pedra,
+Em qualquer lugar</p><p>Seus caminhos estão abertos,
+Caboclos, podem passar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Estava na mata,
+Estava trabalhando (Bis)</p><p>Passou Pena Branca,
+Passou me chamando (Bis)</p><p>Auê Auè, onde é que mora,
+Ele mora nas matas
+Com Nossa Senhora. (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Um grito nas matas ecoou,
+Foi seu Pena Branca que chegou (Bis)</p><p>Com suas flechas, e seu cocar,
+Seu Pena Branca vem nos ajudar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Estava na beira do rio,
+Sem poder atravessar
+Eu chamei pelo caboclo,
+Caboclo Tupinambá (Bis)</p><p>Tupinambá chamei,
+Chamei, tornei chamar ê, ah! (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Que lindo, capacete de penas
+Que tem a cabocla Jurema (Bis)</p><p>Mas ela vem da raiz da samambaia
+Ela vem trabalhar,
+Ê ê ê ê, ah! (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Janaina menininha,
+Sereia do mar (Bis)</p><p>Ela vem no balanço, ela vem
+Ela vem no balanço do mar (Bis)</p><p>Salve a mãe d'água,
+Salve as sereias,
+Salve as caboclas
+De todas as aldeias (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Foi numa tarde serena
+Lá nas matas da Jurema
+Que eu ouvi meus caboclos bradar</p><p>Kio, kio, kio, kio, que era
+Sua mata está em festa,
+Saravá Seu 7 flechas
+Que ele é rei da floresta (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Leeeeeeeeee leleeeee,
+Lele lele lele lele leaaaaaaaaa!</p><p>Leleleeeeeeeeee leleeeee
+Caboclo 7 Flechas no Congá</p><p>Saravá Seu 7 Flechas,
+Ele é o rei das matas
+A sua bodoca gira, oi kalunga,
+A sua flecha mata (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Caboclo roxo da pele morena
+Ele é Oxóssi, caçador lá da Jurema (Bis)</p><p>Ele jurou e tornou a jurar
+Por ouvir os conselhos
+Que a jurema veio dar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eram dois Guerreiros,
+Dois irmãos unidos
+Chamava Tupaíba
+E era filho de Aymoré
+Lá na tribo Guarani
+Seu irmão chamava Peri
+Ele é filho de Maria e José</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá no céu tem um cruzeiro
+Foi Jesus que abençoou (Bis)</p><p>Jesus salve o pena roxa
+Que nessa aldeia chegou (Bis)</p><p>Com pena Roxa não se brinca
+Ele não é de brincar (Bis)</p><p>Pena Roxa faz o bem
+Pena Roxa corta o mal (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ele é caboclo da tribo de Aymoré,
+Mas o seu nome eu não vou dizer qual é</p><p>Não há demanda que quebre o seu timbé
+Na Umbanda ele é cacique,
+Na quimbanda ele é pagé</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Como é bonito a pisada do Caboclo
+Ele pisa na areia, no rastro do outro (Bis)</p><p>Salve a Sereia, Salve Iemanjá
+Salve as Caboclas, da linha do mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Oi, caçador, na beira do caminho
+Oi, não me mate essa coral na estrada</p><p>Ela abandonou sua choupana, oi caçador
+Foi no romper da madrugada</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Quem tem poder sobre a terra
+Quem tem poder sobre o mar</p><p>É a cabocla Jacira
+É a sereia do mar (Bis) (Chamar outras caboclas d 'água)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A sua mata é longe,
+E eles vão embora
+E vão beirando o rio azul</p><p>Adeus à Umbanda
+Que os caboclos vão embora
+E vão beirando o rio azul</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Caboclo pega a sua flecha,
+Pega o seu bodoque,
+O galo já cantou (Bis)</p><p>O galo já cantou na Aruanda,
+Oxalá te chama
+Lá pra sua banda (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Banda, quibanda,
+Caboclo vai embora
+Banda quibanda, catigerê</p><p>Banda quibanda,
+Caboclo vai embora
+Firma o ponto Ogum Megê</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Preto Velho</h3><p style="text-align: right;"><strong>Saudação: Adorei as almas</strong></p><p>Pretos velhos quando vem,
+Vem beirando a beira mar (Bis)</p><p>Vem molhando os pés na areia,
+Pra seus filhos descarregar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Preto velho segura a curimba
+Que o povo de Angola mandou lhe chamar (Bis)</p><p>Quero ver preto velho descer
+Quero ver balancear (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Negra Cambinda,
+Fala na língua Nagô (Bis)</p><p>Negra da Costa Rica, filha de Babalaô. (Bis)</p><p>É na Umbanda ê, é na Umbanda a (Bis)</p><p>Negra canta, negra dança,
+Na batida do tambor
+Saravá sua mironga,
+Saravá meu protetor</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Arriou na linha de congo
+É de Congo, é de Congo, Aruê
+Arriou na linha de Congo,
+Agora que eu quero ver (Bis)</p><p>Salve Congo, salve rei Congo
+Salve Congos em ação
+Salve São Jorge guerreiro
+Salve São Sebastião (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vovó não quer,
+Casca de coco no terreiro (Bis)</p><p>Que é pra não lembrar
+Dos tempos de cativeiro (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Chamai vovó Sabina
+Chamai pra trabalhar (Bis)</p><p>Vovó Sabina vem
+Ela vem desamarrar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Adorei as almas
+As almas me atenderam (Bis)</p><p>Era as santas almas, lá no cruzeiro
+Era as santas almas, que me socorreram</p><p>Eu estava perambulando
+Sem ter nada pra comer
+Fui pedir às santas almas
+Para elas me socorrer (Bis)</p><p>Foi as almas que me ajudou
+Foi as almas que me ajudou
+Meu divino espírito santo, viva Deus nosso senhor (Bis)</p><p>Oi, corre gira meu Deus do céu, oi corre gira (Bis)</p><p>A gente pede pras almas, as almas pedem pros santos
+Os santos pedem pra Deus, a caridade (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Entrei na sala,
+Saí na cozinha (Bis)</p><p>É o povo do Congo
+E ninguém adivinha (Bis)</p><p>Quebra o ovo,
+Estoura o nó
+Fura o papo da galinha carijó (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Preta velha feiticeira,
+No tempo da escravidão
+Toda tarde ela varria,
+O terreiro do patrão
+Preta velha quando vem lá de Aruanda</p><p>Oh sacode a poeira da sua saia (4x)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Preto velho tá cansado ooo
+Mas ainda pode trabalhar
+Só se move de mansinho
+Usa bengala para andar</p><p>Quando lembra do passado ooo
+Do tempo da escravidão
+De fugir para o quilombo
+E aprender com a solidão</p><p>Mas nem mesmo só,
+Deixou de acreditar
+No poder da luz de Deus,
+Ele aprendeu a perdoar</p><p>Sua missão de hoje em dia
+É vir aqui nos ensinar
+O amor de Deus,
+A paz de Deus</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Baixai, baixai, baixai
+Ó virgem da Conceição
+Rainha imaculada,
+Retirai toda perturbação</p><p>Se algum filho tiver praga de alguém
+Desde já seja retirado
+Levai para o mar adentro
+Para as ondas do mar sagrado</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Os pretos velhos vão embora,
+Vão devagarinho
+Vão quebrando os ovos,
+Desmanchando os ninhos (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Baianos</h3><p style="text-align: right;"><strong>Saudação: É da Bahia</strong></p><p>Bahia, ô África,
+Venha nos ajudar (Bis)</p><p>Povo baiano, povo africano,
+Força divina, vem cá, vem cá (Bis)</p><p>Oi quando eu vim lá da Bahia
+Eu trouxe meu patuá
+Terreiro que tem mironga
+Baiano vem trabalhar</p><p>Bahia eee, Baia eea (Bis)</p><p>Ai, ai, ai, ai, meu senhor do Bonfim
+Valei-me São Salvador
+Oi, vamos saravá, minha gente
+Que o povo da Bahia, chegou</p><p>Ai, ai, ai, ai se ele é Baiano
+Agora que eu quero ver (Bis)</p><p>Comer pimenta da costa,
+Com azeite de dendê (Bis)</p><p>Tô chamando, tô chamando,
+Eu to cansado é de chamar (Bis)</p><p>Cadê meu irmão,
+Que não vem brincar mais eu? (Bis)</p><p>Com tanta "abobra" madura
+Eu não tenho farinha
+Com tanto serviço bom
+A minha faca ficou na Bahia (Bis)</p><p>Quebra côco, quebra côco
+Quero ver côco quebrar,
+Você brinca com baiano
+Baiano não é de brincar (Bis)</p><p>Vinte e cinco Pai Nosso,
+Uma Ave Maria só (Bis)</p><p>Uma gira de Baiano
+Arrebenta qualquer nó (Bis)</p><p>Baiano bom, baiano bom,
+Baiano bom é o que sabe trabalhar (Bis)</p><p>Baiano bom é o que sobe no coqueiro
+Tira o côco, bebe a água e deixa o côco no lugar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá vem Zé, lá vem Zé,
+Oh lá vem Zé lá da Bahia
+Lá vem Zé, lá vem Zé,
+Oh lá vem Zé do Juremá (Bis)</p><p>Cadê o Zé, Saravá, Saravá
+Chegou o Zé, Saravá, Saravá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu, fui à Bahia,
+Implorei ao meu senhor do Bonfim (Bis)</p><p>Que ele, me ajudasse,
+A seguir na umbanda meu caminho até o fim</p><p>Meu senhor do Bonfim, me ajude,
+Eu preciso de paz e saúde (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Olê Mulé Rendeira,
+Olê Mulé rendá
+Tu me ensina a fazer renda,
+Eu te ensino a namorar (Bis)</p><p>Lampião desceu a serra
+Com sandália de algodão
+A sandália pegou fogo
+E ficou de pé no chão (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Quando eu cheguei da Bahia
+Estrada eu não via (Bis)</p><p>Em cada encruza que eu passava
+Uma vela eu acendia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Pisa Baiano,
+Pisa lá que eu piso cá
+Pisa baiano,
+Eu quero ver você pisar</p><p>A pisada de baiano,
+Faz poeira levantar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Oi, fizeram um feitiço na encruzilhada pra me derrubar
+Só que não adianta,
+Não adianta eu também sou de lá (Bis)</p><p>Eu também sou de lá, oxente,
+Eu também sou de lá, oxente (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A Baiana faz e não manda,
+Nem tem medo de demanda (Bis)</p><p>Baiana feiticeira, filha de Nagô
+Trabalha com pó de pemba pra ajudar babalaô. (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Nagô oo, oo, oo, oo</p><p>Eu venho de Angola
+Sou rei da magia
+Minha terra é muito longe
+Meu Congá é na Bahia (Bis)</p><p>Tem areia ooooo, tem areia
+Tem areia no fundo mar, sereia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O Coqueiro da Bahia, já bateu,
+Já deu dez horas</p><p>Oi quem quiser ir mais eu, vamo
+Oi quem quiser ir mais eu, vamo
+Oi quem quiser ir mais eu, vamo
+Oi tem lugar pra mais baiano (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>E os baianos vão embora,
+Eles vão lá pra Bahia (Bis)</p><p>Oi Zum Bara Quizumba,
+Bara Quizumba iê iê
+Zum bara quizumba,
+Bara quizumba ia ia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Maré, maré, maré,
+Tem pemba preta joga fora
+Maré, maré, maré,
+Que os baianos vão embora (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Ciganos</h3><p style="text-align: right;"><strong>Saudação: Ori Babá</strong></p><p>Oi, cirandeiro,
+Cirandeiro ah! (Bis)</p><p>A pedra do seu anel,
+Brilha mais do que o sol (Bis)</p><p>Cigano é da lua,
+Cigano é das estrelas (Bis)</p><p>Oi, gira, oi gira, oi gira, cigano,
+Oi gira a noite inteira (Bis)</p><p>Oi, giro, oi giro ê,
+Oi giro, oi giro ah! (Bis)</p><p>Oi gira, oi gira, oi gira, ciganos,
+Ciganos vem trabalhar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Cartas, búzios, castanholas
+Eu quero ver bela senhora (Bis)</p><p>Eu quero ver, eu quero ver,
+Eu quero ver cigana no catigerê (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ciganinha, ciganinha,
+Da sandália de ouro (Bis)</p><p>Venha ver oh ciganinha,
+O seu tesouro (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Na noite escura, a luz da fogueira
+A iluminar, os corações (Bis)</p><p>A fogueira tem o dom, de transformar
+Tudo de ruim, ela vai queimar (Bis)</p><p>Salve, Salve, Santa Sara
+Salve a estrela guia
+Salve o amor que nos irradia (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vinha, caminhando a pé
+Para ver se encontrava,
+A minha cigana de fé (Bis)</p><p>Ela parou e leu minha mão
+E disse, disse toda a verdade
+Mas eu só queria saber se ela era
+A minha cigana de fé (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ganhei uma barraca velha,
+Foi a cigana quem meu deu (Bis)</p><p>O que é meu é da cigana,
+O que é dela não é meu (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu bem que te avisei
+Que você não jogasse essa cartada comigo (Bis)</p><p>Você apostou no valete
+E eu apostei na dama
+Amigo vê se não se engana
+Pois ela é, uma linda cigana (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá vem a carruagem cigana,
+A carruagem cigana, a carruagem cigana (Bis)</p><p>A poeira se levanta, caminhos que se abrem
+Pra carruagem cigana (Bis)</p><p>O coração é a tenda do pensamento
+Onde também os ciganos vão morar
+Meu pai Ogum é o guardião desse terreiro
+Pra vigiar os desejos que vão entrar</p><p>Tudo se corta com o punhal de um cigano
+Fogo e magia ele usa pra cortar
+Traz luz e paz, fé, saúde e alegria
+Com o poder e a justiça de Oxalá</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu não digo adeus,
+Eu digo até logo (Bis)</p><p>Eu me vou sorrindo
+Outro dia eu volto (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Marinheiro</h3><p style="text-align: right;"><strong>Saudação: É da marinha, meu pai</strong></p><p>Gente que vem de Lisboa,
+Gente que vem pelo mar (Bis)</p><p>Laço de fita amarela,
+Na ponta da vela no meio do mar (Bis)</p><p>Ei nós, que viemos de outras terras,
+De outros mares (Bis)</p><p>Trago pólvora, chumbo e bala
+Nós queremos é guerrear (Bis)</p><p>Quem te ensinou a nadar?
+Quem te ensinou a nadar?</p><p>Foi, foi marinheiro,
+Foi os peixinhos do mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Seu Marinheiro é hora,
+É hora de vir trabalhar (Bis)</p><p>É o céu, é o mar, é a lua
+Seu marinheiro, olha o balanço do mar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ô Marinheiro foi você quem trouxe
+Foi você quem trouxe a minha flor amada</p><p>Ô marinheiro das águas tão doces
+Leva as minhas mágoas, pras águas salgadas</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ô marinheiro, marinheiro,
+Marinheiro só
+Ô quem te ensinou a nadar?
+Marinheiro só
+Ô foi o tombo do navio?
+Marinheiro só
+Ou foi o balanço do mar?
+Marinheiro só
+La vem, lá vem
+Marinheiro só
+Ele vem faceiro,
+Marinheiro só
+Todo de branco,
+Marinheiro só
+Com seu bonezinho,
+Marinheiro só
+Eu não sou daqui,
+Marinheiro só
+Eu não tenho amor,
+Marinheiro só
+Eu sou da Bahia,
+Marinheiro só
+De São Salvador,
+Marinheiro só</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá fora, apitou o navio
+Apitou e tornou apitar
+É que a barra tá toda tomada
+Pela marujada de Martim Parangolá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O Navio apitou, pelo mar afora (Bis)
+São os marinheiros, que já vão embora (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Boiadeiro</h3><p style="text-align: right;"><strong>Saudação: Xetroê, Xetroá</strong></p><p>Boia boiadeiro
+Boiadeiro boia (Bis)</p><p>Se eu contar a minha vida,
+Boiadeiro chora (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ê boiadeiro
+Na pisada eu sou ligeiro
+Na laçada eu sou certeiro
+Caçador de feiticeiro (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Quando laçar seu boi,
+O mocotó é meu (Bis)</p><p>Pra pagar a carreirada, Sinha Dona
+Que seu boi me deu (Bis)</p><p>Pega o boi, tira o couro,
+Não aceito desaforo (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A menina do sobrado
+Mandou me chamar pra seu criado (Bis)</p><p>Eu mandei dizer a ela
+Que estava vaquejando gado (Bis)</p><p>Sou eu boiadeiro,
+Que gosta de um bom farreado
+Sou eu boiadeiro,
+Que gosta de um samba rasgado (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Seu boiadeiro por aqui choveu
+Choveu que água rolou
+Foi tanta água que meu boi nadou</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Desci a serra,
+A terra tremeu
+Eu vim buscar meu boi,
+Que ainda não morreu (Bis)</p><p>Xetroê, Xetroá, laço de laçar meu boi
+Xetroê, Xetroá, cê laça um que eu laço dois
+Xetroê, Xetroá, minha força ninguém tira
+Xetroê, Xetroá, só mesmo Deus e os Orixás</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Papai carreiro,
+Eu vim foi carrear (Bis)</p><p>A minha boiada é longa
+Sobe o morro devagar (Bis)</p><p>Alegria de carreiro,
+É ver galo cantar (Bis)</p><p>A metade é de boi branco,
+A outra de boi Araxá. (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Malandro</h3><p style="text-align: right;"><strong>Saudação: Salvado Seja</strong></p><p>Ele é Negro e Branco
+É o porta voz... De um povo soberano
+Ele é filho de baiano
+É neto de africano
+Ele está em Oxalá (Oxalá Babá)
+Oxalá está em nós
+Salve a Bahia
+Salve o Senhor do Bonfim
+O Corisco riscou lá no espaço
+O trovão retumbou lá na serra
+Rompendo correntes de ferro e de aço
+Não existem cativos, na face da terra (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O morro de Santa Teresa está de luto
+Porque o Zé Pelintra morreu
+Ele morreu, na porta de um cabaré
+Com sete punhais no peito, por causa de uma mulher</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu me chamo Zé Pelintra
+Nego do chapéu virado
+Quem mexer com Zé Pelintra
+Ou tá doido, ou tá danado</p><p>Seu doutor, seu doutor
+Bravo senhor
+Zé Pelintra chegou
+Bravo Senhor
+Com os poderes de Deus
+Bravo Senhor
+Zé Pelintra sou eu
+Bravo Senhor</p><p>Eu me chamo é Zé Pelintra
+Nego do pé esparramado
+Na direita eu sou bonzinho
+Na esquerda eu sou danado</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Joaninha, é uma moça bonita
+Mas ela é, a rainha sambista
+Que desce o morro, vem trabalhar
+Com seus malandros, ela vem saravá</p><p>Tem maculelê, maculelê, maculegê
+Tem Joaninha no samba, hoje tem saravá iê</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Boa noite, boa noite
+A todo mundo boa noite
+Boa noite, boa noite,
+Oi Joaninha, boa noite (Chamar as outras Sambas)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Exú</h3><p style="text-align: right;"><strong>(Saudação: Laroyê Exú)</strong></p><p>Tava dormindo na beira do mar (Bis)</p><p>Foi quando as almas me chamou, pra trabalhar
+Oi acorda todos Exús, pra vir girar (Ir chamando os Exús um a um).
+O Inimigo está na porta, está na hora de acordar</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Exú é de querê, querê
+Na hora grande é que eu quero ver (Bis)</p><p>Exú é do romper da aurora
+Todos os Exús tomam conta agora (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Lá na porteira, eu deixei meu sentinela (Bis)
+Eu deixei todos Exús, tomando conta da cancela (Bis)
+(Ir chamando todos os Exús, por ordem de hierarquia na casa)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Não era meia noite
+Quando ele aqui chegou
+Com a sua capa preta,
+Dizendo que era doutor</p><p>Exú no terreiro é rei,
+Na Umbanda ele é doutor
+Exú no terreiro é rei,
+Na quimbanda executor.</p><p>Exú quebra a demanda,
+Exú é curador (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Exu da meia noite,
+Exu da madrugada (Bis)</p><p>Salve o povo de Aruanda,
+Sem Exú não se faz nada (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Abre as estradas,
+Limpa os seus caminhos
+Todos os contrários
+É Exú quem vai levar (Bis)</p><p>Oh salve as correntes de Aruanda,
+Leve os contrários dos terreiros de Yorubá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Exú Caveira,
+firma seu ponto no tronco da bananeira (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Portão de ferro,
+Cadeado de madeira (Bis)</p><p>No portão do cemitério,
+Onde mora João Caveira (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O Luar, o luar, (Ô luar)
+Mas ele é dono da rua (Ô luar)
+Quem cometeu as suas faltas (Ô luar)
+Peça perdão ao tranca ruas (Bis)</p><p>Se pedir ele dá (ele dá!)
+Se errar ele tira (ele tira!)</p><p>Aonde mora o Tranca Ruas
+É morador da encruzilhada (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Santo Antônio de Batalha
+Faz de mim batalhador
+Não me deixe aqui sozinho, Exu de amor
+Pombogira e Marabô</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ê Marabô, eeeea (Bis)
+Exú de lei, batizado na Umbanda
+Exú de lei, aqui nesse Congá (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Tiriri, Tiriri, Tiriri ta no portão
+Tiriri, Tiriri, só manda fogo para ver cair no chão (Bis)</p><p>Ninguém pode com ele, ele pode com tudo
+Lá na encruzilhada, ele é, Exú Veludo (Bis)</p><p>Oi 7, Oi 7, Oi 7 Encruzilhadas
+Toma conta e presta conta
+No romper da madrugada (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>O sino da igrejinha faz belém blém blom (Bis)</p><p>Deu meia noite o galo já cantou
+Seu Tranca Ruas que é o dono da gira
+Oh corre gira que Ogum mandou (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Deu meia noite,
+A lua se escondeu
+Lá na encruzilhada,
+Com a sua gargalhada
+O Seu 7 apareceu</p><p>É Laroyê, é Laroyê é Laroyê
+É mo jubá, é mo jubá, mo ju'bará
+Se ele é Odara,
+Se tem fé nesse legbara,
+É só pedir que ele dá</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ô pemba preta, pemba branca, pemba encarnada
+Exú já trabalhou e vai voltar pra encruzilhada (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vai-se embora Exú,
+Não tropeça no caminho</p><p>Pisa no quintal dos outros,
+Mas não mexa com o vizinho (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Pé pé pé, já é hora, já me vou
+Pé pé pé, encruzilhada me chamou (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Pombo Gira</h3><p style="text-align: right;"><strong>(Saudação: Pombogira é mo jubá)</strong></p><p><em>Do iorubá: mo jubá - meus respeitos</em></p><p>Não mexa com essa moça,
+Ela não mexe com ninguém (Bis)</p><p>Ela é ponta de agulha, senhora dona
+E quando mexe, mexe bem (Bis)</p><p>Deu meia noite, na encruzilhada
+Ela faz rondas, com a sua gargalhada
+E se você com ela quer falar</p><p>É só entrar na roda, quem gira a ganga
+Deixa girar (Bis)</p><p>Oh gira deixa a gira girar (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Foi uma rosa que plantei na encruzilhada
+Foi uma rosa que plantei no meu jardim
+Maria Mulambo, Maria Mulher
+Maria Padilha, rainha do candomblé</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Exú, Maria Padilha,
+Trabalham na encruzilhada (Bis)</p><p>Maria Padilha é minha comadre
+Trabalha de noite e de dia
+É por isso que eu respeito, a sua feitiçaria (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Eu caminhava pela alta madrugada
+Sob o clarão da lua,
+Ouvi uma gargalhada (Bis)</p><p>Linda morena, formosa
+Me diga quem você é
+Eu sou Maria Padilha,
+Sou Pombogira de fé</p><p>Eu posso abrir qualquer gira
+Na hora que eu quiser
+Eu sou Maria Padilha
+Não me conhece quem quer</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Maria Padilha eu preciso de você (Bis)</p><p>Vamos jogar o jogo, da amarelinha
+Se eu perder você me ganha,
+Se eu ganhar você é minha (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Aê Pombogirê, Aê Pombogirá,
+Aê Pombogirê, Pombogirê, Pombogira</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Pombogira de amucongue
+Aya, o lelê
+Pombogira de amucongue
+Aya, o lalá</p><p>Pombogira de amucongue,
+Pombogira de amucongue
+Pombogira ie ie oooo,
+Pombogira ie ie ooooo</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Ela gira no ar, ela gira na praça, ela gira na rua
+Ee ea
+Ela canta, ela dança em noite de lua
+Ee ea</p><p>Ela é sincera, ela é de verdade
+Mas cuidado amigo ela não gosta de falsidade (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>De vermelho e preto, vestindo a noite
+O mistério traz
+De colar de contas, brinco dourado
+A promessa faz</p><p>Se você quer ir, você pode ir,
+Peça o que quiser
+Mas cuidado amigo, ela é bonita,
+Ela é mulher (Bis)</p><p>E no canto da rua, zombando,
+Zombando, zombando está
+Ela é moça bonita, girando, girando, girando lá
+Oi girando lá o lelé, oi girando lá o lá lá</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Rainha das Pombogiras,
+Vou cantar em seu louvor (Bis)</p><p>Da barra da sua saia,
+Corre água e nasce flor (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>A sua catacumba tem mistério
+Vamos saravá, rainha do cemitério (Bis)</p><p>Mas ela é loira, dos olhos azuis
+Mas ela é filha do seu Omolu (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Iná, Iná é Mojubá, é Mojubá
+As Pombogira é Mojubá (Vai chamando o nome de todas as pombogiras)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Juraram de me matar,
+Na porta de um cabaré (Bis)</p><p>Sete dias, sete noites,
+Não mata porque não quer (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Vai dar um nó na sua saia mulher
+Ela dá o seu adeus a todo mundo e vai embora (Bis)</p><p>Olha o vento deu, a poeira levantou
+As Pombogiras o mal levou (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>As Pombogiras se despedem vão embora (Bis)</p><p>É na boca da mata,
+É na boca da mata que elas moram (Bis)</p></div><hr style="border: none; border-top: 1px solid rgba(212,175,55,0.35); margin: 30px 0 30px 24px;"><div style="padding-left: 24px; border-left: 3px solid var(--borda-input);"><h3>Exú Mirim</h3><p style="text-align: right;"><strong>Saudação: Laroyê Exú Mirim</strong></p><p>Ó meu senhor das almas
+Não faça pouco de mim (Bis)</p><p>Eu é pequenininho,
+Eu é Exú Mirim (Bis)</p><hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;"><p>Desce, desce Exú Mirim,
+Sai de cima da tronqueira
+Que Exu ta lhe chamando
+Pra limpar toda zoeira</p><p>Quebra coco no mercado
+Amarra o pé da Aroeira
+Pombogira tá mandando
+Prender as feiticeiras</p></div></div>`,
+            'logsAdmin': `<h1>15. Registros de Acesso</h1><div class="box-conteudo"><p>Histórico de conexões de médiuns e administradores registradas nesta sessão:</p><table><tr><th>Nome do Médium</th><th>Data</th><th>Horário</th></tr>${historicoAcessosAdmin.map(log => `<tr><td>${log.medium}</td><td>${log.data}</td><td>${log.hora}</td></tr>`).join('')}</table></div>`
         };
 
         function carregar(topico) {
