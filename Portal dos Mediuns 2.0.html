@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Espiritual - Casa de São Lázaro</title>
+    <!-- Importação de Fontes Google Fonts refinadas para Portal de Estudo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul-profundo: #0f172a;
+            --azul-safira: #1e3a8a;
+            --azul-claro: #3b82f6;
+            --dourado: #d4af37;
+            --dourado-claro: #fef08a;
+            --fundo-pagina: #f8fafc;
+            --texto-card: #334155;
+            --borda-input: #cbd5e1;
+            --erro-cor: #dc2626;
+            --fonte-titulo: 'Playfair Display', Georgia, serif;
+            --fonte-corpo: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Oculta barras de rolagem globais mantendo a funcionalidade de scroll */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        html, body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: var(--fonte-corpo); 
+            margin: 0; 
+            padding: 0; 
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Tela de Login Refinada e Moderna */
+        #login-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 999; 
+            padding: 20px;
+        }
+
+        .login-card { 
+            background: rgba(255, 255, 255, 0.98); 
+            padding: 40px 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            width: 100%; 
+            max-width: 420px; 
+            border-top: 5px solid var(--dourado);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-card h2 { 
+            color: var(--azul-profundo); 
+            font-family: var(--fonte-titulo);
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            margin: 0 0 8px 0; 
+        }
+
+        .login-subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .input-group { 
+            margin-bottom: 20px; 
+            text-align: left; 
+        }
+
+        .input-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: var(--texto-card); 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            letter-spacing: 0.025em;
+        }
+
+        .input-group input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 2px solid var(--borda-input); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-family: var(--fonte-corpo);
+            transition: all 0.25s ease;
+            background-color: #f8fafc;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--azul-safira);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.12);
+        }
+
+        .login-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--texto-card);
+            cursor: pointer;
+        }
+
+        .login-btn { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, var(--azul-safira) 0%, var(--azul-profundo) 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-family: var(--fonte-corpo);
+            cursor: pointer; 
+            transition: transform 0.2s ease, opacity 0.2s ease; 
+            font-weight: 600; 
+            letter-spacing: 0.03em;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .login-btn:hover { 
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .forgot-link { 
+            color: var(--azul-safira); 
+            text-decoration: none; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            font-weight: 600;
+        }
+
+        .forgot-link:hover { 
+            text-decoration: underline; 
+        }
+
+        #login-error { 
+            color: var(--erro-cor); 
+            font-size: 0.85rem; 
+            margin-top: 15px; 
+            text-align: center; 
+            min-height: 20px; 
+            font-weight: 600;
+        }
+
+        /* Portal Principal Elegante e Responsivo (PC, Tablet e Celular) */
+        #main-container { 
+            width: 96vw; 
+            height: 94vh; 
+            max-width: 1350px;
+            background: #ffffff; 
+            border-radius: 16px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); 
+            display: none; 
+            flex-direction: row;
+            overflow: hidden; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Sidebar Sofisticada */
+        .sidebar { 
+            width: 320px; 
+            background: linear-gradient(180deg, var(--azul-profundo) 0%, #090d16 100%); 
+            padding: 25px 20px; 
+            color: white; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--dourado);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dourado);
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 { 
+            font-family: var(--fonte-titulo);
+            font-size: 1.25rem; 
+            margin: 0;
+            color: var(--dourado); 
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin: 2px 0 0 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .menu-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .menu-btn { 
+            display: flex;
+            align-items: center;
+            width: 100%; 
+            padding: 12px 16px; 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            color: #cbd5e1; 
+            border-radius: 8px; 
+            text-align: left; 
+            cursor: pointer; 
+            transition: all 0.25s ease; 
+            font-size: 0.85rem; 
+            font-weight: 500;
+            font-family: var(--fonte-corpo);
+        }
+
+        .menu-btn:hover { 
+            background: var(--azul-safira); 
+            color: white; 
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
+        }
+
+        .menu-btn.active {
+            background: linear-gradient(135deg, var(--azul-safira) 0%, rgba(30, 58, 138, 0.8) 100%);
+            color: #ffffff;
+            border-color: var(--dourado);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Área de Conteúdo Imersiva e Elegante */
+        .conteudo { 
+            flex: 1; 
+            padding: 45px; 
+            color: var(--texto-card); 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            background-color: #ffffff;
+        }
+
+        .conteudo h1 { 
+            font-family: var(--fonte-titulo);
+            color: var(--azul-profundo); 
+            border-bottom: 3px solid var(--dourado); 
+            padding-bottom: 12px; 
+            margin-top: 0; 
+            font-size: 2.1rem; 
+            font-weight: 700;
+        }
+
+        .conteudo h2 { 
+            font-family: var(--fonte-titulo);
+            color: var(--azul-safira); 
+            margin-top: 30px; 
+            font-size: 1.5rem; 
+            font-weight: 600;
+        }
+
+        .conteudo h3 {
+            font-family: var(--fonte-titulo);
+            color: var(--azul-profundo);
+            font-size: 1.2rem;
+            margin-top: 25px;
+        }
+
+        .box-conteudo { 
+            line-height: 1.85; 
+            text-align: justify; 
+            font-size: 1.02rem;
+            padding-bottom: 40px; /* Garante espaço extra para ler o final da página sem cortar */
+        }
+
+        .box-conteudo ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .box-conteudo li {
+            margin-bottom: 10px;
+        }
+
+        .quote { 
+            background: #f8fafc; 
+            border-left: 4px solid var(--dourado); 
+            padding: 18px 22px; 
+            font-style: italic; 
+            font-family: var(--fonte-titulo);
+            font-size: 1.1rem;
+            margin: 25px 0; 
+            border-radius: 0 8px 8px 0;
+            color: #334155;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            font-size: 0.95rem; 
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        th, td { 
+            padding: 14px 16px; 
+            border-bottom: 1px solid #e2e8f0; 
+            text-align: left; 
+        }
+
+        th { 
+            background-color: #f1f5f9; 
+            color: var(--azul-profundo); 
+            font-weight: 600; 
+            font-family: var(--fonte-titulo);
+            font-size: 1.05rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Responsividade Perfeita para Tablets (Modo Paisagem/Retrato) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
+                padding: 20px 15px;
+            }
+            .conteudo {
+                padding: 30px;
+            }
+            .conteudo h1 {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* Responsividade Impecável para Celulares e Tablets */
+        @media (max-width: 768px) {
+            html, body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            #main-container {
+                flex-direction: column;
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: none; /* Permite expansão adequada para o menu no celular */
+                padding: 12px 15px;
+                overflow-x: auto; /* Permite deslizar os itens do menu horizontalmente com facilidade */
+                overflow-y: hidden;
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+                border-bottom: 2px solid var(--dourado);
+                flex-shrink: 0;
+                -webkit-overflow-scrolling: touch;
+            }
+            .sidebar-brand {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+                padding-right: 12px;
+                border-right: 1px solid rgba(255, 255, 255, 0.15);
+            }
+            .sidebar-brand-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.95rem;
+            }
+            .sidebar h2 {
+                font-size: 1rem;
+            }
+            .sidebar-subtitle {
+                display: none;
+            }
+            .menu-list {
+                flex-direction: row;
+                gap: 8px;
+                padding-bottom: 4px;
+            }
+            .menu-btn {
+                width: auto;
+                white-space: nowrap;
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .conteudo {
+                padding: 20px 16px 60px 16px; /* Adicionado respiro inferior extra para ver o final do texto perfeitamente */
+                flex: 1;
+                overflow-y: auto; /* Habilita rolagem vertical nativa suave para o conteúdo principal */
+                -webkit-overflow-scrolling: touch;
+            }
+            .conteudo h1 {
+                font-size: 1.5rem;
+                padding-bottom: 8px;
+            }
+            .conteudo h2 {
+                font-size: 1.25rem;
+                margin-top: 20px;
+            }
+            .box-conteudo {
+                font-size: 0.95rem;
+                line-height: 1.65;
+            }
+            .login-card {
+                padding: 30px 20px;
+                max-width: 90vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tela de Login Profissional -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Casa de São Lázaro</h2>
+                <p class="login-subtitle">Portal Espiritual • Acesso Restrito</p>
+            </div>
+            <div class="input-group">
+                <label for="usuario">Usuário / Médium</label>
+                <input type="text" id="usuario" placeholder="Ex: Tiago Araujo" autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <div class="login-actions">
+                <label class="remember-me">
+                    <input type="checkbox" id="lembrar"> Lembrar-me
+                </label>
+                <a class="forgot-link" onclick="esqueciSenha()">Esqueceu a senha?</a>
+            </div>
+            <button class="login-btn" onclick="realizarLogin()">Entrar na Plataforma</button>
+            <div id="login-error"></div>
+        </div>
+    </div>
+
+    <!-- Portal Principal -->
+    <div id="main-container">
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">⚡</div>
+                <div>
+                    <h2>São Lázaro</h2>
+                    <p class="sidebar-subtitle">Painel de Estudos</p>
+                </div>
+            </div>
+            <ul class="menu-list" id="menu-dinamico">
+                <li class="menu-item"><button class="menu-btn" id="btn-introducao" onclick="carregar('introducao')">1. Introdução à Umbanda</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-casaSaoLazaro" onclick="carregar('casaSaoLazaro')">2. Casa de São Lázaro</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-saudacoes" onclick="carregar('saudacoes')">3. Saudações</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-oracao" onclick="carregar('oracao')">4. Oração da Casa de São Lázaro</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-orixas" onclick="carregar('orixas')">5. Orixás</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-linhas" onclick="carregar('linhas')">6. Linhas e Guias Espirituais</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-elementos" onclick="carregar('elementos')">7. Elementos da Natureza</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-especiarias" onclick="carregar('especiarias')">8. Especiarias (Ativadores)</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-ervas" onclick="carregar('ervas')">9. Ervas e Banhos</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-mediunidade" onclick="carregar('mediunidade')">10. Mediunidade e Desenvolvimento</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-rituais" onclick="carregar('rituais')">11. Rituais e Pontos Riscados</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-caridade" onclick="carregar('caridade')">12. A Caridade e a Ética</button></li>
+                <li class="menu-item"><button class="menu-btn" id="btn-glossario" onclick="carregar('glossario')">13. Glossário de Termos</button></li>
+            </ul>
+        </nav>
+
+        <main class="conteudo" id="conteudo-area">
+            <h1>Bem-vindo à Casa de São Lázaro</h1>
+            <div class="box-conteudo">
+                <p>Selecione um tópico no menu ao lado para iniciar sua jornada de aprendizado, desenvolvimento espiritual e conexão com a egrégora da nossa casa.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Bloqueio de Inspeção de Código, Atalhos de Desenvolvedor e Menu de Contexto (Botão Direito)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        let tentativas = 0;
+        const maxTentativas = 3;
+        let historicoAcessosAdmin = [];
+
+        const usuariosValidos = {
+            "Admin": "001313",
+            "Bruno Souza": "102030",
+            "Sandra Mara": "304050",
+            "Giovanna Morenna":"302010",
+            "Rosalia": "708090",
+            "Tiago Araujo": "123456",
+            "Usuario": "123456"
+        };
+
+        document.getElementById('senha').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') realizarLogin();
+        });
+        document.getElementById('usuario').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('senha').focus();
+        });
+
+        function realizarLogin() {
+            const userIn = document.getElementById('usuario').value.trim();
+            const passIn = document.getElementById('senha').value.trim();
+            const erroDiv = document.getElementById('login-error');
+
+            if (tentativas >= maxTentativas) {
+                erroDiv.textContent = "Acesso bloqueado permanentemente por excesso de tentativas.";
+                return;
+            }
+
+            if (usuariosValidos[userIn] && usuariosValidos[userIn] === passIn) {
+                const agora = new Date();
+                const dataFormatada = agora.toLocaleDateString('pt-BR');
+                const horaFormatada = agora.toLocaleTimeString('pt-BR');
+                
+                historicoAcessosAdmin.push({ 
+                    medium: userIn, 
+                    data: dataFormatada, 
+                    hora: horaFormatada 
+                });
+
+                if (userIn === "Admin") {
+                    adicionarMenuAdmin();
+                } else {
+                    removerMenuAdmin();
+                }
+
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-container').style.display = 'flex';
+                carregar('casaSaoLazaro'); 
+            } else {
+                tentativas++;
+                const restantes = maxTentativas - tentativas;
+                if (restantes > 0) {
+                    erroDiv.textContent = `Credenciais inválidas. Restam ${restantes} tentativa(s).`;
+                } else {
+                    erroDiv.textContent = "Limite excedido. Acesso bloqueado por segurança.";
+                    document.querySelector('.login-btn').disabled = true;
+                    document.getElementById('usuario').disabled = true;
+                    document.getElementById('senha').disabled = true;
+                }
+            }
+        }
+
+        function esqueciSenha() {
+            alert("Instruções de redefinição de senha foram encaminhadas ao suporte técnico do sistema.");
+        }
+
+        function adicionarMenuAdmin() {
+            const menuList = document.getElementById('menu-dinamico');
+            if(!document.getElementById('menu-log-admin')) {
+                const li = document.createElement('li');
+                li.className = 'menu-item';
+                li.id = 'menu-log-admin';
+                li.innerHTML = `<button class="menu-btn" id="btn-logsAdmin" onclick="carregar('logsAdmin')">14. Registros de Acesso</button>`;
+                menuList.appendChild(li);
+            }
+        }
+
+        function removerMenuAdmin() {
+            const itemAdmin = document.getElementById('menu-log-admin');
+            if(itemAdmin) {
+                itemAdmin.remove();
+            }
+        }
+
+        const dados = {
+            'introducao': `<h1>1. Introdução à Umbanda</h1><div class="box-conteudo"><h2>Contexto Histórico e Origem</h2><p>A Umbanda é uma religião monoteísta, espiritualista e de matriz brasileira. Sua fundação oficial é datada de 15 de novembro de 1908, em Niterói (RJ), através do médium Zélio Fernandino de Moraes e o Caboclo das Sete Encruzilhadas.</p><h2>O Sincretismo Religioso</h2><p>Sintetiza quatro grandes correntes: <strong>Matrizes Africanas</strong> (Orixás), <strong>Catolicismo Popular</strong> (Santos), <strong>Espiritismo Kardecista</strong> (Mediunidade) e <strong>Xamanismo Indígena</strong> (Caboclos).</p><h2>Pilares Teológicos</h2><ul><li><strong>Divindade:</strong> Crença em Olorum ou Zambi.</li><li><strong>Evolução:</strong> Imortalidade da alma e lei de causa e efeito.</li><li><strong>Mediunidade:</strong> Comunicação com o plano espiritual para auxílio.</li></ul><div class="quote">"A manifestação do espírito para a caridade."</div></div>`,
+            'casaSaoLazaro': `<h1>2. Casa de São Lázaro</h1><div class="box-conteudo"><p>A Casa de São Lázaro é um templo de Umbanda fundamentado na prática da caridade, no amor ao próximo e no respeito à doutrina espiritual maior. Inspirada na energia de cura e transmutação de Obaluaiê / Omulu, sincretizado com São Lázaro, nossa casa atua como um verdadeiro pronto-socorro espiritual, acolhendo a todos que buscam amparo, orientação e alívio para suas dores físicas e da alma.</p><h2>Nossa Missão e Princípios</h2><p>O trabalho na Casa de São Lázaro baseia-se em pilares sólidos que garantem a harmonia, a seriedade e a pureza dos rituais:</p><ul><li><strong>A Caridade Desinteressada:</strong> Todos os atendimentos, passes e orientações espirituais são prestados de forma estritamente gratuita, seguindo o preceito maior de dar de graça o que de graça se recebe.</li><li><strong>A Ética e o Sigilo:</strong> O respeito à individualidade e à dor do consulente é absoluto. As confidências e orientações tratadas durante os atendimentos são mantidas sob rigoroso sigilo.</li><li><strong>A Harmonia da Corrente:</strong> A união fraternal e o respeito mútuo entre os médiuns são fundamentais para a sustentação da egrégora de luz da casa.</li></ul><h2>Orientações aos Médiuns e Frequentadores</h2><ul><li><strong>Preparo Espiritual:</strong> Recomenda-se aos médiuns o cuidado prévio com a alimentação leve, o repouso, a prece e a sintonia com os bons pensamentos antes dos dias de trabalho.</li><li><strong>Reforma Íntima:</strong> O verdadeiro desenvolvimento espiritual caminha lado a lado com a busca constante por ser um ser humano melhor, lapidando sentimentos e atitudes no dia a dia.</li><li><strong>Sintonia com os Guias:</strong> A manifestação das entidades deve ocorrer com simplicidade, firmeza, amor e isenção de vaidade, respeitando sempre a hierarquia e a liturgia da casa.</li></ul><div class="quote">"A caridade é a ferramenta e a ética é o limite na condução dos trabalhos da Casa de São Lázaro."</div></div>`,
+            'saudacoes': `<h1>3. Saudações</h1><div class="box-conteudo"><p>As saudações são formas de respeito e conexão energética. Principais saudações:</p><table><tr><td><strong>Oxalá:</strong></td><td>Êpa Babá!</td></tr><tr><td><strong>Iemanjá:</strong></td><td>Odoyá!</td></tr><tr><td><strong>Oxum:</strong></td><td>Ora Yê Yê Ô!</td></tr><tr><td><strong>Ogum:</strong></td><td>Patacori Ogum!</td></tr><tr><td><strong>Xangô:</strong></td><td>Kaô Kabecilê!</td></tr><tr><td><strong>Iansã:</strong></td><td>Eparrei Oyá!</td></tr><tr><td><strong>Oxossi:</strong></td><td>Okê Arô!</td></tr><tr><td><strong>Omulu:</strong></td><td>Atotô Babá!</td></tr><tr><td><strong>Nanã:</strong></td><td>Salubá Nanã!</td></tr></table><p style="margin-top: 20px;"><strong>Linhas:</strong> Laroyê Exu, Saravá os Pretos Velhos!</p></div>`,
+            'oracao': `<h1>4. Oração da Casa de São Lázaro</h1><div class="box-conteudo" style="white-space: pre-line; line-height: 1.9;">Eu desejo Harmonia, Amor, Verdade e Justiça, a todos os filhos do Círculo de Irradiações Espirituais São Lázaro.
+            
+Com as forças reunidas e silenciosas dos nossos pensamentos, somos Fortes, Felizes e Sadios, formando assim, um elo de confraternização universal.
+
+Estou satisfeito e em paz com o universo inteiro, e desejo que todos se realizem nas suas aspirações mais íntimas.
+
+Dou graças ao pai infinito por ter estabelecido o Amor, a Verdade, e a Justiça a todos os filhos.
+
+Os filhos do Círculo de Irradiações Espirituais São Lázaro em comunhão com firmamento espírito universal vos é e serão sempre União, Amor, Fraternidade, e Justiça.
+
+Amém.</div>`,
+            'orixas': `<h1>5. Orixás</h1><div class="box-conteudo"><p>Os Orixás não são deuses no sentido politeísta clássico, mas sim divindades que emanam e governam as energias da natureza e os atributos divinos de Olorum (Deus Supremo). Cada ser humano possui ligações energéticas com determinados Orixás que regem sua coroa e essência espiritual.</p><ul><li><strong>Oxalá:</strong> O Orixá maior, associado à criação, à fé, à paz e à paciência. (Cores: Branco).</li><li><strong>Iemanjá:</strong> A Mãe de todos os cabeças, rainha dos mares, prototípica do amor maternal e da família. (Cores: Azul claro ou Prata).</li><li><strong>Oxum:</strong> Senhora do ouro, do amor, da fertilidade, da beleza e das águas doces dos rios e cachoeiras. (Cores: Amarelo / Dourado).</li><li><strong>Ogum:</strong> O Orixá das demandas, dos caminhos, da tecnologia, da abertura de portas e da coragem. (Cores: Azul escuro ou Verde).</li><li><strong>Xangô:</strong> O Orixá da justiça, do fogo, dos raios e dos tribunais. Seu símbolo é o machado de duas lâminas (Oxé). (Cores: Marrom ou Vermelho e Branco).</li><li><strong>Iansã:</strong> Senhora dos ventos, tempestades, raios e dos espíritos desencarnados (eguns). (Cores: Amarelo ou Vermelho).</li><li><strong>Oxossi:</strong> O caçador, senhor das matas, da fartura, da busca pelo conhecimento e da expansão. (Cores: Verde).</li><li><strong>Omulu / Obaluaiê:</strong> O médico dos pobres, senhor da cura, da saúde, da terra e da transmutação dos corpos. (Cores: Preto e Branco ou Roxo).</li><li><strong>Nanã Buruquê:</strong> A mais velha das divindades das águas, associada à sabedoria ancestral, à lama dos pântanos e à reestruturação da alma. (Cores: Lilás ou Roxo).</li></ul></div>`,
+            'linhas': `<h1>6. Linhas e Guias Espirituais</h1><div class="box-conteudo"><p>As linhas de trabalho são agrupamentos de espíritos que atuam em comunhão com os Orixás para prestar caridade. Eles se manifestam nos terreiros através da incorporação para aconselhar, limpar energias densas e curar. As principais linhas incluem:</p><ul><li><strong>Caboclos:</strong> Espíritos de indígenas brasileiros. Representam a força, a sabedoria das matas, a cura pelas ervas, a bravura e a sinceridade.</li><li><strong>Pretos Velhos:</strong> Espíritos de antigos escravizados. São a representação da paciência, da humildade, da sabedoria profunda, da escuta acolhedora e da cura através do passe e do cachimbo.</li><li><strong>Baianos:</strong> Espíritos de nordestinos que trazem a alegria, a perseverança, a simplicidade e a força de trabalho e superação do povo sertanejo.</li><li><strong>Boiadeiros:</strong> Espíritos que lidam com o resgate de espíritos perdidos ("laçar" almas tresmalhadas), trazendo firmeza, retidão e limpeza de energias pesadas.</li><li><strong>Marinheiros:</strong> Espíritos ligados às águas (mar e rios), que trabalham com o equilíbrio emocional, a balança da vida e a fluidez para superar os altos e baixos.</li><li><strong>Crianças (Erês):</strong> Espíritos que atuam na pureza, na alegria, na sinceridade e na renovação da esperança. Tratam curas da alma através da leveza.</li><li><strong>Exu e Pombagira:</strong> Guardiões dos caminhos, da lei e da ordem no plano astral. Trabalham na base, desmanchando demandas, protegendo templos e atuando contra energias densas.</li></ul></div>`,
+            'elementos': `<h1>7. Elementos da Natureza</h1><div class="box-conteudo"><p>A natureza é o grande templo da Umbanda. Os elementos naturais são portadores de energias sutis que nos conectam diretamente aos Orixás.</p><ul><li><strong>Terra:</strong> Firmeza, base, matéria e ancestralidade.</li><li><strong>Água:</strong> Purificação, emoções, fluidez e maternidade.</li><li><strong>Fogo:</strong> Transformação, energia vital e purificação profunda.</li><li><strong>Ar/Vento:</strong> Mente, sopro da vida, liberdade e movimento.</li><li><strong>Ervas/Vegetais:</strong> Energia vital de cura e axé.</li></ul><h2>Ferramentas e Símbolos</h2><ul><li><strong>Pemba:</strong> Giz ritualístico para traçar pontos riscados.</li><li><strong>Fumo (Charuto/Cachimbo):</strong> Elemento purificador e transmutador de energias.</li><li><strong>Bebidas Sagradas:</strong> Usadas para conexão e transmutação vibratória.</li><li><strong>Atabaque:</strong> O coração do terreiro, conduz os ritmos e invocações.</li><li><strong>Alguidar:</strong> Recipiente de barro para firmezas e oferendas.</li><li><strong>Fios de Contas:</strong> Filtros energéticos e amuletos de proteção.</li><li><strong>Roupa Branca:</strong> Símbolo de neutralidade e organização vibratória.</li></ul></div>`,
+            'especiarias': `<h1>8. Especiarias (Ativadores de Energia)</h1><div class="box-conteudo"><p>Esses elementos são chamados de elementos de fixação ou direcionamento de força. Eles potencializam as intenções do médium e da entidade.</p><h3>1. Especiarias (Ativadores de Energia)</h3><ul><li><strong>Cravo:</strong> Limpeza e proteção. Abre caminhos e afasta vibrações negativas.</li><li><strong>Canela:</strong> Prosperidade, sucesso e alegria. "Esquenta" o ambiente.</li><li><strong>Pimenta:</strong> Elemento de corte e defesa. Proteção contra demandas e inveja.</li><li><strong>Anis Estrelado:</strong> Boa sorte, brilho pessoal, clareza mental e intuição.</li></ul><h3>2. Elementos de Troca e Sustentação</h3><ul><li><strong>Moedas:</strong> Prosperidade e troca energética.</li><li><strong>Farinha de Mandioca:</strong> Sustentação da vida (usada na farofa para Exus).</li><li><strong>Farinha de Milho:</strong> Multiplicação, colheita e expansão (Oxóssi e Iansã).</li></ul><h3>3. Bases de Assentamento</h3><ul><li><strong>Azeite de Dendê:</strong> Força sagrada, indispensável para Exu, Iansã e Xangô.</li><li><strong>Mel:</strong> Harmoniza, acalma e traz prosperidade.</li><li><strong>Sal Grosso:</strong> O grande limpador e absorvedor de cargas negativas.</li><li><strong>Pólvora:</strong> Uso restrito para limpeza energética rápida.</li><li><strong>Cristais e Pedras:</strong> Frequências vibratórias para altares e guias.</li><li><strong>Espelho:</strong> Proteção e reflexão.</li><li><strong>Açúcar:</strong> Suaviza conflitos e atrai prosperidade.</li></ul><h3>4. Sementes e Grãos</h3><ul><li><strong>Milho de Pipoca:</strong> Descarrego e limpeza profunda (Obaluaiê e Iansã).</li><li><strong>Feijão Preto:</strong> Defesa e absorção de cargas (Exus).</li><li><strong>Feijão Fradinho:</strong> Paz, harmonia e vitória (Oxalá e Ogum).</li><li><strong>Arroz:</strong> Fartura e multiplicação.</li><li><strong>Semente de Girassol:</strong> Vitalidade e alegria (Oxum e Xangô).</li><li><strong>Noz-moscada:</strong> Clareza mental e sorte financeira.</li><li><strong>Lentilha:</strong> Riqueza e ganho material.</li><li><strong>Alpiste:</strong> Oportunidades de trabalho e movimentação.</li></ul><h3>5. Metais e Minerais</h3><ul><li><strong>Ferro:</strong> Firmeza, corte de demandas e proteção (Ogum).</li><li><strong>Cobre:</strong> Amor, magnetismo e prosperidade (Oxum).</li><li><strong>Estanho ou Chumbo:</strong> Contenção e limites.</li><li><strong>Pirita:</strong> Magnetismo financeiro.</li><li><strong>Enxofre:</strong> Transmutador potente (usado com cautela na linha de Exu).</li><li><strong>Carvão Vegetal:</strong> Absorção de cargas negativas.</li></ul><h3>6. Aromáticos e Botânicos</h3><ul><li><strong>Alfazema:</strong> Paz e limpeza suave.</li><li><strong>Casca de Alho e Cebola:</strong> Afastar inveja e energias intrusas.</li><li><strong>Folha de Louro:</strong> Vitória e sucesso.</li><li><strong>Alecrim:</strong> Revigoramento e proteção áurica (Oxalá e Xangô).</li><li><strong>Guiné e Arruda:</strong> Defesa contra mau-olhado.</li><li><strong>Espada-de-São-Jorge:</strong> Barreira contra cargas densas.</li></ul><h3>7. Líquidos, Óleos e Adoçantes</h3><ul><li><strong>Melado de Cana:</strong> Prosperidade e firmezas (Exu/Pombagira).</li><li><strong>Vinagre:</strong> Magias de corte e limpeza.</li><li><strong>Água de Coco:</strong> Limpeza e harmonização.</li><li><strong>Óleo de Rícino:</strong> Paralisar energias negativas (alta magia).</li><li><strong>Águas Sagradas (Chuva/Cachoeira):</strong> Energia pura dos Orixás.</li></ul><h3>8. Tecidos e Ornamentos</h3><ul><li><strong>Linhas:</strong> Amarrar intenções e selar trabalhos.</li><li><strong>Fitas:</strong> Laços com os Orixás.</li><li><strong>Pano de Cabeça/Costa:</strong> Proteção energética.</li><li><strong>Casca de Coco:</strong> Recipientes para oferendas.</li></ul><div class="quote">⚠️ <strong>Atenção:</strong> A intenção do médium é o que dá vida ao elemento. Siga sempre a orientação da sua casa e de seu guia.</div></div>`,
+            'ervas': `<h1>9. Ervas e Banhos</h1><div class="box-conteudo"><h2>Qual é a finalidade da Função Sagrada das Ervas?</h2><p>A função sagrada das ervas refere-se ao uso tradicional, ritualístico e energético das plantas em diversas culturas, religiões de matriz africana (como Umbanda e Candomblé), xamanismo e práticas holísticas.</p><p>A sua principal finalidade é promover o equilíbrio, a limpeza energética, a cura espiritual e a conexão com as forças da natureza. Na visão sagrada, as plantas não são apenas matéria física; elas possuem uma força vital capaz de interagir com o campo eletromagnético e espiritual do ser humano e dos ambientes.</p><p>As principais finalidades práticas incluem:</p><ul><li><strong>Limpeza e Proteção:</strong> Afastar energias densas, miasmas astrais, inveja e vibrações de baixa frequência de pessoas e locais.</li><li><strong>Equilíbrio Emocional e Mental:</strong> Acalmar a mente, aliviar o estresse, resgatar a âncora e trazer clareza espiritual através de banhos, defumações ou chás.</li><li><strong>Atração de Boas Energias:</strong> Atrair prosperidade, paz, harmonia, amor e abertura de caminhos.</li><li><strong>Consagração e Alinhamento:</strong> Elevar a vibração espiritual durante rituais, meditações ou trabalhos mediúnicos.</li></ul><h2>Como fazer (Uso Prático e Ritualístico)</h2><h3>1. Banho de Ervas (Energético)</h3><p><strong>Como fazer:</strong> Escolha as ervas adequadas para o seu objetivo. Ferva cerca de 1,5 a 2 litros de água. Adicione as ervas, tampe e deixe em infusão por 10 a 15 minutos. Coe e despeje do pescoço para baixo após o banho de higiene, mentalizando o propósito.</p><h3>2. Defumação (Limpeza de Ambientes)</h3><p><strong>Como fazer:</strong> Utilize um recipiente resistente ao calor com carvão em brasa. Adicione as ervas secas e percorra o ambiente de dentro para fora, deixando a porta da frente aberta para a saída das energias densas.</p><h3>3. Escalda-Pés</h3><p><strong>Como fazer:</strong> Em uma bacia com água morna, adicione infusões de ervas calmantes e sal grosso. Mergulhe os pés por 15 a 20 minutos, mentalizando a absorção do estresse pela água.</p><h2>Principais Ervas e suas Propriedades</h2><ul><li><strong>Arruda:</strong> Proteção e corte de energias densas.</li><li><strong>Alecrim:</strong> Foco, clareza e alegria.</li><li><strong>Guiné:</strong> Descarrego pesado e quebra de demandas.</li><li><strong>Manjericão:</strong> Harmonia, paz e acalento.</li><li><strong>Eucalipto:</strong> Limpeza de ambientes e desobstrução.</li><li><strong>Espada-de-São-Jorge:</strong> Escudo contra mau-olhado.</li><li><strong>Camomila:</strong> Calmante e paz.</li><li><strong>Hortelã/Menta:</strong> Frescor e clareza mental.</li><li><strong>Capim-Limão:</strong> Relaxamento profundo.</li><li><strong>Sálvia Branca:</strong> Purificação profunda.</li><li><strong>Alfazema/Lavanda:</strong> Equilíbrio emocional.</li><li><strong>Rosas:</strong> Branca (cura e paz) / Vermelha (vitalidade e força).</li><li><strong>Erva-Doce:</strong> Afeto e união.</li><li><strong>Abre-Caminhos:</strong> Destravar situações.</li><li><strong>Poejo:</strong> Purificação da aura.</li><li><strong>Melissa:</strong> Combate ao estresse e insônia.</li><li><strong>Louro:</strong> Prosperidade e vitória.</li><li><strong>Canela:</strong> Dinamismo e sucesso.</li><li><strong>Pixurim/Noz-moscada:</strong> Intuição.</li><li><strong>Anis-Estrelado:</strong> Autoconfiança e sorte.</li><li><strong>Quebra-Pedra:</strong> Quebrar bloqueios internos.</li><li><strong>Tília:</strong> Estados de choque e medo.</li><li><strong>Maracujá:</strong> Sedativo natural.</li><li><strong>Jurema Preta:</strong> Mistério e cura.</li><li><strong>Angico:</strong> Corte de miasmas.</li><li><strong>Boldo:</strong> Descarrego de excessos emocionais.</li><li><strong>Pata-de-Vaca:</strong> Equilíbrio corporal.</li><li><strong>Gengibre:</strong> Vitalidade e foco.</li><li><strong>Cabreúva:</strong> Firmeza e aterramento.</li></ul></div>`,
+            'mediunidade': `<h1>10. Mediunidade e Desenvolvimento</h1><div class="box-conteudo"><p>Na Umbanda, a mediunidade é compreendida como uma faculdade inerente a todo ser humano — uma capacidade de percepção e interação com o plano espiritual. O desenvolvimento mediúnico, por sua vez, não se resume a "incorporar entidades", mas sim a um processo profundo de autoconhecimento, disciplina, estudo e sintonia com a espiritualidade maior.</p><h2>1. O que é a Mediunidade na Umbanda?</h2><p>Diferente de correntes que encaram a mediunidade como algo extraordinário ou restrito a poucos, na Umbanda ela é vista como uma ferramenta natural de caridade e evolução espiritual.</p><ul><li><strong>Canal de Amor e Caridade:</strong> O médium atua como um intermediário entre os planos espiritual e material. Seu propósito principal é prestar auxílio espiritual e material àqueles que sofrem, sempre sob a égide da Lei Maior e de Oxalá.</li><li><strong>Instrumento de Reforma Íntima:</strong> A mediunidade reflete o estado interior do médium. Quanto mais equilibrados forem seus pensamentos, sentimentos e atos, mais límpida e segura será a sua sintonia com os guias e protetores.</li></ul><h2>2. O Processo de Desenvolvimento</h2><p>O desenvolvimento mediúnico ocorre, via de regra, dentro de um terreiro de Umbanda, sob a orientação direta de sacerdotes e espíritos mais experientes. Esse processo estruturado envolve etapas fundamentais:</p><ul><li><strong>Estudo e Doutrina:</strong> O conhecimento da doutrina umbandista, da cosmogonia, das leis espirituais e do funcionamento da mediunidade é o alicerce indispensável.</li><li><strong>Limpeza e Harmonização Energética:</strong> Banhos de ervas, passes magnéticos e o cuidado com a alimentação e o pensamento preparam o corpo e a aura do médium.</li><li><strong>Desenvolvimento Prático:</strong> Através de girias, pontos cantados e rituais orientados, o médium aprende a sintonizar com seus guias de forma consciente, respeitosa e controlada.</li></ul></div>`,
+            'rituais': `<h1>11. Rituais e Pontos Riscados</h1><div class="box-conteudo">
+<h2>1. Ponto Riscado</h2>
+<p>O ponto riscado é a assinatura energética, a identidade espiritual e o diagrama de força de uma entidade, linha de trabalho ou divindade na Umbanda.</p>
+<ul>
+<li><strong>O que é:</strong> Trata-se de um desenho sagrado traçado no chão (com giz, pemba, carvão ou sal) pelo médium incorporado ou pelo dirigente.</li>
+<li><strong>Simbologia:</strong> Cada símbolo, traço, cruz, estrela, tridente ou círculo possui um significado esotérico preciso, funcionando como chaves vibratórias ou portais.</li>
+<li><strong>Função:</strong> Servir de escudo protetor, estabelecer a sintonia direta com a força da entidade e auxiliar em trabalhos de descarrego, cura e defesa espiritual.</li>
+</ul>
+
+<h2>2. Cantigas (Pontos Cantados)</h2>
+<p>As cantigas são orações ritmadas em forma de música que possuem altíssimo poder mágico e vibratório, entoadas coletivamente durante os rituais para invocar falanges e elevar a vibração energética.</p>
+
+<h2>3. Rituais Principais</h2>
+<ul>
+<li><strong>Abertura e Encerramento da Gira:</strong> Ritual que delimita o espaço sagrado e fecha o terreiro para influências externas.</li>
+<li><strong>Defumação:</strong> Uso de ervas sagradas para purificar o ambiente.</li>
+<li><strong>Banhos de Ervas:</strong> Higiene energética e revitalização espiritual.</li>
+<li><strong>Passes e Firmezas:</strong> Imposição de mãos para reequilíbrio e estruturação de altares.</li>
+</ul>
+</div>`,
+            'caridade': `<h1>12. A Caridade e a Ética</h1><div class="box-conteudo">
+<p>Na Umbanda, a caridade e a ética não são apenas virtudes recomendadas; são os pilares fundamentais que sustentam toda a prática religiosa, a manifestação mediúnica e a própria existência de um terreiro.</p>
+
+<h2>1. A Caridade como Essência e Missão</h2>
+<ul>
+<li><strong>Gratuidade Absoluta:</strong> O trabalho espiritual na Umbanda é estritamente gratuito. Guias, médiuns e dirigentes não cobram por consultas, passes ou rituais.</li>
+<li><strong>Caridade Espiritual:</strong> Consiste em acolher o consulente em seu momento de dor, oferecendo-lhe orientação, consolo e passes magnéticos.</li>
+</ul>
+
+<h2>2. A Ética na Prática Umbandista</h2>
+<ul>
+<li><strong>Sigilo Absoluto:</strong> O que é tratado na consulta espiritual é confidencial. E os médiuns têm o dever ético de guardar segredo sobre os problemas dos consulentes.</li>
+<li><strong>Respeito ao Livre-Arbítrio:</strong> Os guias espirituais orientam, mas nunca impõem decisões ou retiram o livre-arbítrio.</li>
+<li><strong>Postura Fora do Terreiro:</strong> A ética exige bom senso, sobriedade, respeito às leis e às diferenças, evitando o uso da religião para autopromoção ou vaidade.</li>
+</ul>
+
+<div class="quote">Em suma, na Umbanda, a caridade é a ética é o limite.</div>
+</div>`,
+            'glossario': `<h1>13. Glossário de Termos Umbandistas</h1><div class="box-conteudo">
+<p>Principais termos litúrgicos utilizados dentro dos terreiros:</p>
+<h2>A</h2>
+<ul>
+<li><strong>Axé:</strong> Força, energia vital, poder espiritual sagrado.</li>
+<li><strong>Aruanda:</strong> O plano espiritual superior, morada de Oxalá e dos Orixás.</li>
+<li><strong>Atabaque:</strong> Instrumento de percussão sagrado que conduz o ritmo litúrgico.</li>
+<li><strong>Altar (Peji):</strong> Espaço sagrado onde ficam dispostas as imagens e símbolos.</li>
+<li><strong>Amaci:</strong> Ritual de lavagem da cabeça do médium com infusão de ervas.</li>
+</ul>
+<h2>C</h2>
+<ul>
+<li><strong>Consulente:</strong> A pessoa que busca atendimento ou orientação espiritual.</li>
+<li><strong>Corrente Mediúnica:</strong> O conjunto de médiuns unidos pelo mesmo propósito.</li>
+</ul>
+<h2>E</h2>
+<ul>
+<li><strong>Egrégora:</strong> A força espiritual coletiva gerada pela sintonia do grupo.</li>
+<li><strong>Ebó:</strong> Ritual de limpeza e reequilíbrio energético.</li>
+</ul>
+<h2>P</h2>
+<ul>
+<li><strong>Passe:</strong> Transmissão de energia magnética aplicada por imposição de mãos.</li>
+<li><strong>Pemba:</strong> Giz ritualístico para traçar pontos riscados.</li>
+</ul>
+<h2>S</h2>
+<ul>
+<li><strong>Saravá:</strong> Saudação de respeito e acolhimento ("Salve!").</li>
+</ul>
+<h2>T</h2>
+<ul>
+<li><strong>Terreiro:</strong> O espaço físico sagrado onde se realizam os rituais.</li>
+</ul>
+</div>`,
+            'logsAdmin': `<h1>14. Registros de Acesso</h1><div class="box-conteudo"><p>Histórico de conexões de médiuns e administradores registradas nesta sessão:</p><table><tr><th>Nome do Médium</th><th>Data</th><th>Horário</th></tr>${historicoAcessosAdmin.map(log => `<tr><td>${log.medium}</td><td>${log.data}</td><td>${log.hora}</td></tr>`).join('')}</table></div>`
+        };
+
+        function carregar(topico) {
+            if (dados[topico]) {
+                document.getElementById('conteudo-area').innerHTML = dados[topico];
+                
+                const botoes = document.querySelectorAll('.menu-btn');
+                botoes.forEach(btn => btn.classList.remove('active'));
+                
+                const botaoAtivo = document.getElementById('btn-' + topico);
+                if (botaoAtivo) {
+                    botaoAtivo.classList.add('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
