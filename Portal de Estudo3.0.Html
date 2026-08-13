@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Estudos - Casa de São Lázaro</title>
+    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBlue: {
+                            900: '#0B132B',
+                            800: '#1C2541',
+                            700: '#3A506B',
+                        },
+                        brandYellow: {
+                            DEFAULT: '#F4A261',
+                            light: '#E9C46A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-darkBlue-900 font-sans text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- ================= TELA DE LOGIN ================= -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-md rounded-2xl shadow-2xl p-8 relative overflow-hidden transition-colors duration-300">
+            <!-- Detalhe decorativo superior -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+            
+            <div class="text-center mb-8">
+                <!-- Logotipo da Casa de São Lázaro -->
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brandYellow/10 border-2 border-brandYellow mb-3 shadow-lg overflow-hidden">
+                    <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo Casa de São Lázaro" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-wide">Portal de Estudos</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Casa de São Lázaro</p>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="login-form" onsubmit="realizarLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">E-mail ou Usuário</label>
+                    <input type="text" id="login-user" required 
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Seu usuário ou e-mail">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Senha</label>
+                    <input type="password" id="login-pass" required 
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Sua senha">
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <button type="button" onclick="mostrarModalRecuperar()" class="text-amber-600 dark:text-brandYellow hover:underline">
+                        Esqueceu a senha?
+                    </button>
+                </div>
+
+                <div id="login-error" class="hidden text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 py-1.5 rounded"></div>
+
+                <button type="submit" 
+                    class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL RECUPERAR SENHA ================= -->
+    <div id="recovery-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-sm rounded-xl p-6 shadow-2xl transition-colors duration-300">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Recuperar Senha</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Digite seu e-mail cadastrado para receber as instruções.</p>
+            
+            <input type="email" id="recovery-email" placeholder="seu-email@exemplo.com" 
+                class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 mb-3 focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+            
+            <div id="recovery-message" class="hidden text-sm mb-3 text-center"></div>
+
+            <div class="flex space-x-2">
+                <button onclick="fecharModalRecuperar()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
+                <button onclick="enviarRecuperacao()" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PAINEL DO PORTAL DE ESTUDOS ================= -->
+    <div id="portal-screen" class="hidden min-h-screen flex flex-col bg-slate-100 dark:bg-darkBlue-900 transition-colors duration-300">
+        <!-- Barra Superior -->
+        <header class="bg-white dark:bg-darkBlue-800 border-b border-slate-200 dark:border-darkBlue-700 px-6 py-4 flex justify-between items-center shadow-md transition-colors duration-300">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full border border-brandYellow overflow-hidden bg-brandYellow/10 flex items-center justify-center">
+                    <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Portal de Estudos</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <!-- Botão discreto para selecionar o tema claro ou escuro -->
+                <button onclick="alternarTema()" id="theme-toggle-btn" title="Alternar Tema" class="p-2 rounded-lg bg-slate-200 dark:bg-darkBlue-700/50 hover:bg-slate-300 dark:hover:bg-darkBlue-700 border border-slate-300 dark:border-darkBlue-600 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-brandYellow transition text-sm flex items-center justify-center">
+                    <svg id="theme-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+                <span id="user-display-name" class="text-sm font-medium text-slate-700 dark:text-slate-300"></span>
+                <button onclick="realizarLogout()" class="bg-red-100 dark:bg-red-950/50 hover:bg-red-200 dark:hover:bg-red-900/60 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 max-w-6xl w-full mx-auto p-6">
+            
+            <!-- Dashboard / Lista de Cursos -->
+            <div id="dashboard-content">
+                <!-- Conteúdo exclusivo para Admin -->
+                <div id="admin-section" class="hidden mb-8 bg-white dark:bg-darkBlue-800 border border-brandYellow/30 rounded-xl p-6 relative overflow-hidden shadow-lg transition-colors duration-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brandYellow/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <h3 class="text-lg font-bold text-amber-600 dark:text-brandYellow mb-2">Painel do Administrador</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Você possui privilégios administrativos para gerenciar conteúdos e usuários deste portal.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold px-4 py-2 rounded-lg text-sm transition shadow">Adicionar Novo Curso</button>
+                        <button class="bg-slate-200 dark:bg-darkBlue-700 border border-slate-300 dark:border-darkBlue-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-darkBlue-600 px-4 py-2 rounded-lg text-sm font-medium transition">Gerenciar Alunos</button>
+                    </div>
+                </div>
+
+                <!-- Grade de Cursos / Módulos de Estudo -->
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Seus Módulos de Aprendizado</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Card Curso de Umbanda -->
+                    <div class="bg-white dark:bg-darkBlue-800 rounded-xl shadow-md border border-slate-200 dark:border-darkBlue-700 p-5 flex flex-col justify-between hover:border-brandYellow/50 transition-colors duration-300">
+                        <div>
+                            <span class="bg-brandYellow/10 text-amber-700 dark:text-brandYellow border border-brandYellow/20 text-xs font-semibold px-2.5 py-1 rounded-full">Espiritualidade</span>
+                            <h4 class="font-bold text-lg text-slate-900 dark:text-white mt-3">Curso de Umbanda</h4>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Fundamentos, orações, guias e práticas da Casa de São Lázaro.</p>
+                        </div>
+                        <button onclick="abrirCursoUmbanda()" class="mt-6 w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-2 rounded-lg text-sm transition">Acessar Curso</button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white dark:bg-darkBlue-800 rounded-xl shadow-md border border-slate-200 dark:border-darkBlue-700 p-5 flex flex-col justify-between hover:border-brandYellow/50 transition-colors duration-300">
+                        <div>
+                            <span class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full">Xamanismo</span>
+                            <h4 class="font-bold text-lg text-slate-900 dark:text-white mt-3">Introdução ao Xamanismo</h4>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Compreenda ancestral de conhecimento, cura e espiritualidade.</p>
+                        </div>
+                        <button class="mt-6 w-full bg-slate-100 dark:bg-darkBlue-900 hover:bg-slate-200 dark:hover:bg-darkBlue-700 text-amber-700 dark:text-brandYellow border border-slate-300 dark:border-darkBlue-700 hover:border-brandYellow/50 py-2 rounded-lg text-sm font-semibold transition">Acessar Aulas</button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white dark:bg-darkBlue-800 rounded-xl shadow-md border border-slate-200 dark:border-darkBlue-700 p-5 flex flex-col justify-between hover:border-brandYellow/50 transition-colors duration-300">
+                        <div>
+                            <span class="bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 border border-purple-300 dark:border-purple-800 text-xs font-semibold px-2.5 py-1 rounded-full">Ervas</span>
+                            <h4 class="font-bold text-lg text-slate-900 dark:text-white mt-3">Ervas e Folhas para cuidados</h4>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Os banhos de ervas são uma das práticas ancestrais mais ricas e acessíveis para a limpeza e renovação da energia pessoal.</p>
+                        </div>
+                        <button class="mt-6 w-full bg-slate-100 dark:bg-darkBlue-900 hover:bg-slate-200 dark:hover:bg-darkBlue-700 text-amber-700 dark:text-brandYellow border border-slate-300 dark:border-darkBlue-700 hover:border-brandYellow/50 py-2 rounded-lg text-sm font-semibold transition">Acessar Aulas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área de Visualização do Curso de Umbanda (Inicia Oculta) -->
+            <div id="curso-content" class="hidden">
+                <button onclick="voltarAoDashboard()" class="text-amber-600 dark:text-brandYellow hover:underline mb-4 flex items-center gap-1 font-medium text-sm">
+                    &larr; Voltar para módulos
+                </button>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <!-- Menu do Curso -->
+                    <div class="md:col-span-1 bg-white dark:bg-darkBlue-800 p-4 rounded-xl border border-slate-200 dark:border-darkBlue-700 h-fit transition-colors duration-300">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-200 dark:border-darkBlue-700 pb-2 text-sm uppercase tracking-wider">Módulos</h4>
+                        <ul id="menu-curso" class="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                            <!-- Gerado dinamicamente via script -->
+                        </ul>
+                    </div>
+                    <!-- Exibição do Texto -->
+                    <div class="md:col-span-3 bg-white dark:bg-darkBlue-800 p-6 rounded-xl border border-slate-200 dark:border-darkBlue-700 shadow-xl transition-colors duration-300">
+                        <h2 id="titulo-aula" class="text-2xl font-bold text-amber-600 dark:text-brandYellow mb-4 border-b border-slate-200 dark:border-darkBlue-700 pb-3">Selecione uma aula</h2>
+                        <div id="texto-aula" class="text-slate-700 dark:text-slate-200 leading-relaxed space-y-4">
+                            <p>Bem-vindo ao Curso de Umbanda da Casa de São Lázaro. Selecione um tópico no menu ao lado para iniciar seus estudos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ================= SCRIPTS DE CONTROLE ================= -->
+    <script>
+        // Base de dados simulada de usuários permitidos
+        const usuariosPermitidos = [
+            { user: "admin", email: "admin@portal.com", senha: "001313", nome: "Administrador", isAdmin: true },
+            { user: "bruno.tonicelli@hotmail.com", email: "bruno.tonicelli@hotmail.com", senha: "123456", nome: "Bruno Tonicelli", isAdmin: false },
+            { user: "tiago.araujo@gmail.com", email: "tiago.araujo@gmail.com", senha: "123456", nome: "Tiago Araújo", isAdmin: false }
+        ];
+
+        // Conteúdos detalhados do Curso de Umbanda com o tópico 11 atualizado
+        const dadosCurso = {
+            "1 - Introdução a Umbanda": `
+                <p class="mb-4">A Umbanda é uma religião brasileira, monoteísta e espírita, fundada oficialmente em 15 de novembro de 1908, no Rio de Janeiro, pelo médium Zélio Fernandino de Morais. Ela sintetiza elementos de várias correntes religiosas e culturais, destacando-se como uma manifestação genuinamente brasileira.</p>
+                
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">1. Pilares e Fundamentos</h3>
+                <p class="mb-3">O lema principal da Umbanda é a manifestação do espírito para a caridade. Seus três pilares fundamentais são:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Luz:</strong> A busca pela evolução espiritual e pelo esclarecimento.</li>
+                    <li><strong>Caridade:</strong> A prática do bem ao próximo sem distinção, preconceito ou cobrança financeira por trabalhos espirituais.</li>
+                    <li><strong>Amor:</strong> O respeito à vida, à natureza e a todas as formas de manifestação divina.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">2. Sincretismo e Influências</h3>
+                <p class="mb-3">A Umbanda absorveu elementos de diferentes matrizes religiosas, adaptando-os à sua cosmovisão:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Catolicismo:</strong> Culto aos santos, representados muitas vezes de forma sincretizada com as divindades (Orixás), além da devoção a Jesus (visto como o espírito mais puro que passou pela Terra).</li>
+                    <li><strong>Espiritismo (Kardecista):</strong> A crença na reencarnação, na lei de causa e efeito (karma), na comunicabilidade dos espíritos e na evolução espiritual contínua.</li>
+                    <li><strong>Religiões de Matriz Africana:</strong> O culto aos Orixás (divindades que representam as forças da natureza) e a reverência aos ancestrais.</li>
+                    <li><strong>Xamanismo / Tradições Indígenas:</strong> O respeito profundo à natureza, às matas, aos elementos naturais (água, fogo, terra, ar) e a figura dos Caboclos.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">3. A Linha de Trabalho (Guias e Espíritos)</h3>
+                <p class="mb-3">Nos terreiros (templos de Umbanda), os espíritos evoluídos manifestam-se através da incorporação nos médiuns para prestar caridade, orientação e passes energéticos. Eles são divididos em "linhas" ou falanges de trabalho:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Pretos Velhos:</strong> Espíritos de antigos escravizados que trazem a sabedoria, a paciência, o acolhimento e conselhos profundos.</li>
+                    <li><strong>Caboclos:</strong> Espíritos de índios brasileiros, associados à força, à coragem, à cura através de ervas e à conexão com a natureza.</li>
+                    <li><strong>Crianças (Erês):</strong> Espíritos que se manifestam com a alegria, a pureza e a espontaneidade infantil, trazendo renovação e quebra de energias densas.</li>
+                    <li><strong>Baianos, Marinheiros e Boiadeiros:</strong> Outros povos tradicionais brasileiros que representam a resiliência, o trabalho árduo e a alegria do povo.</li>
+                    <li><strong>Exus e Pombagiras:</strong> Guardiões dos caminhos, da lei e da ordem espiritual. Atuam nas camadas mais densas, desmanchando demandas, protegendo os terreiros e auxiliando no resgate espiritual (frequentemente estigmatizados por preconceito religioso, mas fundamentais na hierarquia umbandista).</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">4. Os Orixás</h3>
+                <p class="mb-3">Na Umbanda, Deus (Olorum ou Zambi) é o Criador supremo. Os Orixás não são deuses no sentido politeísta, mas emanações divinas ou divindades que governam as energias da natureza. Os principais Orixás cultuados incluem:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Oxalá:</strong> A fé, a paz e a criação (sincretizado com Jesus Cristo).</li>
+                    <li><strong>Iemanjá:</strong> A rainha do mar, mãe das cabeças e protetora da família.</li>
+                    <li><strong>Ogum:</strong> O senhor dos caminhos, da guerra justa, da tecnologia e das demandas.</li>
+                    <li><strong>Oxum:</strong> A deusa do ouro, do amor, da fertilidade e das águas doces.</li>
+                    <li><strong>Xangô:</strong> O senhor da Justiça e dos raios.</li>
+                    <li><strong>Iansã:</strong> A deusa dos ventos, tempestades e raios.</li>
+                    <li><strong>Oxóssi:</strong> O senhor das matas, da caça e do conhecimento.</li>
+                    <li><strong>Obaluayê / Omulu:</strong> O senhor da cura e da transmutação.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">5. Práticas e Rituais</h3>
+                <ul class="list-disc list-inside space-y-2 pl-2">
+                    <li><strong>Gira:</strong> Nome dado aos cultos públicos na Umbanda, que envolvem canto de pontos (músicas sagradas), palmas, defumações com ervas e passes.</li>
+                    <li><strong>Passe:</strong> Transmissão de energia espiritual magnética para limpeza e harmonização do espírito e do corpo físico.</li>
+                    <li><strong>Uso de Ervas:</strong> Banhos, chás e defumações utilizados para limpeza energética e cura física/espiritual.</li>
+                    <li><strong>Vestimentas (Branco):</strong> O uso predominante de roupas brancas simboliza a paz, a pureza e a igualdade entre todos os frequentadores perante o plano espiritual.</li>
+                </ul>
+            `,
+            "2 - Casa de São Lazaro": `
+                <p class="mb-4">O Círculo de Irradiações Espirituais São Lázaro nasce, em São Paulo, por volta de 1950, através da trajetória de uma portuguesa chamado Dona Maria de Lourdes da Silva e Senhor Antônio Martins que tinha o codinome espiritual de Vô Vitorino. Fugindo da fome na Europa no período pós-guerra, eles chegam ao Brasil e se estabelecem no interior de São Paulo. Nesta época se intensificam as manifestações espirituais deste casal que começam então a acolher e cuidar das pessoas desta região. Perseguidos pelo pensamento da Igreja naquela época, são obrigados a mudar de cidade e chegam a capital paulista.</p>
+                
+                <p class="mb-4">Na década de 60 abre o CIESL na Rua Irerê, no Planalto Paulista. Por esta casa passaram milhões de pessoas que foram cuidadas e auxiliadas. Muitas eram influenciadores da política e da cultura e faziam parte do cenário intelectual da época. Esta casa foi definitivamente um dos pilares na construção da Umbanda neste país. Alexandre Meireles chega à casa de São Lázaro em 1989, logo após o falecimento de seus fundadores. No ano de 1991, os trabalhos passam por uma pausa.</p>
+                
+                <p class="mb-4">Mas como uma casa de Obaluaiê ou Omulu nunca fecha, em 1996 ela é reabrerta por Alexandre Meireles, com apenas 24 anos de idade.</p>
+
+                <p class="mb-4">Uma entidade chamada Zé Baiano, que trabalhava com uma Mãe no Santo chamada Marieta, que não tinham nenhuma ligação com laços formalis com a Casa de São Lázaro, o comunica que Dona Maria e Seu Antônio junto com toda a egrégora do CIESL esperavam que ele reabrisse a Casa. Neste mesmo ano, no dia 27 de novembro, Alexandre é coroado Pai no Santo. No dia 21 de janeiro de 1996, em um pequeno cômodo, com a presença de 7 médiuns, reabre a Casa de São Lázaro sob o comando do Pai Alexandre Meireles. E o crescimento foi rápido. Na segunda gira já eram 16 médiuns, na terceira gira eram 30 e no final do ano a casa já contava com uma corrente de mais de 70 médiuns. A casa teve mais 3 endereços até chegar onde está hoje.</p>
+                
+                <p class="mb-4">Nestes 30 anos de história, já foram realizados milhares de atendimentos, com uma média de 40 mil pessoas por ano, de segunda a domingo. As atividades estão divididas em aulas de desenvolvimento espiritual, atendimentos de passe e consulta, atendimentos para animais, medicina espiritual, giras especiais de educação e cuidados para crianças, núcleos que tentam sintetizar e criar protocolos de trabalho para tratamento de adictos e suporte no tratamento de câncer, para dar acesso à justiça, além de projetos sociais.</p>
+                
+                <p class="mb-4">Os trabalhos já estão expandidos para fora de São Paulo. Hoje existem o CIESL em Uberlândia, com mais de 7 anos, o CIESL Vitória - ES, o CIESL Alemanha, na cidade de Colônia, com uma ação pioneira de levar a Umbanda para uma cultura completamente distinta, e o CIESL Cachoeira Dourada, no meio da floresta, no estado de SP, a primeira sede própria da instituição e um espaço multireligioso.</p>
+
+                <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mt-6 mb-3">Os Tipos de Trabalhos na Casa</h3>
+                <p class="mb-4">A Umbanda é uma religião dinâmica e estruturada em diferentes tipos de rituais, conhecidos popularmente como trabalhos da casa. Cada atividade possui uma finalidade espiritual específica, atendendo desde o descarrego cotidiano até tratamentos espirituais mais profundos. Abaixo estão explicados os principais trabalhos realizados nos terreiros:</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">1. Gira de Passe e Consulta (Atendimento Público)</h4>
+                        <ul class="list-disc list-inside pl-2 space-y-1">
+                            <li><strong>O que é:</strong> É a sessão mais tradicional e aberta ao público dos terreiros de Umbanda. Nela, os médiuns incorporam seus guias para atender diretamente aos consulentes.</li>
+                            <li><strong>Como funciona:</strong> O consulente passa por uma conversa individual com o guia espiritual, que oferece conselhos, orientação moral, escuta terapêutica e direcionamento. Em seguida, aplica-se o passe e, se necessário, orienta-se sobre banhos de ervas ou limpezas específicas.</li>
+                            <li><strong>Finalidade:</strong> Aliviar dores da alma, orientar em momentos de crise, limpar energias densas do cotidiano e promover o reequilíbrio emocional e espiritual.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">2. Desobsessão</h4>
+                        <ul class="list-disc list-inside pl-2 space-y-1">
+                            <li><strong>O que é:</strong> Um trabalho espiritual especializado e de profundidade, voltado para o amparo, esclarecimento e encaminhamento de espíritos obsessores que estão acoplados ao campo áurico de uma pessoa viva.</li>
+                            <li><strong>Como funciona:</strong> Geralmente realizado em dias específicos, os guias atuam dialogando com o espírito obsessor, evangelizando-o, mostrando-lhe a luz e aplicando passes magnéticos de desligamento e amparo. Paralelamente, o encarnado recebe tratamento energético para restaurar sua vitalidade.</li>
+                            <li><strong>Finalidade:</strong> Romper laços de influência negativa, curar obsessões espirituais profundas e harmonizar tanto o espírito encarnado quanto o desencarnado.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">3. Mesa Branca (Trabalho de Cura e Espiritismo)</h4>
+                        <ul class="list-disc list-inside pl-2 space-y-1">
+                            <li><strong>O que é:</strong> Um ritual com forte influência do Espiritismo Kardecista adaptado à corrente do terreiro. Acontece ao redor de uma mesa coberta com toalha branca, sem o uso de atabaques.</li>
+                            <li><strong>Como funciona:</strong> Os dirigentes e médiuns sintonizam com equipes espirituais de médicos, mentores e cientistas do espaço. Realizam-se preces, leituras edificantes, irradiações de energias à distância para enfermos e fluidificação de água.</li>
+                            <li><strong>Finalidade:</strong> Tratamento de doenças físicas e mentais, cirurgias espirituais sutis, amparo a espíritos em sofrimento profundo e irradiação de paz para lares e hospitais.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">4. Trabalhos Pré-Agendados</h4>
+                        <ul class="list-disc list-inside pl-2 space-y-1">
+                            <li><strong>O que é:</strong> Atendimentos específicos que exigem maior tempo, sigilo, estrutura ou preparação prévia por parte da casa e da espiritualidade.</li>
+                            <li><strong>Como funciona:</strong> Diferente da gira aberta, esses casos são marcados com antecedência com a liderança do terreiro. Costumam envolver limpezas profundas de residências, casos complexos de desarmonia familiar ou orientação a médiuns e consulentes que necessitam de acompanhamento contínuo.</li>
+                            <li><strong>Finalidade:</strong> Organizar fluxos complexos de atendimento, garantindo a atenção necessária a situações que não podem ser resolvidas no tempo rápido de uma consulta pública.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">5. Gira dos Animais (Bênção e Tratamento dos Pets)</h4>
+                        <ul class="list-disc list-inside pl-2 space-y-1">
+                            <li><strong>O que é:</strong> Um trabalho litúrgico voltado especificamente para a proteção, o equilíbrio energético, a saúde e o amparo espiritual dos animais de estimação e da natureza.</li>
+                            <li><strong>Como funciona:</strong> Os tutores podem levar seus animais (ou fotos e pertences deles) para receberem passes específicos e fluidificação de água. As entidades trabalham com a energia da linha dos Erês, Caboclos e protetores da natureza.</li>
+                            <li><strong>Finalidade:</strong> Reconhecer os animais como seres dotados de alma e sensibilidade, limpando cargas energéticas que eles absorvem de seus donos, promovendo curas físicas complementares e agradecendo aos espíritos da natureza.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-amber-600 dark:text-brandYellow">6. Gira de Medicina</h4>
+                        <p>É um trabalho espiritual e terapêutico que integra os fundamentos da Umbanda com a sabedoria ancestral das equipes espirituais de médicos, mentores e cientistas do espaço (como a linha do Dr. Fritz ou médicos espirituais), podendo ser conduzida por linhas espirituais especializadas na cura e no manejo dos elementos botânicos — como Caboclos, Curandeiros, Pajés, Mestres da Jurema e Pretos-Velhos.</p>
+                    </div>
+                </div>
+            `,
+            "3 - Oração da Casa de São Lazaro": `
+                <div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center space-y-4">
+                    <p class="text-amber-600 dark:text-brandYellow font-semibold text-base not-italic">"Eu desejo Harmonia, Amor, Verdade e Justiça, a todos os filhos do Círculo de Irradiações Espirituais São Lázaro."</p>
+                    
+                    <p>Com as forças reunidas e silenciosas dos nossos pensamentos, somos Fortes, Felizes e Sadios, formando assim, um elo de confraternização universal.</p>
+                    
+                    <p>Estou satisfeito e em paz com o universo inteiro, e desejo que todos se realizem nas suas aspirações mais íntimas.</p>
+                    
+                    <p>Dou graças ao pai infinito por ter estabelecido o Amor, a Verdade, e a Justiça a todos os filhos.</p>
+                    
+                    <p class="font-medium">Os filhos do Círculo de Irradiações Espirituais São Lázaro em comunhão com firmamento espírito universal vos é e serão sempre União, Amor, Fraternidade e Justiça.</p>
+                    
+                    <p class="text-amber-600 dark:text-brandYellow font-bold tracking-wider not-italic pt-2">Amém</p>
+                </div>
+            `,
+            "4 - Ponto Cantado": `
+                <p class="mb-4">O ponto cantado é uma das expressões mais importantes e sagradas da Umbanda. Trata-se de um cântico rítmico, acompanhado geralmente por palmas e instrumentos (como o atabaque, o agogô ou o pandeiro), que serve como uma ferramenta de conexão espiritual, invocação, magia e comunicação com as divindades (Orixás) e os espíritos (Guias e Guardiões).</p>
+                
+                <p class="mb-4">Na Umbanda, acredita-se que "quem canta, ora duas vezes". Os pontos cantados funcionam como mantras e portais vibracionais que ajudam a sintonizar a energia do terreiro, limpar energias densas, abrir ou fechar os trabalhos espirituais e saudar as entidades.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Principais Tipos de Pontos Cantados</h3>
+                <p class="mb-3">Os pontos são divididos de acordo com a finalidade do ritual e a linha de trabalho espiritual:</p>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Pontos de Abertura e Fechamento:</strong> Cantados no início e no final das giras para abrir os portões vibracionais, pedir proteção e encerrar os trabalhos.</li>
+                    <li><strong>Pontos de Chamada (ou Invocação):</strong> Cantados para atrair a presença dos Orixás ou das entidades da linha que vai trabalhar (Caboclos, Pretos Velhos, Baianos, Exus, Pombagiras, etc.).</li>
+                    <li><strong>Pontos de Descarga (ou Limpeza):</strong> Utilizados para afastar energias negativas, obsessores ou cargas pesadas acumuladas nos médiuns ou consulentes.</li>
+                    <li><strong>Pontos de Firmeza:</strong> Cantados para sustentar a energia de um médium, de um altar ou de um elemento ritualístico (velas, ervas, incensos).</li>
+                    <li><strong>Pontos de Subida (ou Despedida):</strong> Cantados quando a entidade encerra o seu trabalho e se despede do plano físico, retornando ao plano espiritual.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Exemplos de Principais Pontos por Linha</h3>
+                <p class="mb-4">Como a Umbanda possui milhares de pontos passados pela tradição oral, cada terreiro costuma ter seus cânticos tradicionais. Abaixo estão exemplos clássicos e amplamente conhecidos na religião:</p>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-2">Defumação</h4>
+                        <p class="italic text-slate-600 dark:text-slate-300">
+                            "Defuma a nossa casa, oh Pai Oxalá<br>
+                            Defuma com as ervas da Jurema de Oxóssi<br>
+                            Defuma com a arruda, guiné e alfazema<br>
+                            Para afastar o mal e trazer a paz plena."
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-2">Abertura</h4>
+                        <p class="italic text-slate-600 dark:text-slate-300">
+                            "Abri os nossos caminhos, oh Pai Ogum<br>
+                            Para a nossa gira começar<br>
+                            Com a proteção de Oxalá e dos Orixás<br>
+                            A nossa banda vai trabalhar."
+                        </p>
+                    </div>
+                </div>
+            `,
+            "5 - Saudações ao Orixás": `
+                <p class="mb-4">Na Umbanda, as saudações são formas de respeito, reverência e conexão energética com os Orixás e as linhas de espíritos (falanges). Cada divindade e linha de trabalho possui uma saudação específica, geralmente acompanhada de um gesto de respeito (como inclinar a cabeça ou tocar o chão com os dedos).</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">1. Saudação aos Orixás</h3>
+                <p class="mb-3">As saudações aos Orixás são feitas em Yorubá e carregam o pedido de bênção, força e proteção de cada divindade:</p>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Oxalá:</strong> Epa Babá! (Viva o Pai!)</li>
+                    <li><strong>Iemanjá:</strong> Odoyá! ou Eô Iemanjá! (Salve a Mãe do Mar!)</li>
+                    <li><strong>Ogum:</strong> Patacori Ogum! (Salve o guerreiro de fé / Cortador de caminhos!)</li>
+                    <li><strong>Oxum:</strong> Ora Yê Yê Ô! (Salve a senhora das águas doces / Olhem por nós com carinho!)</li>
+                    <li><strong>Xangô:</strong> Kaô Kabecilê! (Venham saudar o Rei da Justiça!)</li>
+                    <li><strong>Iansã:</strong> Eparrei Oyá! (Salve a Senhora dos ventos e tempestades!)</li>
+                    <li><strong>Oxóssi:</strong> Okê Arô! (Salve o grande caçador!)</li>
+                    <li><strong>Obaluayê / Omulu:</strong> Atotô Babá! (Silêncio para o Pai da Terra / Senhor da Cura!)</li>
+                    <li><strong>Nanã Buruquê:</strong> Saluba Nanã! (Salve a mãe ancestral e senhora da sabedoria!)</li>
+                    <li><strong>Exu (Orixá/Guia Maior):</strong> Laroyê Exu! (Salve o mensageiro!)</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">2. Saudação às Falanges e Guias de Trabalho</h3>
+                <p class="mb-3">As falanges de trabalho utilizam frases tradicionais de respeito e acolhimento dentro dos terreiros:</p>
+                <ul class="list-disc list-inside space-y-2 pl-2">
+                    <li><strong>Pretos Velhos:</strong> Ê, Babá! ou Saravá meu Pai Preto! / Salve as Almas! ("Ê, pretinha/pretinho", respeitando a ancestralidade e a sabedoria dos mais velhos).</li>
+                    <li><strong>Caboclos:</strong> Okê Caboclo! (Saudação que exalta a força da mata e dos guerreiros indígenas).</li>
+                    <li><strong>Crianças (Erês):</strong> Ê, Erê! ou Saravá os Doum e Cosme! (Saudação à pureza e à alegria infantil).</li>
+                    <li><strong>Marinheiros:</strong> Salve a Marujada! ou Ê, marujo! (Referência às forças das águas salgadas e dos oceanos).</li>
+                    <li><strong>Boiadeiro:</strong> Jetruá! ou Saravá Seu Boiadeiro! (Grito tradicional que evoca a lida do campo e a força de manejo).</li>
+                    <li><strong>Baianos:</strong> Salve a Bahia! ou Ê, Baiano! (Evocando a alegria, a sabedoria popular e a resiliência do povo nordestino).</li>
+                    <li><strong>Cigano:</strong> Optchá! (A saudação mais tradicional e universal do povo cigano, que expressa vida, força, energia e bênção).</li>
+                    <li><strong>Exus e Pombagiras:</strong> Laroyê Exu! / Exu é mojubá! (Exu é bendito / saudado) e Salve a força da Pombagira! (Guardiões dos caminhos, da lei e da guarda dos templos).</li>
+                </ul>
+            `,
+            "6 - Orixás": `
+                <p class="mb-4">Na Umbanda, os Orixás são divindades que representam as energias puras da natureza e as centelhas divinas de Olorum (Deus Supremo). Cada um possui mitos (itans) que explicam suas origens e personalidade, uma força da natureza que governam e cores sagradas que os identificam nos rituais, vestimentas e guias (fios de contas).</p>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">1. Oxalá</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> A criação, a fé, a paz, a paciência e a brancura da alma. É considerado o pai de todos os Orixás e dos seres humanos.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Branco (na Umbanda, o branco abrange e substitui todas as cores).</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Nos mitos iorubás, Oxalá (Olofin/Obatalá) foi o encarregado por Olorum de criar o mundo e os seres humanos a partir do barro. A narrativa mostra sua paciência infinita e seu papel central como o grande modelador da consciência humana.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">2. Iemanjá</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> As águas salgadas, os oceanos, a maternidade, a família, a proteção dos lares e o equilíbrio emocional.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Azul-claro (ou cristal/prata).</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Conhecida como a "Rainha do Mar", um dos contos mais famosos relata como suas águas profundas guardam os maiores tesouros e segredos do mundo. Iemanjá acolhe a todos que se sentem perdidos, sendo a grande mãe que ampara e limpa as dores no balanço de suas ondas.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">3. Ogum</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> A tecnologia, os caminhos, a abertura de veredas, a justiça, a coragem e a superação de obstáculos.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Azul-escuro (ou verde, dependendo da nação/linha).</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Ogum é o ferreiro divino que abriu os caminhos na mata fechada com sua ferramenta de ferro para que os outros Orixás pudessem transitar. Ele representa a força de vontade inabalável, o pioneirismo e a proteção contra as demandas e dificuldades da vida.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">4. Oxum</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> As águas doces (rios e cachoeiras), o ouro, a riqueza material e espiritual, o amor, a fertilidade e a diplomacia.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Amarelo-ouro ou dourado.</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Dona do ouro e dos sentimentos mais profundos, Oxum é descrita como uma divindade de extrema beleza e inteligência. Um famoso mito conta que, quando os Orixás tentaram criar o mundo sem consultar Oxum, nada prosperou; foi preciso recorrer à sua sabedoria e doçura para que a criação se completasse com harmonia e fertilidade.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">5. Xangô</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> A justiça divina, os raios, o fogo, os trovões e as pedreiras. Não tolera a mentira ou a injustiça.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Marrom ou Vermelho e Branco.</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Rei de Oyó, Xangô era um governante poderoso e impetuoso. Seu mito mais marcante envolve o domínio do fogo (que ele trazia na boca) e sua balança implacável. Ele representa o peso da lei kármica: tudo o que o ser humano faz retorna para si na proporção exata de seus atos.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">6. Iansã (Oyá)</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> As tempestades, os raios, a transformação repentina e o direcionamento dos espíritos desencarnados (sendo a senhora dos Egun).</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Amarelo-marrom (ou vermelho vivo/rosa, dependendo do fundamento).</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Guerreira destemida que lutou ao lado de Xangô, Iansã é o vento que sopra a mudança. O mito conta que ela foi a única capaz de enfrentar os ventos mais fortes e dominar as tempestades, ensinando aos humanos que as reviravoltas da vida são necessárias para limpar o ar e abrir espaço para o novo.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">7. Oxóssi</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> As matas, as florestas, a fartura, a caça ao conhecimento, a estratégia e a expansão da mente.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Verde.</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> O grande caçador que sustenta a aldeia com sua precisão e foco. O mito de Oxóssi destaca a importância da inteligência e do silêncio na busca pelo alimento e pela evolução espiritual. Ele é aquele que aponta a direção certa na escuridão da ignorância.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h3 class="font-bold text-amber-600 dark:text-brandYellow text-lg mb-2">8. Obaluayê / Omulu</h3>
+                        <p class="text-sm mb-1"><strong>Força e Domínio:</strong> A saúde, a cura das doenças físicas e espirituais, a terra e a transmutação.</p>
+                        <p class="text-sm mb-2"><strong>Cor:</strong> Preto e Branco (ou palha).</p>
+                        <p class="text-sm italic text-slate-600 dark:text-slate-300"><strong>Mito / Mito Essencial:</strong> Vestido com palhas para esconder as marcas de suas provações terrenas, Obaluayê é o Orixá que transita entre a vida e a morte. Seus mitos mostram que por trás de sua aparência severa e silenciosa reside o poder supremo da regeneração e da cura, provando que a verdadeira força de um espírito está na superação da dor.</p>
+                    </div>
+                </div>
+            `,
+            "7 - Oferendas e Paó": `
+                <p class="mb-4">No culto aos Orixás (Candomblé e Umbanda), as comidas rituais (conhecidas como Amalá, Ebô ou oferendas alimentares) e os trabalhos espirituais (oferendas de pedido, limpeza ou agradecimento) possuem fundamentos profundos ligados aos elementos da natureza, às cores, às energias e às histórias (itãs) de cada divindade.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">1. Comidas Rituais e Trabalhos por Orixá</h3>
+                <div class="space-y-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Oxalá (Orixá Maior, Criador da Vida)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Canjica branca cozida, servida em louça branca, enfeitada com rodelas de coco ou algodão. Também se oferece inhame assado ou amassado com mel.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Focados em paz de espírito, harmonia, clareza mental, cura e abertura de caminhos espirituais. Os elementos utilizados são sempre limpos e claros (velas brancas, flores brancas, mel e algodão).</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Ogum (Orixá da Guerra, dos Caminhos e do Ferro)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Inhame assado na brasa temperado com azeite de dendê, acompanhado de feijão-fradinho torrado ou cozido, e rodelas de cebola.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Voltados para abertura de caminhos, quebra de demandas, proteção contra inimigos, vitória em causas difíceis e coragem. Utiliza-se muita cor verde ou azul-escuro, ferramentas de ferro, velas e charutos.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Xangô (Orixá da Justiça, do Fogo e dos Raios)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Amalá, feito à base de caruru (quiabo cortado em rodelas refogado com camarão seco, cebola, azeite de dendê) servido com inhame cozido ou pilado (conhecido como elubô), ou carne de boi.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Direcionados a causas de justiça, acerto de contas, verdade, proteção contra injustiças e força nos momentos de decisão. Suas oferendas são feitas geralmente em pedreiras ou locais altos.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Iemanjá (Rainha do Mar, Mãe da Família e da Geração)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Manjar branco feito com leite de coco, amido de milho e açúcar, regado com calda de ameixa preta. Também se oferece arroz branco cozido com melão ou peixe assado.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Pedidos por paz familiar, fertilidade, equilíbrio emocional, proteção para quem viaja pelo mar ou caminhos da vida, e limpeza de cargas espirituais pesadas. Entregues na beira da praia ou no mar.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Oxum (Orixá das Águas Doces, do Ouro, do Amor e da Riqueza)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Otim (feijão-fradinho cozido temperado com camarão seco, cebola e azeite de dendê, decorado com ovos cozidos em rodelas ou fitas de gema) ou quindim.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Focados em prosperidade financeira, abertura de caminhos na vida amorosa, fertilidade, autoestima e doçura. Feitos na beira de rios, cachoeiras ou fontes de água doce.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Iansã / Oyá (Orixá dos Ventos, Tempestades e dos Espíritos)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Acarajé (bolinho de feijão-fradinho fritado no azeite de dendê) ou abará (cozido na folha de bananeira). Também se oferece batata-doce cortada em rodelas fritas no dendê.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Trabalhos de mudanças drásticas, quebra de energias paradas, coragem, direcionamento espiritual e corte de demandas ligadas a espíritos obsessores. Utiliza-se a cor vermelha ou marrom e espadas de cobre.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Obaluayê / Omolu (Orixá da Cura, da Doença e da Transmutação)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Doburu (pipoca estourada na areia limpa ou panela sem óleo, oferecida com tiras de coco e mel) e feijão-preto torrado.</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Focados estritamente na cura de enfermidades físicas e espirituais, proteção contra pestes, saúde e renovação profunda de ciclos de sofrimento. Feitos geralmente nos pés de árvores ou em caminhos de mato.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">Oxóssi (Orixá da Caça, da Fartura e do Conhecimento)</h4>
+                        <p class="text-sm mt-1"><strong>Comida Ritual:</strong> Milho vermelho cozido temperado com mel, cebola e camarão, ou frutas diversas (como manga, coco e caqui).</p>
+                        <p class="text-sm mt-1"><strong>Trabalhos:</strong> Voltados para fartura material, busca por emprego, estudos, sabedoria e foco nos objetivos. Suas oferendas e trabalhos são direcionados às matas e florestas.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">2. Comidas Rituais por Linha (Exemplos Comuns)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Caboclos:</strong> Frutas da mata (coco, manga, abacaxi), mel, milho cozido. Gostam de trabalhar com ervas frescas e charutos.</li>
+                    <li><strong>Pretos Velhos:</strong> Café sem açúcar (ou com mel), bolos de fubá, cocadas brancas, fumo de rolo. Trabalham com a força da terra e o conforto emocional.</li>
+                    <li><strong>Exus e Pombagiras:</strong> Farofa de dendê, mel, cachaça, marafo (para Exu) ou licor/champanhe (para Pombagira). Trabalham na quebra de demandas e abertura de caminhos.</li>
+                    <li><strong>Crianças (Erês):</strong> Doces, balas, guaraná, mel, bolos coloridos. Trabalham com a energia da alegria e da renovação.</li>
+                    <li><strong>Baianos:</strong> Coco seco, doces de abóbora, farofa, café. Trabalham com a força do movimento e da superação.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">3. Regras de Ouro na Umbanda</h3>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Intenção:</strong> A comida, por si só, não tem "poder" mágico se não estiver acompanhada de uma fé real e de uma intenção clara.</li>
+                    <li><strong>Local de Entrega:</strong> Cada entidade tem seu local de força (natureza). Nunca se entrega uma oferenda de um Guia ou Orixá em local aleatório; segue-se a orientação do terreiro.</li>
+                    <li><strong>Respeito Ambiental:</strong> Hoje, a Umbanda preza muito pela ecologia. Evita-se deixar plásticos, papéis ou garrafas na natureza. As oferendas são feitas de forma a serem absorvidas pela terra (frutas, flores, grãos).</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">4. O Paó</h3>
+                <p class="mb-3">O Paó (do iorubá pa o) é um ritual de palmas sagradas, rítmicas e abafadas — caracterizadas pelo som "oco" — essencial nas tradições de matriz iorubá, como o Candomblé, e presente em algumas vertentes de Umbanda. Mais do que um simples aplauso, trata-se de uma linguagem corporal e espiritual para:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li>Saudar e reverenciar os Orixás;</li>
+                    <li>Pedir licença e estabelecer uma comunicação silenciosa no espaço sagrado;</li>
+                    <li>Sinalizar momentos de profundo respeito litúrgico.</li>
+                </ul>
+                <p class="mb-2"><strong>Estrutura e Cadência:</strong> O toque do paó gera um som abafado e oco, estruturando-se em ciclos de batidas fortes e lentas seguidas de batidas mais curtas e rápidas.</p>
+                <p><strong>Domínio Sacerdotal:</strong> Os fundamentos exatos, as subdivisões numéricas e as cadências do paó estão estritamente ligados aos segredos de iniciação (orò), sendo repassados de forma restrita e interna dentro de cada casa de santo (ilê).</p>
+            `,
+            "8 - Elementos de Força": `
+                <p class="mb-4">Na Umbanda, os elementos de forma (muitas vezes referidos como elementos materiais ou formas elementares) dizem respeito à estruturação física, ao arranjo simbólico e à geometria sagrada utilizados nos rituais, assentamentos, oferendas e na própria paramentação dos médiuns e altares.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">1. Geometria e Formas Físicas (Simbologia das Estruturas)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Círculo:</strong> Representa a eternidade, a união, a proteção e o campo de força fechado (como nas tronqueiras, correntes de trabalho e no congá).</li>
+                    <li><strong>Triângulo:</strong> Relaciona-se com a trindade e a força dos três reinos ou linhas de força (ex: Pai, Filho e Espírito Santo, ou a síntese entre Orixá, Guia e Médium).</li>
+                    <li><strong>Cruz / Retângulo:</strong> Simboliza a encruzilhada cósmica, o cruzamento dos caminhos, o ponto de equilíbrio entre o plano espiritual e o material.</li>
+                    <li><strong>Espiral:</strong> Representa a evolução, a subida ou descida de energias, comum em trabalhos de descarrego ou elevação.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">2. Os Elementos da Natureza como Matéria-Prima da Forma</h3>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Terra:</strong> Manifestada em cristais, minerais, argila, ervas secas, areia e sal. A argila modelada serve como assentamento.</li>
+                    <li><strong>Água:</strong> Utilizada em sua forma líquida (água benta, água de cheiro, água mineral) contida em recipientes de vidro ou barro.</li>
+                    <li><strong>Fogo:</strong> Presente nas velas, incensos, defumações e braseiros.</li>
+                    <li><strong>Ar:</strong> Movimentado pelo sopro, dispersa as energias e ativa os elementos.</li>
+                    <li><strong>Plantas (Vegetal):</strong> Galhos, flores e folhas dispostos em mandalas, coroas ou banhos.</li>
+                    <li><strong>Minerais (Metais e Cristais):</strong> O ouro, a prata, o cobre, o ferro e as pedras brutas moldados em ferramentas de trabalho.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">3. Vegetais e Ervas Litúrgicas</h3>
+                <p class="mb-3">Os vegetais atuam no campo eletromagnético humano e dos ambientes, dividindo-se em:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Vegetais de Limpeza (Descarrego):</strong> Arruda, Guiné, Espada de São Jorge, Pimenta.</li>
+                    <li><strong>Vegetais de Equilíbrio (Passe e Purificação):</strong> Alface, Manjericão, Alecrim, Alfazema.</li>
+                    <li><strong>Vegetais de Defesa e Potencialização:</strong> Espada de Santa Bárbara, Comigo-ninguém-pode, Cebola.</li>
+                </ul>
+                <p class="text-sm italic text-slate-600 dark:text-slate-300">Nota: A maioria das ervas e vegetais de uso ritual não deve ser fervida; devem ser maceradas à mão em água fria para preservar o seu axé.</p>
+            `,
+            "9 - Especiaria e Ativadores de Energia": `
+                <p class="mb-4">Na Umbanda, esses elementos são chamados de "elementos de ativação" ou "elementos de potência". Eles funcionam como catalisadores: enquanto as ervas e flores trazem a vibração da natureza, esses elementos traz a "força" (axé) necessária para acelerar processos, criar barreiras de proteção, movimentar energias estagnadas ou selar pedidos.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">1. Elementos de Aceleração e Atração (Especiarias)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Cravo:</strong> Acelera resultados e traz vitalidade. É muito usado para "acordar" energias paradas.</li>
+                    <li><strong>Canela:</strong> O grande estimulante. Atrai prosperidade, sucesso e aumenta o poder de atraíção de qualquer ritual. É "fogo" que aquece os caminhos.</li>
+                    <li><strong>Anis Estrelado:</strong> Atua na clareza mental e na espiritualidade. Ajuda a abrir caminhos bloqueados pela confusão mental, trazendo sorte e proteção divina.</li>
+                    <li><strong>Louro:</strong> Folha da vitória e do triunfo. Simboliza a conquista, a fartura e o sucesso profissional/material.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">2. Elementos de "Corte" e Proteção (Defesa)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Pimenta:</strong> Elemento de fogo e quebra de demanda. Cria uma barreira de proteção através da neutralização de energias hostis (choque).</li>
+                    <li><strong>Sal Grosso:</strong> O elemento básico de descarrego. É um cristal que atrai íons negativos e neutraliza o campo energético. É um potente "isolante".</li>
+                    <li><strong>Pólvora:</strong> É o elemento de transformação radical. Usado nas linhas de Exu e Pombagira, serve para "estourar" energias negativas, quebrar correntes densas e limpar o ambiente através do impacto sonoro e do fogo repentino. (Deve ser usado apenas por médiuns experientes sob orientação).</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">3. Elementos de Fixação e Sustentação (Terras e Cereais)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Farinha de Mandioca:</strong> Elemento de terra pura. Serve para criar "caminhos" ou "estradas" para as entidades, ou para assentar a energia de entidades de falange da terra (como Pretos Velhos e Caboclos).</li>
+                    <li><strong>Farinha de Milho:</strong> Frequentemente associada à fartura e à energia de Oxóssi (fartura na caça/alimento). Também é usada para "limpar" a energia de caminhos.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">4. Elementos de Troca e Valor (Símbolos)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Moeda:</strong> Representa o valor da troca. Na Umbanda, a moeda simboliza o fechamento de um ciclo de negociação com o plano espiritual ou para atrair o fluxo financeiro (prosperidade). É o elemento que "paga" a licença ou o trabalho.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">5. Elementos de "Axé" (Líquidos e Gorduras)</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Mel:</strong> Elemento de união, doçura e apaziguamento. Ele "cola" as energias positivas e suaviza o comportamento das pessoas.</li>
+                    <li><strong>Dendê:</strong> O azeite sagrado, ligado à energia de Orixás como Ogum, Iansã e Exu. É um elemento de movimentação e força, dando a "liga" necessária para ativar oferendas de força.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Dicas para o Uso</h3>
+                <ol class="list-decimal list-inside space-y-2 pl-2">
+                    <li><strong>Mentalização:</strong> Esses elementos funcionam através da intenção e do foco mental.</li>
+                    <li><strong>Harmonia:</strong> Respeite a "Lei da Afinidade" na combinação dos elementos.</li>
+                    <li><strong>Responsabilidade:</strong> Nunca manipule elementos de "fogo" ou "explosão" sem conhecimento litúrgico aprofundado.</li>
+                </ol>
+            `,
+            "10 - Banhos e Ervas": `
+                <p class="mb-4">O uso de ervas e folhas na espiritualidade e no autocuidado é uma prática ancestral que busca o equilíbrio energético, a limpeza de cargas densas e a revitalização do corpo e da mente.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">1. Práticas e Suas Finalidades</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Banho de Ervas (Energético):</strong> Limpar o campo energético (aura), eliminar energias estagnadas, inveja, cansaço excessivo e atrair vibrações específicas.</li>
+                    <li><strong>Defumação:</strong> Limpar e purificar o ambiente físico e espiritual da casa ou local de trabalho, dissolvendo miasmas e larvas astrais.</li>
+                    <li><strong>Escalda-Pés:</strong> Relaxamento profundo, alívio do estresse, redução do inchaço e descarrego energético rápido através das terminações nervosas dos pés.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">2. Finalidade das Principais Ervas e Folhes</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>De Limpeza, Descarrego e Proteção:</strong> Guiné, Espada de São Jorge, Arruda, Eucalipto.</li>
+                    <li><strong>De Equilíbrio, Harmonia e Calma:</strong> Camomila, Erva-Doce, Lavanda (Alfazema), Rosa Branca.</li>
+                    <li><strong>De Prosperidade, Alegria e Vitalidade:</strong> Canela, Mel/Açúcar, Louro, Alecrim.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">3. Como Preparar e Tomar o Banho de Ervas</h3>
+                <div class="space-y-3 mb-4">
+                    <p><strong>Método 1: Infusão (Para ervas delicadas e flores):</strong> Ferva 1 a 2 litros de água, desligue o fogo, adicione as ervas, tampe por 10 a 15 minutos, coe e descarte as folhas na natureza.</p>
+                    <p><strong>Método 2: Decocção (Para ervas duras, cascas e raízes):</strong> Coloque as ervas e a água em uma panela, ferva por 3 a 5 minutos, tampe, deixe amornar e coe antes de usar.</p>
+                </div>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Modo de Aplicação</h3>
+                <ul class="list-disc list-inside space-y-2 pl-2">
+                    <li><strong>Higiene prévia:</strong> Tome seu banho de chuveiro normal primeiro.</li>
+                    <li><strong>Temperatura:</strong> Misture o banho de ervas com água morna do chuveiro.</li>
+                    <li><strong>Aplicação:</strong> Despeje o líquido do <strong>pescoço para baixo</strong> (nunca na cabeça, para não sobrecarregar o coronário).</li>
+                    <li><strong>Secagem:</strong> Seque-se levemente, sem esfregar com força.</li>
+                </ul>
+            `,
+            "11 – Mediunidade e Desenvolvimento": `
+                <p class="mb-4">A mediunidade é a faculdade inerente a todo ser humano que permite a captação e a comunicação com o plano espiritual. Na Umbanda, ela não é vista como um privilégio ou um fardo, mas sim como uma ferramenta de trabalho para a prática da caridade e do amor ao próximo.</p>
+                
+                <p class="mb-4">Todos nós possuímos algum grau de sensibilidade mediúnica (como a intuição aguçada, a empatia profunda ou a inspiração artística), mas nos médiuns de terreiro essa faculdade é desenvolvida de forma consciente para permitir a incorporação (acoplamento áurico entre espírito e médium) ou a irradiação de energias de cura.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">O Propósito do Desenvolvimento Mediúnico</h3>
+                <p class="mb-3">Desenvolver a mediunidade na Umbanda não é apenas aprender a "incorporar", mas sim passar por um processo profundo de reforma íntima, autoconhecimento e disciplina. Os principais objetivos do desenvolvimento são:</p>
+                
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Educação da faculdade:</strong> Aprender a controlar o transe, garantindo que a manifestação ocorra de forma segura, consciente e organizada.</li>
+                    <li><strong>Sintonização com o Bem:</strong> Elevar o padrão vibratório do médium para que ele sirva de instrumento apenas para espíritos de luz e trabalhadores da caridade.</li>
+                    <li><strong>Evolução Espiritual:</strong> Através da doação de tempo e energia para ajudar o próximo, o próprio médium evolui, desfazendo carmas e burilando seus próprios defeitos (egoísmo, orgulho, impaciência).</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">As Fases do Desenvolvimento no Terreiro</h3>
+                <p class="mb-3">O processo de desenvolvimento mediúnico ocorre dentro de uma casa de Umbanda (terreiro), sob a supervisão rigorosa de sacerdotes (Pais ou Mães de Santo) e guias espirituais. Ele geralmente passa pelas seguintes etapas:</p>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">1. A fase de Adaptação e Limpeza</h4>
+                        <p class="text-sm mt-1">Antes de qualquer trabalho de incorporação, o médium passa por um período de banhos de ervas, passes magnéticos e escuta de palestras ou orientações.</p>
+                        <p class="text-sm mt-1">O objetivo é descarregar o campo energético acumulado pelo estresse do dia a dia, equilibrar os chakras e preparar o corpo físico e sutil para suportar novas frequências.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">2. O Desenvolvimento Próprio (Giras de Desenvolvimento)</h4>
+                        <p class="text-sm mt-1">São sessões fechadas ao público, destinadas exclusivamente ao treinamento dos médiuns.</p>
+                        <p class="text-sm mt-1">Nelas, o médium aprende a reconhecer os sinais da aproximação de um guia, a manter a firmeza mental e a permitir a manifestação gradual (que no início pode ser apenas uma alteração de sensibilidade, formigamento ou leveza, evoluindo para a incorporação consciente ou semiconsciente).</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow">3. A Confirmação e o Batismo (Amaci)</h4>
+                        <p class="text-sm mt-1">Когда o médium atinge maturidade e estabilidade no transe, realiza-se o ritual de "coroação" ou fixação das linhas de trabalho.</p>
+                        <p class="text-sm mt-1">O médium passa a atuar de forma fixa com suas linhas de frente (como Caboclos, Pretos-Velhos, Baianos, Exus, etc.), prestando atendimento aos consulentes nas giras públicas.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Pilares Fundamentais para um Bom Desenvolvimento</h3>
+                <p class="mb-3">Para que a mediunidade se desenvolva de forma saudável e segura, o médium deve cultivar três pilares essenciais:</p>
+                <ul class="list-disc list-inside space-y-2 mb-6 pl-2">
+                    <li><strong>Disciplina:</strong> Cumprir horários, respeitar a hierarquia do terreiro, manter a frequência nos rituais e seguir as orientações dos dirigentes.</li>
+                    <li><strong>Humildade:</strong> Entender que o médium é apenas o "aparelho" (o instrumento). A sabedoria e a força vêm do guia espiritual; portanto, vaidade ou orgulho bloqueiam a mediunidade verdadeira.</li>
+                    <li><strong>Estudo e Vigilância:</strong> Ler sobre a doutrina, vigiar pensamentos e atitudes no cotidiano (manter a "vigilância e oração") e buscar o equilíbrio emocional.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">A Importância da Higiene Energética</h3>
+                <p class="mb-4">Na Umbanda, assim como cuidamos da higiene do corpo físico tomando banho todos os dias, é fundamental realizar a higiene energética. O médium e qualquer pessoa sensível estão constantemente expostos a diferentes ambientes, pensamentos e vibrações que podem gerar acúmulo de cargas densas, afetando o ânimo, a saúde emocional e a clareza mental.</p>
+                <p class="mb-4">Cuidar da energia não significa ter medo do mundo, mas sim manter o seu campo eletromagnético (aura) limpo, equilibrado e fortalecido.</p>
+
+                <h4 class="font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">Principais Cuidados Diários</h4>
+                <div class="space-y-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h5 class="font-bold text-amber-600 dark:text-brandYellow">1. Vigilância Mental e Emocional ("Vigiai e Vigiai")</h5>
+                        <ul class="list-disc list-inside space-y-1 text-sm mt-1">
+                            <li><strong>O pensamento cria e atrai:</strong> O campo energético é alimentado principalmente pelos pensamentos e sentimentos. Praticar a gratidão, evitar reclamações excessivas e vigiar a tendência à fofoca, ao ódio ou à ansiedade impede que você sintonize com frequências baixas.</li>
+                            <li><strong>Boa convivência:</strong> Ambientes de muita discórdia geram miasmas energéticos densos. Busque manter a serenidade diante dos conflitos cotidianos.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h5 class="font-bold text-amber-600 dark:text-brandYellow">2. Banhos de Ervas de Limpeza e Proteção</h5>
+                        <ul class="list-disc list-inside space-y-1 text-sm mt-1">
+                            <li><strong>Uso regular:</strong> Tomar banhos de ervas (como guiné, arruda, espada de são Jorge ou alfazema) ajuda a descarregar o cansaço do dia a dia e renovar o campo áurico.</li>
+                            <li><strong>Frequência:</strong> Pode ser feito semanalmente ou sempre que sentir que o peso emocional está excessivo.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h5 class="font-bold text-amber-600 dark:text-brandYellow">3. O Escalda-Pés para Aterramento</h5>
+                        <p class="text-sm mt-1"><strong>Descarregamento rápido:</strong> Quando o excesso de energia mental (muito pensamento acumulado, estresse do trabalho) causa dores de cabeça ou irritação, um escalda-pés com sal grosso e ervas relaxantes (como camomila ou capim-limão) ajuda a "puxar" a energia densa da cabeça para a terra, restabelecendo o equilíbrio.</p>
+                    </div>
+                </div>
+
+                <h4 class="font-semibold text-amber-600 dark:text-brandYellow mt-4 mb-2">Proteção e Manutenção do Lar</h4>
+                <ul class="list-disc list-inside space-y-2 pl-2">
+                    <li><strong>1. Limpeza Física e Arejamento:</strong> A energia circula onde há movimento. Manter a casa limpa, arejada e com entrada de luz solar diária é o primeiro e mais poderoso defasador de energias estagnadas.</li>
+                    <li><strong>2. Defumação Residencial:</strong> Queimar ervas de limpeza (como eucalipto, alecrim, casca de alho ou guiné) periodicamente nos cômodos da casa ajuda a dissolver resíduos energéticos pesados trazidos do exterior.</li>
+                    <li><strong>3. Firmeza de Pensamento e Fé:</strong> Práticas simples como a prece sincera, a meditação ou a conexão com os seus protetores espirituais elevam a vibração imediata do seu campo, criando uma barreira natural contra influências nocivas.</li>
+                </ul>
+            `,
+            "12 – Caridade e Ética": `
+                <p class="mb-4">Na Umbanda, a caridade não é vista apenas como uma boa ação pontual ou um ato de generosidade material. Ela é a razão de ser da própria religião. O médium umbandista compreende que sua mediunidade é um empréstimo temporário concedido pela espiritualidade para servir ao próximo sem distinção de raça, credo, classe social ou histórico de vida.</p>
+                
+                <p class="mb-4">Los guias espirituais — sejam Caboclos, Pretos-Velhos, Crianças, Baianos ou Exus — dedicam seus trabalhos nos terreiros exclusivamente a aliviar o sofrimento alheio, oferecendo escuta, passes de cura, conselhos e descarregos de forma totalmente gratuita. A máxima que rege o terreiro é clara: <em>"Dai de graça o que de graça recebestes"</em>.</p>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-3">Os Pilares da Ética Umbandista</h3>
+                <p class="mb-4">Para que a prática da caridade seja verdadeira e segura, a Umbanda exige uma conduta ética rigorosa tanto dentro quanto fora do terreiro. A ética umbandista fundamenta-se nos seguintes princípios:</p>
+
+                <div class="space-y-4">
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-1">1. Gratuidade Absoluta</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>A espiritualidade de luz não tem preço e não se comercializa. O atendimento espiritual, o passe, a consulta com os guias e os rituais de terreiro são gratuitos.</li>
+                            <li>Cobrar por trabalhos espirituais, consultas, "amarrações" ou exigir pagamentos para resolver problemas pessoais é uma violação gravíssima dos princípios da Umbanda e da Lei Maior.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-1">2. Sigilo e Respeito ao Consulente</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>Tudo o que é revelado durante uma consulta espiritual (seja dor, segredo, conflito familiar ou problema de saúde) é sagrado e está coberto pelo sigilo absoluto.</li>
+                            <li>O médium e a entidade atuam como confidentes e terapeutas da alma. Expor a vida de um consulente fora do terreiro quebra a confiança na corrente espiritual e gera graves desequilíbrios cármicos para quem o faz.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-1">3. A Prática do Bem e a Lei do Retorno</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>A ética na Umbanda proíbe o uso da mediunidade para prejudicar, manipular, dominar ou desejar o mal ao próximo.</li>
+                            <li>Conforme a Lei de Causa e Efeito (o carma), tudo o que o ser humano emite em pensamento, palavra ou ação retorna para si na mesma proporção. Trabalhar na linha da luz é ser um canal exclusivo de amor, evolução e respeito ao livre-arbítrio alheio.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-1">4. Respeito ao Livre-Arbítrio</h4>
+                        <p class="text-sm mb-2">Os guias espirituais orientam, mas nunca impõem decisões ou retiram o livre-arbítrio.</p>
+                        <p class="text-sm mb-2">O aprendizado na Terra baseia-se justamente na liberdade de errar, aprender, ajustar a rota e acertar. Se os espíritos superiores interferissem em nossas escolhas para nos impedir de sofrer, não haveria aprendizado, mérito nem evolução espiritual real.</p>
+                        <p class="text-sm">Portanto, o respeito ao livre-arbítrio é a mais alta expressão de amor e respeito à individualidade e à jornada de cada alma perante a lei divina.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-amber-600 dark:text-brandYellow mb-1">5. Humildade e Postura Sacerdotal</h4>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>O verdadeiro médium entende que ele é apenas o instrumento ("o cavalo" ou "o aparelho"), nunca a fonte do poder ou da cura. A vaidade de achar que é superior por incorporar uma entidade famosa ou poderosa desvirtua o propósito religioso.</li>
+                            <li>A ética também se reflete no respeito à hierarquia do terreiro, aos irmãos de fé e à disciplina exigida nos rituais.</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            "13 - Glossário e Termos": `
+                <p class="mb-4">O glossário da Umbanda é riquíssimo, misturando termos de matrizes africanas (principalmente Iorubá e Banto), influências indígenas (Tupi-Guarani) e o espiritismo kardecista.</p>
+                
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">A — Estrutura, Práticas e Rituais Iniciais</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Abaçá (ou Abá):</strong> Templo, tenda ou terreiro de Umbanda.</li>
+                    <li><strong>Abacê:</strong> Pessoa encarregada de preparar as comidas de santo.</li>
+                    <li><strong>Abadá:</strong> Túnica ou veste larga e comprida, geralmente branca, usada nos rituais.</li>
+                    <li><strong>Abará:</strong> Comida ritual de feijão-fradinho enrolada em folha de bananeira.</li>
+                    <li><strong>Abô:</strong> Banho de ervas sagradas maceradas (muitas vezes misturadas com elementos litúrgicos).</li>
+                    <li><strong>Açaiá / Acaçá:</strong> Comida branca sagrada feita de farinha de arroz ou milho branco, embrulhada em folhas.</li>
+                    <li><strong>Adarrum:</strong> Toque rápido e contínuo dos atabaques usado para invocar e acelerar a incorporação dos guias.</li>
+                    <li><strong>Adejá (Adjá):</strong> Campainha ou sininho de metal manuseado pelo dirigente para comandar os ritos e afastar energias densas.</li>
+                    <li><strong>Afoxé:</strong> Cortejo ou ritmo de rua de origem afro-brasileira.</li>
+                    <li><strong>Agô:</strong> Pedido de licença, perdão ou permissão (ex: "Agô, meu Pai" / "Agô, licença").</li>
+                    <li><strong>Agogô:</strong> Instrumento musical de duas ou mais campânulas de ferro tocado com baqueta para marcar o ritmo.</li>
+                    <li><strong>Alguidar:</strong> Prato ou bacia de barro cozido utilizado para oferendas, assentamentos e banhos.</li>
+                    <li><strong>Altar (ver Congá):</strong> Espaço sagrado principal do terreiro.</li>
+                    <li><strong>Amaci:</strong> Ritual de batismo ou lavagem de cabeça com infusão de ervas para ligar o médium ao seu Orixá.</li>
+                    <li><strong>Amalá:</strong> Comida ritual consagrada a Xangô (geralmente baseada em caruru ou quiabos), ou comida de santo em geral.</li>
+                    <li><strong>Aparelho:</strong> Termo tradicional para designar o médium (aquele que serve de instrumento para a manifestação espiritual).</li>
+                    <li><strong>Aruanda:</strong> Plano espiritual superior, cidade luz ou "céu" na cosmovisão umbandista.</li>
+                    <li><strong>Assentamento:</strong> Consagração de elementos materiais (pedras, metais, ferramentas) que fixam e sintonizam a energia de um Orixá ou guia em um local.</li>
+                    <li><strong>Atabaques:</strong> Tambores sagrados (Rum, Rumpi e Lê) que comandam o ritmo das giras.</li>
+                    <li><strong>Atotô:</strong> Saudação respeitosa a Obaluayê/Omolu (significa "Silêncio, ele é o rei").</li>
+                    <li><strong>Axé:</strong> Force vital, energia sagrada, poder de realização e bênção presente em tudo.</li>
+                    <li><strong>Axofô:</strong> Roupas sagradas usadas pelos médiuns nos rituais.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">B — Dinâmica de Terreiro e Mediunidade</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Babalorixá (ou Pai de Santo):</strong> Sacerdote dirigente do terreiro (homem).</li>
+                    <li><strong>Babalaketu:</strong> Sacerdote ligado à nação Ketu.</li>
+                    <li><strong>Batuque:</strong> Ritmo e culto de origem afro-sul-ristista (comum no Sul do Brasil).</li>
+                    <li><strong>Baiano (Linha dos):</strong> Espíritos de trabalhadores nordestinos/baianos que atuam na linha de carga, alegria e passes de descarrego.</li>
+                    <li><strong>Barravento:</strong> Momento de transe profundo ou desequilíbrio momentâneo que antecede a incorporação completa.</li>
+                    <li><strong>Boiadeiro (Linha dos):</strong> Espíritos de vaqueiros e sertanejos que trabalham com laços e passes enérgicos de limpeza e corte de demandas.</li>
+                    <li><strong>Bori:</strong> Pequeno ritual de alimentação e fortalecimento da cabeça (ori) do médium.</li>
+                    <li><strong>Búzio:</strong> Concha marinha utilizada no jogo divinatório para orientações espirituais.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">C — Entidades, Linhas e Guias</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Caboclo(a):</strong> Espírito de índios brasileiros. Trabalham na linha da cura, descarrego, firmeza e conhecimento das matas.</li>
+                    <li><strong>Calunga Grande:</strong> Denominação mística para o Mar ou Oceano.</li>
+                    <li><strong>Calunga Pequena:</strong> Denominação mística para o Cemitério (espaço sagrado de Omolu e dos Guardiões).</li>
+                    <li><strong>Cambono(a):</strong> Auxiliar direto do médium e da entidade durante os atendimentos, anotando recados, segurando velas e zelando pelo consulente.</li>
+                    <li><strong>Candomblé:</strong> Religião de matriz africana distinta da Umbanda, focada exclusivamente no culto aos Orixás.</li>
+                    <li><strong>Carregado:</strong> Pessoa com acúmulo de energias densas, miasmas ou espíritos obsessores ao seu redor.</li>
+                    <li><strong>Cavalo:</strong> Sinônimo de médium em transe.</li>
+                    <li><strong>Cigano(a) (Linha dos):</strong> Espíritos que trabalham com a alegria, o baralho, fitas coloridas, cristais, aromaterapia e a energia da liberdade.</li>
+                    <li><strong>Coité (Cuia):</strong> Fruto seco e oco usado como recipiente para líquidos sagrados ou oferendas.</li>
+                    <li><strong>Compadre:</strong> Termo carinhoso ou de respeito popularmente atribuído aos Exus.</li>
+                    <li><strong>Congá:</strong> Altar sagrado do terreiro onde ficam dispostas as imagens das divindades e guias.</li>
+                    <li><strong>Corrente Magnética / Corrente Espiritual:</strong> União energética de todos os médiuns e espíritos presentes em uma sessão.</li>
+                    <li><strong>Criança (Linha dos - Erês):</strong> Espíritos que se manifestam com a energia pura da infância, atuando na quebra de demandas pesadas com simplicidade e alegria.</li>
+                    <li><strong>Curimba:</strong> Orquestra do terreiro (formada por atabaques, agogôs e vozes) ou o conjunto de cantadores.</li>
+                    <li><strong>Curiar / Curimar:</strong> Atos de comer/beber ou cantar/dançar nos rituais.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">D a F — Energias, Ações e Instrumentos</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Demanda:</strong> Trabalho de magia negativa direcionado a alguém, ou qualquer disputa/conflito espiritual.</li>
+                    <li><strong>Descarrego:</strong> Limpeza energética profunda (pessoal ou ambiental) para remoção de cargas densas.</li>
+                    <li><strong>Ebó:</strong> Oferenda ou despacho ritualístico de limpeza, entrega ou agradecimento às divindades e guardiões.</li>
+                    <li><strong>Egum (Egoun):</strong> Espírito de pessoas falecidas (geralmente tratado com ritos específicos de encaminhamento).</li>
+                    <li><strong>Encantado:</strong> Seres da natureza que não passaram pela morte física tradicional (lendas, seres elementais ou povos das matas e águas).</li>
+                    <li><strong>Encosto:</strong> Espírito desencarnado em desarmonia que se acopla ao campo áurico de uma pessoa viva.</li>
+                    <li><strong>Encruza (Encruzilhada):</strong> Ponto de cruzamento de caminhos, consagrado na Umbanda à atuação das linhas de Exu e Pombagira.</li>
+                    <li><strong>Erê:</strong> Espírito infantil que faz a ponte entre a energia dos Orixás e a atuação dos médiuns; energia de pureza e alegria.</li>
+                    <li><strong>Espada de São Jorge:</strong> Planta sagrada de proteção e corte de energias negativas, associada a Ogum.</li>
+                    <li><strong>Exu:</strong> Guardião dos caminhos, executor da lei divina, mensageiro e protetor. Não representa o "mal" cristão, mas a ordem e a justiça na terra.</li>
+                    <li><strong>Falange:</strong> Legião ou grupamento de espíritos que comungam da mesma faixa vibratória e propósito de trabalho.</li>
+                    <li><strong>Firmeza:</strong> Ação de consagrar, proteger ou ancorar uma energia em um ponto físico (firmeza de portaria, de congá, de anjo da guarda).</li>
+                    <li><strong>Fundanga:</strong> Termo de origem banto para designar a pólvora, usada em rituais de queima rápida de energias negativas (chamada de "fogo sagrado").</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">G a M — Práticas do Dia a Dia do Terreiro</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-2">
+                    <li><strong>Gira:</strong> Sessão ritualística de Umbanda (trabalho espiritual aberto ao público ou fechado).</li>
+                    <li><strong>Guia (Como entidade):</strong> Espírito protetor.</li>
+                    <li><strong>Guia (Como objeto):</strong> Colar de contas (fio de contas) utilizado no pescoço para proteção e sintonia vibratória.</li>
+                    <li><strong>Ialorixá (ou Mãe de Santo):</strong> Sacerdotisa dirigente do terreiro (mulher).</li>
+                    <li><strong>Iansã:</strong> Orixá dos ventos, tempestades, raios e do alinhamento com a coragem (sincretizada com Santa Bárbara).</li>
+                    <li><strong>Ibiri:</strong> Cetro sagrado de Nanã Buruquê, feito de nervuras de palmeira trançadas.</li>
+                    <li><strong>Iemanjá:</strong> Orixá rainha dos mares, geradora da vida e protetora da família (sincretizada com Nossa Senhora da Conceição).</li>
+                    <li><strong>Imbaré / Maracá:</strong> Chocalho ritual.</li>
+                    <li><strong>Incorporação:</strong> Fenômeno mediúnico em que o espírito guia se acopla ao médium para prestar atendimento e caridade.</li>
+                    <li><strong>Jurema (Sagrada):</strong> Linha de trabalho de espíritos de caboclos e mestres originários do Nordeste brasileiro, cultuados através da árvore Jurema.</li>
+                    <li><strong>Laroiê:</strong> Saudação respeitosa aos Exus e Pombagiras (significa "Salve o mensageiro").</li>
+                    <li><strong>Levantamento:</strong> Ato de encerrar uma gira ou reerguer energias caídas.</li>
+                    <li><strong>Linha:</strong> Conjunto de falanges espirituais com atribuições afins (ex: Linha das Almas, Linha de Preto-Velho, Linha de Baianos).</li>
+                    <li><strong>Macumba:</strong> Termo de origem africana que originalmente designa um instrumento musical, embora popularmente tenha sido associado a rituais de feitiçaria. Na raiz, refere-se aos ritos de culto.</li>
+                    <li><strong>Malandro (Linha dos):</strong> Espíritos boêmios (como Zé Pelintra) que trabalham na margem da lei, ajudando marginalizados, curando vícios e desmanchando demandas urbanas.</li>
+                    <li><strong>Marafo:</strong> Cachaça ou aguardente utilizada nos rituais de Exu e Pombagira.</li>
+                    <li><strong>Médium:</strong> O intermediário entre os mundos material e espiritual.</li>
+                    <li><strong>Mironga:</strong> Segredo litúrgico, sabedoria oculta ou feitiço do bem realizado com fundamentos.</li>
+                    <li><strong>Miema / Miasma:</strong> Resíduos energéticos densos e pegajosos deixados por pensamentos ruins ou cargas espirituais.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow mt-6 mb-2">N a Z — Fundamentos Finais e Orixás</h3>
+                <ul class="list-disc list-inside space-y-2 pl-2">
+                    <li><strong>Nanã Buruquê:</strong> Orixá mais antiga, senhora da sabedoria, da lama primordial e da passagem (reencarnação).</li>
+                    <li><strong>Obatalá / Oxalá:</strong> Orixá maior da criação, da paz e da fé (sincretizado com Jesus Cristo).</li>
+                    <li><strong>Ogã:</strong> Sacerdote músico ou auxiliar litúrgico que não incorporates entidades; responsável pelos atabaques, pontos cantados e sacrifícios rituais quando aplicável.</li>
+                    <li><strong>Ogum:</strong> Orixá da tecnologia, da lei, dos caminhos, da guerra justa e desbravador (sincretizado com São Jorge).</li>
+                    <li><strong>Omolu / Obaluayê:</strong> Orixá da cura, da saúde, da transmutação e do controle sobre as doenças (sincretizado com São Roque ou São Lázaro).</li>
+                    <li><strong>Ori:</strong> A cabeça física e o receptáculo do espírito e do Orixá guardião de uma pessoa.</li>
+                    <li><strong>Orixá:</strong> Divindade suprema que rege as forças da natureza e emana as qualidades divinas de Olorum (Deus).</li>
+                    <li><strong>Ossaim (Ossãe):</strong> Orixá guardião das folhas sagradas, das matas e das ervas medicinais e mágicas.</li>
+                    <li><strong>Oxóssi:</strong> Orixá da caça, da abundância, da floresta e da expansão do conhecimento (sincretizado com São Sebastião).</li>
+                    <li><strong>Oxumarê:</strong> Orixá da renovação, do ciclo da vida, da riqueza e do arco-íris (sincretizado com São Bartolomeu).</li>
+                    <li><strong>Passe:</strong> Transmissão de energia magnética e espiritual realizada pelas entidades ou médiuns para reequilíbrio.</li>
+                    <li><strong>Patuá:</strong> Pequeno amuleto de tecido contendo ervas, linhas, orações ou elementos minerais, usado para proteção pessoal.</li>
+                    <li><strong>Pegi:</strong> Pequeno altar particular ou espaço reservado para preces e assentamentos dentro do terreiro.</li>
+                    <li><strong>Pemba:</strong> Giz ritualístico (branco ou colorido) feito de calcário, usado para riscar pontos de força e proteção no chão.</li>
+                    <li><strong>Pombagira:</strong> Entidade feminina guardiã, atuante nas mesmas linhas de vibração de Exu, associada à força dos caminhos, empoderamento, amor e clareza emocional.</li>
+                    <li><strong>Ponto Cantado:</strong> Cântico sagrado em forma de mantra que invoca, sintoniza e direciona a força das entidades.</li>
+                    <li><strong>Ponto Riscado:</strong> Grafismo mágico (assinatura energética) desenhado com pemba no chão pelas entidades para demonstrar sua origem e traçar barreiras protetoras.</li>
+                    <li><strong>Preto-Velho (Linha dos):</strong> Espíritos de antigos escravizados que trazem a paciência, a sabedoria da dor superada, passes de profunda calmaria e conselhos de cura espiritual.</li>
+                    <li><strong>Quebranto:</strong> Mau-olhado ou carga de energia negativa transmitida pelo olhar ou inveja.</li>
+                    <li><strong>Quimbanda:</strong> Prática voltada para o trabalho com energias de mão esquerda, focada em demandas mais densas (frequentemente dissociada da Umbanda tradicional, que cultua a caridade pura).</li>
+                    <li><strong>Renda:</strong> Contribuição voluntária ou taxa de manutenção do terreiro.</li>
+                    <li><strong>Saravá:</strong> Saudação respeitosa e afetuosa usada no culto (equivalente a "salve", "viva" ou "que Deus te abençoe").</li>
+                    <li><strong>Terreiro:</strong> Espaço físico consagrado aos rituais da Umbanda.</li>
+                    <li><strong>Transe:</strong> Estado alterado de consciência em que o médium sintoniza e permite a manifestação do guia espiritual.</li>
+                    <li><strong>Umbanda:</strong> Religião brasileira de base espírita, cristã e africanista, sintetizada sob o lema da "manifestação do espírito para a caridade".</li>
+                </ul>
+            `
+        };
+
+        function realizarLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('login-user').value.trim().toLowerCase();
+            const passInput = document.getElementById('login-pass').value;
+            const errorDiv = document.getElementById('login-error');
+
+            const usuarioEncontrado = usuariosPermitidos.find(u => 
+                (u.user.toLowerCase() === userInput || u.email.toLowerCase() === userInput) && u.senha === passInput
+            );
+
+            if (usuarioEncontrado) {
+                errorDiv.classList.add('hidden');
+                localStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+                carregarPortal(usuarioEncontrado);
+            } else {
+                errorDiv.textContent = "Usuário/E-mail ou senha inválidos.";
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function carregarPortal(usuario) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('portal-screen').classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = `Olá, ${usuario.nome}`;
+
+            if (usuario.isAdmin) {
+                document.getElementById('admin-section').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-section').classList.add('hidden');
+            }
+        }
+
+        function realizarLogout() {
+            localStorage.removeItem('usuarioLogado');
+            document.getElementById('portal-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            voltarAoDashboard();
+        }
+
+        function mostrarModalRecuperar() {
+            document.getElementById('recovery-modal').classList.remove('hidden');
+            document.getElementById('recovery-message').classList.add('hidden');
+            document.getElementById('recovery-email').value = '';
+        }
+
+        function fecharModalRecuperar() {
+            document.getElementById('recovery-modal').classList.add('hidden');
+        }
+
+        function enviarRecuperacao() {
+            const emailInput = document.getElementById('recovery-email').value.trim().toLowerCase();
+            const msgDiv = document.getElementById('recovery-message');
+
+            if (!emailInput) {
+                msgDiv.textContent = "Por favor, digite um e-mail.";
+                msgDiv.className = "text-sm mb-3 text-center text-red-600 dark:text-red-400";
+                msgDiv.classList.remove('hidden');
+                return;
+            }
+
+            const existe = usuariosPermitidos.some(u => u.email.toLowerCase() === emailInput);
+
+            msgDiv.classList.remove('hidden');
+            if (existe) {
+                msgDiv.textContent = "E-mail de recuperação enviado com sucesso! Verifique sua caixa de entrada.";
+                msgDiv.className = "text-sm mb-3 text-center text-emerald-600 dark:text-emerald-400 font-medium";
+            } else {
+                msgDiv.textContent = "Este e-mail não está cadastrado no sistema.";
+                msgDiv.className = "text-sm mb-3 text-center text-red-600 dark:text-red-400";
+            }
+        }
+
+        // Funções de Navegação do Curso
+        function abrirCursoUmbanda() {
+            document.getElementById('dashboard-content').classList.add('hidden');
+            document.getElementById('curso-content').classList.remove('hidden');
+            
+            const menu = document.getElementById('menu-curso');
+            menu.innerHTML = '';
+            
+            const chaves = Object.keys(dadosCurso);
+            chaves.forEach((titulo, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<button onclick="carregarAula('${titulo}')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-darkBlue-900 hover:text-amber-700 dark:hover:text-brandYellow transition text-xs font-medium">${titulo}</button>`;
+                menu.appendChild(li);
+            });
+
+            // Abre o primeiro tópico por padrão
+            carregarAula(chaves[0]);
+        }
+
+        function carregarAula(titulo) {
+            document.getElementById('titulo-aula').textContent = titulo;
+            // Insere o conteúdo HTML completo do tópico mantendo a formatação
+            document.getElementById('texto-aula').innerHTML = dadosCurso[titulo];
+        }
+
+        function voltarAoDashboard() {
+            document.getElementById('curso-content').classList.add('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+        }
+
+        // Lógica de alternância de Tema Claro / Escuro
+        function alternarTema() {
+            const html = document.documentElement;
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                atualizarIconeTema('light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                atualizarIconeTema('dark');
+            }
+        }
+
+        function atualizarIconeTema(tema) {
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (tema === 'light') {
+                // Ícone de Lua (indicando que o próximo clique ativará o modo escuro)
+                themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
+            } else {
+                // Ícone de Sol (indicando que o próximo clique ativará o modo claro)
+                themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
+            }
+        }
+
+        window.onload = function() {
+            // Recupera e aplica o tema salvo
+            const temaSalvo = localStorage.getItem('theme') || 'dark';
+            const html = document.documentElement;
+
+            if (temaSalvo === 'light') {
+                html.classList.remove('dark');
+                atualizarIconeTema('light');
+            } else {
+                html.classList.add('dark');
+                atualizarIconeTema('dark');
+            }
+
+            const salvo = localStorage.getItem('usuarioLogado');
+            if (salvo) {
+                carregarPortal(JSON.parse(salvo));
+            }
+        }
+    </script>
+</body>
+</html>
