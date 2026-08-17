@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Estudos - Casa de São Lázaro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBlue: {
+                            900: '#0B132B',
+                            800: '#1C2541',
+                            700: '#3A506B',
+                        },
+                        brandYellow: {
+                            DEFAULT: '#F4A261',
+                            light: '#E9C46A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .neon-badge-yellow {
+            background-color: rgba(244, 162, 97, 0.15);
+            color: #F4A261;
+            border: 1.5px solid #F4A261;
+            box-shadow: 0 0 8px rgba(244, 162, 97, 0.6), inset 0 0 5px rgba(244, 162, 97, 0.3);
+            text-shadow: 0 0 5px rgba(244, 162, 97, 0.5);
+        }
+        .neon-badge-purple {
+            background-color: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1.5px solid #a855f7;
+            box-shadow: 0 0 8px rgba(168, 85, 247, 0.6), inset 0 0 5px rgba(168, 85, 247, 0.3);
+            text-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+        }
+        .neon-badge-emerald {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1.5px solid #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), inset 0 0 5px rgba(16, 185, 129, 0.3);
+            text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+        .btn-acao {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 4px;
+            padding: 4px;
+            transition: transform 0.1s ease;
+        }
+        .btn-acao:active {
+            transform: scale(0.9);
+        }
+        .btn-editar { color: #3498db; }
+        .dark .btn-editar { color: #60a5fa; }
+        .btn-excluir { color: #e74c3c; }
+        .dark .btn-excluir { color: #f87171; }
+        .card-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-darkBlue-900 font-sans text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-md rounded-2xl shadow-2xl p-8 relative overflow-hidden transition-colors duration-300">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+            
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brandYellow/10 border-2 border-brandYellow mb-3 shadow-lg overflow-hidden">
+                    <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo Casa de São Lázaro" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-wide">Portal de Estudos</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Casa de São Lázaro</p>
+            </div>
+
+            <form id="login-form" onsubmit="realizarLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">E-mail ou Usuário</label>
+                    <input type="text" id="login-user" required 
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Seu usuário ou e-mail">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Senha</label>
+                    <input type="password" id="login-pass" required 
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Sua senha">
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <button type="button" onclick="mostrarModalRecuperar()" class="text-amber-600 dark:text-brandYellow hover:underline">
+                        Esqueceu a senha?
+                    </button>
+                </div>
+
+                <div id="login-error" class="hidden text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 py-1.5 rounded"></div>
+
+                <button type="submit" 
+                    class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL FLUANTE DE AVISO / COMUNICADO -->
+    <div id="modal-aviso-fluante" onclick="fecharAvisoFluantePorFora(event)" class="hidden fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div id="modal-aviso-conteudo" class="bg-white dark:bg-darkBlue-800 border border-brandYellow/50 w-full max-w-lg rounded-2xl p-6 shadow-2xl transition-transform duration-300 scale-95 opacity-0 animate-fade-in relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+            
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-brandYellow/20 border border-brandYellow flex items-center justify-center text-amber-600 dark:text-brandYellow">
+                    <i class="fas fa-bullhorn text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Comunicado Importante</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Casa de São Lázaro</p>
+                </div>
+            </div>
+
+            <div id="texto-aviso-fluante" class="text-slate-700 dark:text-slate-200 text-sm leading-relaxed mb-6 space-y-3 bg-slate-50 dark:bg-darkBlue-900 p-4 rounded-xl border border-slate-200 dark:border-darkBlue-700"></div>
+
+            <div class="flex justify-end">
+                <button onclick="fecharAvisoFluante()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold px-6 py-2.5 rounded-lg text-sm transition shadow-lg">
+                    Entendi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="recovery-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-sm rounded-xl p-6 shadow-2xl transition-colors duration-300">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Recuperar Senha</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Digite seu e-mail cadastrado para receber as instruções.</p>
+            
+            <input type="email" id="recovery-email" placeholder="seu-email@exemplo.com" 
+                class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 mb-3 focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+            
+            <div id="recovery-message" class="hidden text-sm mb-3 text-center"></div>
+
+            <div class="flex space-x-2">
+                <button onclick="fecharModalRecuperar()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
+                <button onclick="enviarRecuperacao()" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-course-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-lg rounded-xl p-6 shadow-2xl transition-colors duration-300">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Editar Módulo / Curso</h3>
+            <input type="hidden" id="edit-course-key">
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome do Curso / Módulo</label>
+                    <input type="text" id="edit-course-title" 
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Conteúdo HTML da Aula Principal</label>
+                    <textarea id="edit-course-content" rows="8"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-xs font-mono transition-colors"></textarea>
+                </div>
+            </div>
+
+            <div class="flex space-x-2 mt-6">
+                <button onclick="fecharModalEdicao()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
+                <button onclick="salvarEdicaoCurso()" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-course-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-lg rounded-xl p-6 shadow-2xl transition-colors duration-300">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Adicionar Novo Curso / Módulo</h3>
+            
+            <form onsubmit="salvarNovoCurso(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Identificador Único (Chave sem espaços, ex: <span class="font-mono text-amber-600 dark:text-brandYellow">tarot</span>)</label>
+                    <input type="text" id="new-course-key" required placeholder="ex: tarot"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Título do Curso</label>
+                    <input type="text" id="new-course-title" required placeholder="ex: Curso de Tarô"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Breve Descrição do Card</label>
+                    <input type="text" id="new-course-desc" required placeholder="ex: Fundamentos e tiragem de cartas..."
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Conteúdo da Primeira Aula (HTML)</label>
+                    <textarea id="new-course-content" rows="4" required placeholder="<p class='mb-4'>Introdução ao curso...</p>"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-xs font-mono transition-colors"></textarea>
+                </div>
+
+                <div class="flex space-x-2 mt-6">
+                    <button type="button" onclick="fecharModalNovoCurso()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Criar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GERENCIAR ALUNOS E PERMISSÕES -->
+    <div id="manage-users-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-4xl rounded-xl p-6 shadow-2xl transition-colors duration-300 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Gerenciar Alunos e Permissões de Módulos</h3>
+                <button onclick="fecharModalGerenciarAlunos()" class="text-slate-500 hover:text-slate-700 dark:hover:text-white font-bold">&times;</button>
+            </div>
+            
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Defina quais módulos cada aluno pode acessar marcando as caixas correspondentes:</p>
+
+            <div class="overflow-x-auto flex-1 mb-4 border border-slate-200 dark:border-darkBlue-700 rounded-lg">
+                <table class="w-full text-left text-sm text-slate-700 dark:text-slate-200">
+                    <thead class="bg-slate-100 dark:bg-darkBlue-900 text-xs uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-darkBlue-700">
+                        <tr>
+                            <th class="px-4 py-3">Nome / E-mail</th>
+                            <th class="px-4 py-3">Perfil</th>
+                            <th class="px-4 py-3">Módulos Liberados</th>
+                            <th class="px-4 py-3 text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-alunos-corpo" class="divide-y divide-slate-200 dark:divide-darkBlue-700"></tbody>
+                </table>
+            </div>
+
+            <div class="border-t border-slate-200 dark:border-darkBlue-700 pt-4">
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2">Cadastrar Novo Aluno</h4>
+                <form onsubmit="cadastrarNovoAluno(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <input type="text" id="novo-aluno-nome" required placeholder="Nome completo" 
+                        class="px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none">
+                    <input type="email" id="novo-aluno-email" required placeholder="E-mail de acesso" 
+                        class="px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none">
+                    <input type="password" id="novo-aluno-senha" required placeholder="Senha" 
+                        class="px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none">
+                    <button type="submit" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">Adicionar Aluno</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GERENCIAR AVISOS -->
+    <div id="manage-announcements-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-lg rounded-xl p-6 shadow-2xl transition-colors duration-300 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Gerenciar Avisos para os Alunos</h3>
+                <button onclick="fecharModalAvisos()" class="text-slate-500 hover:text-slate-700 dark:hover:text-white font-bold">&times;</button>
+            </div>
+
+            <form onsubmit="salvarNovoAviso(event)" class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Texto do Aviso</label>
+                    <textarea id="novo-aviso-texto" rows="3" required placeholder="Digite o aviso importante para os alunos..."
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">URL da Imagem (Opcional)</label>
+                    <input type="url" id="novo-aviso-imagem" placeholder="https://exemplo.com/imagem.jpg"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                </div>
+                <button type="submit" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Publicar Aviso</button>
+            </form>
+
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-2">Avisos Ativos</h4>
+            <div id="lista-avisos-admin" class="space-y-2 max-h-48 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DO ADMIN PARA VER TODAS AS PONTUAÇÕES DE QUIZ -->
+    <div id="manage-quiz-scores-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-3xl rounded-xl p-6 shadow-2xl transition-colors duration-300 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white"><i class="fas fa-trophy text-amber-500 mr-2"></i> Relatório Geral de Pontuações do Quiz</h3>
+                <button onclick="fecharModalRelatorioQuiz()" class="text-slate-500 hover:text-slate-700 dark:hover:text-white font-bold">&times;</button>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Acompanhe abaixo o desempenho de todos os alunos que responderam aos quizzes (1 ponto por questão correta):</p>
+
+            <div class="overflow-x-auto flex-1 border border-slate-200 dark:border-darkBlue-700 rounded-lg">
+                <table class="w-full text-left text-sm text-slate-700 dark:text-slate-200">
+                    <thead class="bg-slate-100 dark:bg-darkBlue-900 text-xs uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-darkBlue-700">
+                        <tr>
+                            <th class="px-4 py-3">Aluno</th>
+                            <th class="px-4 py-3">Data / Hora</th>
+                            <th class="px-4 py-3">Acertos</th>
+                            <th class="px-4 py-3">Nota Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-relatorio-quiz-corpo" class="divide-y divide-slate-200 dark:divide-darkBlue-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="portal-screen" class="hidden min-h-screen flex flex-col bg-slate-100 dark:bg-darkBlue-900 transition-colors duration-300">
+        <header class="bg-white dark:bg-darkBlue-800 border-b border-slate-200 dark:border-darkBlue-700 px-6 py-4 flex justify-between items-center shadow-md transition-colors duration-300">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full border border-brandYellow overflow-hidden bg-brandYellow/10 flex items-center justify-center">
+                    <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Portal de Estudos</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="alternarTema()" id="theme-toggle-btn" title="Alternar Tema" class="p-2 rounded-lg bg-slate-200 dark:bg-darkBlue-700/50 hover:bg-slate-300 dark:hover:bg-darkBlue-700 border border-slate-300 dark:border-darkBlue-600 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-brandYellow transition text-sm flex items-center justify-center">
+                    <svg id="theme-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+                <span id="user-display-name" class="text-sm font-medium text-slate-700 dark:text-slate-300"></span>
+                <button onclick="realizarLogout()" class="bg-red-100 dark:bg-red-950/50 hover:bg-red-200 dark:hover:bg-red-900/60 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-6xl w-full mx-auto p-6">
+            <div id="dashboard-content">
+                <!-- CARD DE BOAS-VINDAS REESTRUTURADO COM O TEXTO SOLICITADO -->
+                <div class="bg-white dark:bg-darkBlue-800 border border-amber-500/30 dark:border-brandYellow/30 rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden transition-colors duration-300 mb-8">
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-brandYellow/5 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-wide mb-4 flex items-center gap-3">
+                        Sejam muito bem-vindos ao Portal de Estudos Casa de São Lázaro! <span class="text-2xl">🌟</span>
+                    </h2>
+                    
+                    <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-4">
+                        É com imensa alegria e de coração aberto que recebemos você em nosso espaço virtual de aprendizado, evolução e fraternidade.
+                    </p>
+                    
+                    <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-6">
+                        O Portal de Estudos Casa de São Lázaro foi idealizado para ser um refúgio de conhecimento e luz, onde possamos caminhar juntos no aprimoramento moral, espiritual e intelectual. Aqui, cada conteúdo foi preparado com muito carinho para nutrir a sua alma e expandir a sua consciência.
+                    </p>
+
+                    <div class="border-t border-slate-200 dark:border-darkBlue-700 pt-6 mt-6">
+                        <h3 class="text-lg font-bold text-amber-600 dark:text-brandYellow mb-4">O que você encontrará por aqui:</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-start space-x-3 p-4 rounded-xl bg-slate-50 dark:bg-darkBlue-900/80 border border-slate-200/80 dark:border-darkBlue-700/80">
+                                <span class="text-2xl">📚</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Conteúdos Exclusivos</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Textos, apostilas e materiais de apoio para aprofundar os seus estudos.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-4 rounded-xl bg-slate-50 dark:bg-darkBlue-900/80 border border-slate-200/80 dark:border-darkBlue-700/80">
+                                <span class="text-2xl">🎧</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Áudios e Vídeos</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Palestras, reflexões e momentos de estudo em grupo para acompanhar onde e quando quiser.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-4 rounded-xl bg-slate-50 dark:bg-darkBlue-900/80 border border-slate-200/80 dark:border-darkBlue-700/80">
+                                <span class="text-2xl">📅</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Agenda de Atividades</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Fique por dentro de todos os nossos encontros, cursos, palestras e eventos especiais.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-4 rounded-xl bg-slate-50 dark:bg-darkBlue-900/80 border border-slate-200/80 dark:border-darkBlue-700/80">
+                                <span class="text-2xl">🤝</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Comunidade Fraterna</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Um espaço seguro de troca, acolhimento e crescimento mútuo na luz do bem.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mural-avisos-container" class="mb-6"></div>
+
+                <div id="admin-section" class="hidden mb-8 bg-white dark:bg-darkBlue-800 border border-brandYellow/30 rounded-xl p-6 relative overflow-hidden shadow-lg transition-colors duration-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brandYellow/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <h3 class="text-lg font-bold text-amber-600 dark:text-brandYellow mb-2">Painel do Administrador</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Você possui privilégios administrativos para gerenciar conteúdos, alunos, permissões e avisos.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="abrirModalNovoCurso()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold px-4 py-2 rounded-lg text-sm transition shadow">Adicionar Novo Curso</button>
+                        <button onclick="abrirModalGerenciarAlunos()" class="bg-slate-200 dark:bg-darkBlue-700 border border-slate-300 dark:border-darkBlue-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-darkBlue-600 px-4 py-2 rounded-lg text-sm font-medium transition">Gerenciar Alunos & Permissões</button>
+                        <button onclick="abrirModalAvisos()" class="bg-amber-100 dark:bg-darkBlue-700 border border-amber-300 dark:border-darkBlue-600 text-amber-800 dark:text-brandYellow hover:bg-amber-200 px-4 py-2 rounded-lg text-sm font-medium transition">Mural de Avisos</button>
+                        <button onclick="abrirModalRelatorioQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow flex items-center gap-2"><i class="fas fa-table"></i> Ver Notas dos Quizzes</button>
+                    </div>
+                </div>
+
+                <!-- TABELA DE HISTÓRICO DE PONTUAÇÕES DO ALUNO -->
+                <div id="aluno-perfil-quiz-section" class="mb-8 bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 rounded-xl p-6 shadow-md transition-colors duration-300">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                        <i class="fas fa-medal text-brandYellow"></i> Meu Histórico de Pontuações (Quiz)
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Veja abaixo o registro de suas tentativas e pontos obtidos (cada pergunta vale 1 ponto).</p>
+                    <div class="overflow-x-auto border border-slate-200 dark:border-darkBlue-700 rounded-lg">
+                        <table class="w-full text-left text-sm text-slate-700 dark:text-slate-200">
+                            <thead class="bg-slate-100 dark:bg-darkBlue-900 text-xs uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-darkBlue-700">
+                                <tr>
+                                    <th class="px-4 py-3">Tentativa / Data</th>
+                                    <th class="px-4 py-3">Acertos</th>
+                                    <th class="px-4 py-3">Pontuação Obtida</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-meu-historico-quiz" class="divide-y divide-slate-200 dark:divide-darkBlue-700">
+                                <tr><td colspan="3" class="px-4 py-4 text-center text-slate-400 text-xs">Nenhum quiz respondido ainda.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Seus Módulos de Aprendizado</h3>
+                <div id="grades-cursos-container" class="grid md:grid-cols-3 gap-6"></div>
+            </div>
+
+            <div id="curso-content" class="hidden">
+                <button onclick="voltarAoDashboard()" class="text-amber-600 dark:text-brandYellow hover:underline mb-4 flex items-center gap-1 font-medium text-sm">
+                    &larr; Voltar para módulos
+                </button>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="md:col-span-1 bg-white dark:bg-darkBlue-800 p-4 rounded-xl border border-slate-200 dark:border-darkBlue-700 h-fit transition-colors duration-300">
+                        <ul id="menu-curso" class="space-y-1 text-sm text-slate-600 dark:text-slate-300"></ul>
+                    </div>
+                    <div class="md:col-span-3 bg-white dark:bg-darkBlue-800 p-6 rounded-xl border border-slate-200 dark:border-darkBlue-700 shadow-xl transition-colors duration-300">
+                        <h2 id="titulo-aula" class="text-2xl font-bold text-amber-600 dark:text-brandYellow mb-4 border-b border-slate-200 dark:border-darkBlue-700 pb-3">Selecione uma aula</h2>
+                        <div id="texto-aula" class="text-slate-700 dark:text-slate-200 leading-relaxed space-y-4">
+                            <p>Selecione um tópico no menu ao lado para iniciar seus estudos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white dark:bg-darkBlue-800 border-t border-slate-200 dark:border-darkBlue-700 py-6 text-center text-sm text-slate-500 dark:text-slate-400 transition-colors duration-300 mt-auto">
+            <p>&copy; 2026 Portal de Estudos - Casa de São Lázaro. Todos os direitos reservados.</p>
+            <p class="mt-1 text-xs text-amber-600 dark:text-brandYellow font-medium">Criação: Tiago Araújo</p>
+        </footer>
+    </div>
+
+    <script>
+        const usuariosPadrao = [
+            { user: 'admin', email: 'admin@portal.com', senha: '001313', nome: 'Administrador', isAdmin: true, modulosPermitidos: ['espiritualidade', 'xamanismo', 'ervas', 'quiz_umbanda'] },
+            { user: 'bruno.tonicelli@hotmail.com', email: 'bruno.tonicelli@hotmail.com', senha: '123456', nome: 'Bruno Tonicelli', isAdmin: false, modulosPermitidos: ['espiritualidade'] },
+            { user: 'tiago.araujo@gmail.com', email: 'tiago.araujo@gmail.com', senha: '123456', nome: 'Tiago Araújo', isAdmin: false, modulosPermitidos: ['espiritualidade', 'quiz_umbanda'] }
+        ];
+
+        const avisosPadrao = [
+            { id: 1, texto: 'Bem-vindos ao novo Portal de Estudos da Casa de São Lázaro! Verifiquem seus módulos liberados.', imagem: '' }
+        ];
+
+        function salvarUsuarios() {
+            localStorage.setItem('portal_usuarios_dados', JSON.stringify(usuariosPermitidos));
+        }
+
+        function salvarCursos() {
+            localStorage.setItem('portal_cursos_dados', JSON.stringify(configCursos));
+        }
+
+        function salvarAvisos() {
+            localStorage.setItem('portal_avisos_dados', JSON.stringify(avisosGlobais));
+        }
+
+        let usuariosPermitidos = JSON.parse(localStorage.getItem('portal_usuarios_dados')) || usuariosPadrao;
+        let avisosGlobais = JSON.parse(localStorage.getItem('portal_avisos_dados')) || avisosPadrao;
+
+        let historicoQuizzes = JSON.parse(localStorage.getItem('portal_historico_quizzes')) || [];
+
+        const cursosPadrao = {
+            espiritualidade: {
+                titulo: 'Introdução à Umbanda',
+                descricao: 'Curso completo com 13 aulas sobre fundamentos, práticas e caridade na Casa de São Lázaro.',
+                tag: 'Módulo Principal',
+                tagNeon: 'neon-badge-yellow',
+                aulas: {
+                    '1. Introdução à Umbanda': `
+                        <h2 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-3">1. Introdução à Umbanda</h2>
+                        <p class="mb-4">A Umbanda é uma religião brasileira, monoteísta e espírita, fundada oficialmente em 15 de novembro de 1908, no Rio de Janeiro, pelo médium Zélio Fernandino de Morais.</p>
+                    `,
+                    '2. História e Fundação da Casa de São Lázaro': `<h2 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-2">2. História e Fundação da Casa de São Lázaro</h2><p class="mb-4">O Círculo de Irradiações Espirituais São Lázaro nasce em São Paulo por volta de 1950.</p>`
+                }
+            },
+            xamanismo: {
+                titulo: 'Introdução ao Xamanismo',
+                descricao: 'Compreenda o conhecimento ancestral de cura e espiritualidade.',
+                tag: 'Novo Módulo',
+                tagNeon: 'neon-badge-emerald',
+                aulas: {
+                    '1. Conceitos Fundamentais': `<h2 class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Conceitos Fundamentais do Xamanismo</h2><p class="mb-3">O xamanismo não é uma religião centralizada...</p>`
+                }
+            },
+            ervas: {
+                titulo: 'Ervas e Folhas para Cuidados',
+                descricao: 'Os banhos de ervas são práticas ancestrais para limpeza e renovação energética.',
+                tag: 'Novo Módulo',
+                tagNeon: 'neon-badge-purple',
+                aulas: {
+                    '1 - Introdução aos Banhos': `<p class="mb-4">Os banhos de ervas são práticas ancestrais para limpeza e renovação energética.</p>`
+                }
+            },
+            quiz_umbanda: {
+                titulo: 'Questões sobre Espiritualidade',
+                descricao: 'Teste seus conhecimentos sobre a história, fundamentos e práticas espirituais.',
+                tag: 'Quiz Interativo',
+                tagNeon: 'neon-badge-yellow',
+                aulas: {
+                    '1 - Quiz Interativo': `<div class="max-w-xl mx-auto"><h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow text-center mb-4">Quiz de Espiritualidade</h3><div id="quizContainer"></div><div id="results" class="mt-4"></div></div>`
+                }
+            }
+        };
+
+        let configCursos = JSON.parse(localStorage.getItem('portal_cursos_dados')) || cursosPadrao;
+        salvarCursos();
+
+        (function() {
+            const temaSalvo = localStorage.getItem('theme') || 'dark';
+            if (temaSalvo === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+
+            const usuarioSalvo = localStorage.getItem('usuarioLogado');
+            if (usuarioSalvo) {
+                try {
+                    const usuario = JSON.parse(usuarioSalvo);
+                    const usuarioAtualizado = usuariosPermitidos.find(u => u.email === usuario.email) || usuario;
+                    carregarPortal(usuarioAtualizado);
+                } catch (e) {
+                    localStorage.removeItem('usuarioLogado');
+                }
+            }
+        })();
+
+        function realizarLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('login-user').value.trim().toLowerCase();
+            const passInput = document.getElementById('login-pass').value;
+            const errorDiv = document.getElementById('login-error');
+
+            const usuarioEncontrado = usuariosPermitidos.find(u =>
+                (u.user.toLowerCase() === userInput || u.email.toLowerCase() === userInput) && u.senha === passInput
+            );
+
+            if (usuarioEncontrado) {
+                errorDiv.classList.add('hidden');
+                localStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+                carregarPortal(usuarioEncontrado);
+            } else {
+                errorDiv.textContent = 'Usuário/E-mail ou senha inválidos.';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function carregarPortal(usuario) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('portal-screen').classList.remove('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+            document.getElementById('curso-content').classList.add('hidden');
+            document.getElementById('user-display-name').textContent = `Olá, ${usuario.nome}`;
+
+            renderizarAvisos();
+            renderizarGradesCursos(usuario);
+            verificarExibicaoAvisoFluante(usuario);
+
+            const secaoHistoricoAluno = document.getElementById('aluno-perfil-quiz-section');
+
+            if (usuario.isAdmin) {
+                document.getElementById('admin-section').classList.remove('hidden');
+                if (secaoHistoricoAluno) secaoHistoricoAluno.classList.add('hidden');
+            } else {
+                document.getElementById('admin-section').classList.add('hidden');
+                if (secaoHistoricoAluno) {
+                    secaoHistoricoAluno.classList.remove('hidden');
+                    renderizarTabelaHistoricoAluno(usuario);
+                }
+            }
+        }
+
+        function renderizarTabelaHistoricoAluno(usuario) {
+            const tbody = document.getElementById('tabela-meu-historico-quiz');
+            const registrosDoAluno = historicoQuizzes.filter(h => h.emailAluno === usuario.email);
+
+            if (registrosDoAluno.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-4 text-center text-slate-400 text-xs">Nenhum quiz respondido ainda.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            registrosDoAluno.forEach((reg, idx) => {
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">Tentativa ${idx + 1} <span class="block text-xs text-slate-400">${reg.data}</span></td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">${reg.acertos} / 5</td>
+                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${reg.acertos >= 4 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function verificarExibicaoAvisoFluante(usuario) {
+            if (!avisosGlobais || avisosGlobais.length === 0) return;
+            const ultimoAviso = avisosGlobais[avisosGlobais.length - 1];
+            const chaveLocalStorage = `aviso_visto_${usuario.email}_${ultimoAviso.id}`;
+            const jaVisto = localStorage.getItem(chaveLocalStorage);
+
+            if (!jaVisto) {
+                let conteudoHtml = `<p class="flex items-start gap-2"><i class="fas fa-info-circle text-amber-500 mt-0.5"></i> <span>${ultimoAviso.texto}</span></p>`;
+                if (ultimoAviso.imagem) {
+                    conteudoHtml += `<div class="mt-3 rounded-lg overflow-hidden border border-slate-200 dark:border-darkBlue-700"><img src="${ultimoAviso.imagem}" alt="Imagem do aviso" class="w-full h-auto object-cover max-h-64"></div>`;
+                }
+
+                document.getElementById('texto-aviso-fluante').innerHTML = conteudoHtml;
+                const modal = document.getElementById('modal-aviso-fluante');
+                const conteudo = document.getElementById('modal-aviso-conteudo');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    conteudo.classList.remove('scale-95', 'opacity-0');
+                    conteudo.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                localStorage.setItem(chaveLocalStorage, 'true');
+            }
+        }
+
+        function fecharAvisoFluante() {
+            const modal = document.getElementById('modal-aviso-fluante');
+            const conteudo = document.getElementById('modal-aviso-conteudo');
+            conteudo.classList.remove('scale-100', 'opacity-100');
+            conteudo.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        }
+
+        function fecharAvisoFluantePorFora(event) {
+            if (event.target.id === 'modal-aviso-fluante') {
+                fecharAvisoFluante();
+            }
+        }
+
+        function renderizarAvisos() {
+            const container = document.getElementById('mural-avisos-container');
+            if (!avisosGlobais || avisosGlobais.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <div class="bg-white dark:bg-darkBlue-800 border border-amber-500/30 dark:border-brandYellow/30 rounded-2xl p-6 shadow-xl relative overflow-hidden transition-colors duration-300">
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+                    <div class="flex items-center space-x-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-brandYellow/10 border border-amber-300 dark:border-brandYellow/50 flex items-center justify-center text-amber-600 dark:text-brandYellow shadow-sm">
+                            <i class="fas fa-bullhorn text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white tracking-wide">Mural de Avisos da Casa</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Fique por dentro das últimas novidades e comunicados</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+            `;
+
+            avisosGlobais.forEach((aviso, idx) => {
+                let imagemHtml = '';
+                if (aviso.imagem) {
+                    imagemHtml = `
+                        <div class="mt-3 rounded-xl overflow-hidden border border-slate-200 dark:border-darkBlue-700 max-w-md">
+                            <img src="${aviso.imagem}" alt="Imagem do aviso" class="w-full h-auto object-cover max-h-72">
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="flex items-start space-x-3 p-4 rounded-xl bg-slate-50 dark:bg-darkBlue-900/80 border border-slate-200/80 dark:border-darkBlue-700/80 transition hover:border-amber-400/50">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500/10 dark:bg-brandYellow/10 text-amber-600 dark:text-brandYellow font-bold text-xs flex items-center justify-center mt-0.5">
+                            ${idx + 1}
+                        </span>
+                        <div class="flex-1">
+                            <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                                ${aviso.texto}
+                            </p>
+                            ${imagemHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderizarGradesCursos(usuario) {
+            const container = document.getElementById('grades-cursos-container');
+            container.innerHTML = '';
+
+            Object.keys(configCursos).forEach(chave => {
+                if (!usuario.isAdmin && (!usuario.modulosPermitidos || !usuario.modulosPermitidos.includes(chave))) {
+                    return;
+                }
+
+                const curso = configCursos[chave];
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 rounded-xl p-6 shadow-md flex flex-col justify-between transition-colors duration-300 hover:border-brandYellow/50';
+
+                let botoesAdmin = '';
+                if (usuario.isAdmin) {
+                    botoesAdmin = `
+                        <div class="mt-4 pt-3 border-t border-slate-200 dark:border-darkBlue-700 flex justify-end items-center space-x-1">
+                            <button onclick="abrirModalEdicao('${chave}')" class="btn-acao btn-editar" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                            <button onclick="excluirCurso('${chave}')" class="btn-acao btn-excluir" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                }
+
+                cardDiv.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${curso.tagNeon || 'neon-badge-yellow'}">${curso.tag || 'Módulo'}</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">${curso.titulo}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 card-description">${curso.descricao}</p>
+                    </div>
+                    <div>
+                        <button onclick="abrirCurso('${chave}')" class="w-full bg-slate-100 dark:bg-darkBlue-700 hover:bg-brandYellow hover:text-darkBlue-900 text-slate-700 dark:text-slate-200 font-medium py-2 rounded-lg text-sm transition duration-200">
+                            Acessar Módulo
+                        </button>
+                        ${botoesAdmin}
+                    </div>
+                `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        function abrirCurso(chave) {
+            const curso = configCursos[chave];
+            if (!curso) return;
+
+            document.getElementById('dashboard-content').classList.add('hidden');
+            document.getElementById('curso-content').classList.remove('hidden');
+
+            const menuUl = document.getElementById('menu-curso');
+            menuUl.innerHTML = '';
+            const chavesAulas = Object.keys(curso.aulas);
+
+            chavesAulas.forEach((nomeAula, index) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left px-3 py-2 rounded-lg transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkBlue-700 text-xs sm:text-sm';
+                btn.textContent = nomeAula;
+                btn.onclick = () => {
+                    document.querySelectorAll('#menu-curso button').forEach(b => {
+                        b.classList.remove('bg-amber-100', 'dark:bg-darkBlue-700', 'text-amber-700', 'dark:text-brandYellow', 'font-bold');
+                    });
+                    btn.classList.add('bg-amber-100', 'dark:bg-darkBlue-700', 'text-amber-700', 'dark:text-brandYellow', 'font-bold');
+                    document.getElementById('titulo-aula').textContent = nomeAula;
+                    document.getElementById('texto-aula').innerHTML = curso.aulas[nomeAula];
+
+                    if (chave === 'quiz_umbanda') {
+                        iniciarQuiz();
+                    }
+                };
+                li.appendChild(btn);
+                menuUl.appendChild(li);
+
+                if (index === 0) {
+                    btn.click();
+                }
+            });
+        }
+
+        function voltarAoDashboard() {
+            document.getElementById('curso-content').classList.add('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            if (usuarioLogado && !usuarioLogado.isAdmin) {
+                renderizarTabelaHistoricoAluno(usuarioLogado);
+            }
+        }
+
+        function realizarLogout() {
+            localStorage.removeItem('usuarioLogado');
+            document.getElementById('curso-content').classList.add('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+            document.getElementById('portal-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+
+        function alternarTema() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function abrirModalNovoCurso() { document.getElementById('add-course-modal').classList.remove('hidden'); }
+        function fecharModalNovoCurso() { document.getElementById('add-course-modal').classList.add('hidden'); }
+
+        function salvarNovoCurso(event) {
+            event.preventDefault();
+            const chave = document.getElementById('new-course-key').value.trim().toLowerCase().replace(/\s+/g, '-');
+            const titulo = document.getElementById('new-course-title').value.trim();
+            const desc = document.getElementById('new-course-desc').value.trim();
+            const conteudoHtml = document.getElementById('new-course-content').value.trim();
+
+            if (configCursos[chave]) {
+                alert('Já existe um curso com essa chave identificadora.');
+                return;
+            }
+
+            configCursos[chave] = {
+                titulo,
+                descricao: desc,
+                tag: 'Novo Módulo',
+                tagNeon: 'neon-badge-yellow',
+                aulas: { '1 - Introdução': conteudoHtml }
+            };
+
+            const admin = usuariosPermitidos.find(u => u.isAdmin);
+            if (admin && !admin.modulosPermitidos.includes(chave)) {
+                admin.modulosPermitidos.push(chave);
+            }
+
+            salvarCursos();
+            salvarUsuarios();
+            fecharModalNovoCurso();
+            renderizarGradesCursos(JSON.parse(localStorage.getItem('usuarioLogado')));
+            event.target.reset();
+        }
+
+        function abrirModalEdicao(chave) {
+            const curso = configCursos[chave];
+            if (!curso) return;
+            document.getElementById('edit-course-key').value = chave;
+            document.getElementById('edit-course-title').value = curso.titulo;
+            const primeiraAulaChave = Object.keys(curso.aulas)[0];
+            document.getElementById('edit-course-content').value = curso.aulas[primeiraAulaChave] || '';
+            document.getElementById('edit-course-modal').classList.remove('hidden');
+        }
+
+        function fecharModalEdicao() { document.getElementById('edit-course-modal').classList.add('hidden'); }
+
+        function salvarEdicaoCurso() {
+            const chave = document.getElementById('edit-course-key').value;
+            const novoTitulo = document.getElementById('edit-course-title').value.trim();
+            const novoConteudo = document.getElementById('edit-course-content').value;
+
+            if (configCursos[chave]) {
+                configCursos[chave].titulo = novoTitulo;
+                const primeiraAulaChave = Object.keys(configCursos[chave].aulas)[0] || '1 - Aula Principal';
+                configCursos[chave].aulas[primeiraAulaChave] = novoConteudo;
+                salvarCursos();
+                fecharModalEdicao();
+                renderizarGradesCursos(JSON.parse(localStorage.getItem('usuarioLogado')));
+            }
+        }
+
+        function excluirCurso(chave) {
+            if (confirm('Tem certeza que deseja excluir este módulo de estudo?')) {
+                delete configCursos[chave];
+                salvarCursos();
+                renderizarGradesCursos(JSON.parse(localStorage.getItem('usuarioLogado')));
+            }
+        }
+
+        function abrirModalGerenciarAlunos() {
+            atualizarTabelaAlunos();
+            document.getElementById('manage-users-modal').classList.remove('hidden');
+        }
+        function fecharModalGerenciarAlunos() { document.getElementById('manage-users-modal').classList.add('hidden'); }
+
+        function atualizarTabelaAlunos() {
+            const tbody = document.getElementById('tabela-alunos-corpo');
+            tbody.innerHTML = '';
+
+            usuariosPermitidos.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                let checkboxesModulos = '';
+                Object.keys(configCursos).forEach(chaveCurso => {
+                    const checked = u.modulosPermitidos && u.modulosPermitidos.includes(chaveCurso) ? 'checked' : '';
+                    checkboxesModulos += `
+                        <label class="inline-flex items-center mr-3 mb-1 text-xs cursor-pointer">
+                            <input type="checkbox" ${checked} onchange="alternarPermissaoModulo(${index}, '${chaveCurso}')" class="rounded border-slate-300 text-amber-600 focus:ring-brandYellow mr-1">
+                            ${configCursos[chaveCurso].titulo}
+                        </label>
+                    `;
+                });
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">
+                        ${u.nome}<br><span class="text-xs text-slate-500">${u.email}</span>
+                    </td>
+                    <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-xs ${u.isAdmin ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow' : 'bg-slate-200 dark:bg-darkBlue-700 text-slate-700 dark:text-slate-300'}">${u.isAdmin ? 'Admin' : 'Aluno'}</span></td>
+                    <td class="px-4 py-3">${checkboxesModulos}</td>
+                    <td class="px-4 py-3 text-right">
+                        ${!u.isAdmin ? `<button onclick="removerAluno(${index})" class="text-red-600 hover:text-red-800 text-xs font-medium">Remover</button>` : '<span class="text-xs text-slate-400">Protegido</span>'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function alternarPermissaoModulo(indexUsuario, chaveCurso) {
+            const usuario = usuariosPermitidos[indexUsuario];
+            if (!usuario.modulosPermitidos) usuario.modulosPermitidos = [];
+            const pos = usuario.modulosPermitidos.indexOf(chaveCurso);
+            if (pos > -1) usuario.modulosPermitidos.splice(pos, 1);
+            else usuario.modulosPermitidos.push(chaveCurso);
+            salvarUsuarios();
+        }
+
+        function cadastrarNovoAluno(event) {
+            event.preventDefault();
+            const nome = document.getElementById('novo-aluno-nome').value.trim();
+            const email = document.getElementById('novo-aluno-email').value.trim();
+            const senha = document.getElementById('novo-aluno-senha').value;
+
+            if (usuariosPermitidos.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                alert('Já existe um usuário cadastrado com este e-mail.');
+                return;
+            }
+
+            usuariosPermitidos.push({ user: email, email, senha, nome, isAdmin: false, modulosPermitidos: ['espiritualidade'] });
+            salvarUsuarios();
+            atualizarTabelaAlunos();
+            event.target.reset();
+        }
+
+        function removerAluno(index) {
+            if (confirm('Tem certeza que deseja remover este aluno?')) {
+                usuariosPermitidos.splice(index, 1);
+                salvarUsuarios();
+                atualizarTabelaAlunos();
+            }
+        }
+
+        function abrirModalAvisos() {
+            atualizarListaAvisosAdmin();
+            document.getElementById('manage-announcements-modal').classList.remove('hidden');
+        }
+        function fecharModalAvisos() { document.getElementById('manage-announcements-modal').classList.add('hidden'); }
+
+        function atualizarListaAvisosAdmin() {
+            const container = document.getElementById('lista-avisos-admin');
+            container.innerHTML = '';
+            avisosGlobais.forEach((aviso, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-xs';
+                div.innerHTML = `
+                    <div class="flex-1 mr-2">
+                        <span class="text-slate-700 dark:text-slate-300 font-medium">${aviso.texto}</span>
+                        ${aviso.imagem ? '<span class="block text-[10px] text-amber-500 mt-0.5"><i class="fas fa-image"></i> Com imagem anexada</span>' : ''}
+                    </div>
+                    <button onclick="removerAviso(${index})" class="text-red-500 hover:text-red-700 font-bold px-2">Remover</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function salvarNovoAviso(event) {
+            event.preventDefault();
+            const texto = document.getElementById('novo-aviso-texto').value.trim();
+            const imagem = document.getElementById('novo-aviso-imagem').value.trim();
+            if (!texto) return;
+            avisosGlobais.push({ id: Date.now(), texto, imagem });
+            salvarAvisos();
+            atualizarListaAvisosAdmin();
+            renderizarAvisos();
+            event.target.reset();
+        }
+
+        function removerAviso(index) {
+            avisosGlobais.splice(index, 1);
+            salvarAvisos();
+            atualizarListaAvisosAdmin();
+            renderizarAvisos();
+        }
+
+        function abrirModalRelatorioQuiz() {
+            atualizarTabelaRelatorioQuizAdmin();
+            document.getElementById('manage-quiz-scores-modal').classList.remove('hidden');
+        }
+        function fecharModalRelatorioQuiz() { document.getElementById('manage-quiz-scores-modal').classList.add('hidden'); }
+
+        function atualizarTabelaRelatorioQuizAdmin() {
+            const tbody = document.getElementById('tabela-relatorio-quiz-corpo');
+            if (historicoQuizzes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-400 text-xs">Nenhum registro de quiz encontrado.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            const historicoOrdenado = [...historicoQuizzes].reverse();
+            historicoOrdenado.forEach(reg => {
+                html += `
+                    <tr>
+                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${reg.nomeAluno}<br><span class="text-xs text-slate-400">${reg.emailAluno}</span></td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${reg.data}</td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${reg.acertos} / 5</td>
+                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${reg.acertos >= 4 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function mostrarModalRecuperar() { document.getElementById('recovery-modal').classList.remove('hidden'); }
+        function fecharModalRecuperar() {
+            const msgDiv = document.getElementById('recovery-message');
+            document.getElementById('recovery-modal').classList.add('hidden');
+            msgDiv.className = 'hidden text-sm mb-3 text-center';
+            document.getElementById('recovery-email').value = '';
+        }
+
+        function enviarRecuperacao() {
+            const email = document.getElementById('recovery-email').value.trim();
+            const msgDiv = document.getElementById('recovery-message');
+            if (!email) {
+                msgDiv.textContent = 'Por favor, digite seu e-mail.';
+                msgDiv.className = 'text-sm mb-3 text-center text-red-500';
+                msgDiv.classList.remove('hidden');
+                return;
+            }
+            const usuarioExiste = usuariosPermitidos.some(u => u.email.toLowerCase() === email.toLowerCase() || u.user.toLowerCase() === email.toLowerCase());
+            msgDiv.classList.remove('hidden');
+            if (usuarioExiste) {
+                msgDiv.textContent = 'Instruções de recuperação enviadas para o seu e-mail.';
+                msgDiv.className = 'text-sm mb-3 text-center text-emerald-600 dark:text-emerald-400 font-medium';
+            } else {
+                msgDiv.textContent = 'E-mail não encontrado na base de dados.';
+                msgDiv.className = 'text-sm mb-3 text-center text-red-500 font-medium';
+            }
+        }
+
+        const bancoCompleto = [
+            { id: 1, p: 'Em que ano e país a Umbanda foi fundada?', r: ['1908, Brasil', '1888, Portugal', '1930, Argentina'], c: '1908, Brasil' },
+            { id: 2, p: 'Quem manifestou a Umbanda pela primeira vez?', r: ['Pai João', 'Caboclo das Sete Encruzilhadas', 'Tranca Rua'], c: 'Caboclo das Sete Encruzilhadas' },
+            { id: 3, p: 'Qual o lema da Umbanda?', r: ['Olho por olho', 'Caridade', 'Culto ao dinheiro'], c: 'Caridade' },
+            { id: 4, p: 'Qual Orixá rege a paz e usa branco?', r: ['Oxalá', 'Ogum', 'Xangô'], c: 'Oxalá' },
+            { id: 5, p: 'Quem rege as matas?', r: ['Oxóssi', 'Ogum', 'Iansã'], c: 'Oxóssi' },
+            { id: 6, p: 'Qual Orixá é sincretizado com São Jorge?', r: ['Ogum', 'Xangô', 'Omulú'], c: 'Ogum' },
+            { id: 7, p: 'O que significa Axé?', r: ['Força vital', 'Tristeza', 'Algo ruim'], c: 'Força vital' },
+            { id: 8, p: 'O que faz um Ogã?', r: ['Toca atabaque', 'Cobra caro', 'Não faz nada'], c: 'Toca atabaque' },
+            { id: 9, p: 'Quem rege os rios e o amor?', r: ['Oxum', 'Iemanjá', 'Nanã'], c: 'Oxum' },
+            { id: 10, p: 'O que são Erês?', r: ['Espíritos infantis', 'Velhos', 'Guerreiros'], c: 'Espíritos infantis' }
+        ];
+
+        let questoesAtuais = [];
+        let indiceAtual = 0;
+        let respostasUsuario = [];
+
+        function iniciarQuiz() {
+            const containerQuiz = document.getElementById('quizContainer');
+            if (!containerQuiz) return;
+
+            questoesAtuais = [...bancoCompleto].sort(() => 0.5 - Math.random()).slice(0, 5);
+            indiceAtual = 0;
+            respostasUsuario = [];
+            const resultsEl = document.getElementById('results');
+            if (resultsEl) {
+                resultsEl.style.display = 'none';
+                resultsEl.innerHTML = '';
+            }
+            mostrarQuestao();
+        }
+
+        function mostrarQuestao() {
+            const container = document.getElementById('quizContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (indiceAtual < questoesAtuais.length) {
+                const item = questoesAtuais[indiceAtual];
+                const div = document.createElement('div');
+                div.className = 'bg-slate-50 dark:bg-darkBlue-900 border-l-4 border-amber-500 dark:border-brandYellow rounded-xl p-4 mb-4 shadow-sm';
+
+                const progresso = document.createElement('div');
+                progresso.className = 'text-center font-bold text-slate-500 dark:text-slate-400 mb-3 text-xs uppercase';
+                progresso.innerText = `Pergunta ${indiceAtual + 1} de 5`;
+                container.appendChild(progresso);
+
+                const pPergunta = document.createElement('p');
+                pPergunta.className = 'font-medium text-slate-800 dark:text-slate-200 mb-3';
+                pPergunta.innerText = item.p;
+                div.appendChild(pPergunta);
+
+                const respostasEmbaralhadas = [...item.r].sort(() => 0.5 - Math.random());
+                respostasEmbaralhadas.forEach(res => {
+                    const label = document.createElement('label');
+                    label.className = 'block my-2 cursor-pointer p-2.5 rounded-lg border border-slate-200 dark:border-darkBlue-700 bg-white dark:bg-darkBlue-800 hover:bg-amber-50 dark:hover:bg-darkBlue-700/50 text-sm text-slate-700 dark:text-slate-300 transition';
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'perguntaAtual';
+                    input.value = res;
+                    input.className = 'mr-2 accent-amber-500';
+
+                    label.appendChild(input);
+                    label.append(res);
+                    div.appendChild(label);
+                });
+
+                container.appendChild(div);
+
+                const btn = document.createElement('button');
+                btn.className = 'w-full mt-2 py-3 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold rounded-lg text-sm transition shadow';
+                btn.innerText = indiceAtual === questoesAtuais.length - 1 ? 'Finalizar e Ver Resultado' : 'Próxima Pergunta';
+                btn.onclick = avancarProxima;
+                container.appendChild(btn);
+            } else {
+                exibirResultadoFinal();
+            }
+        }
+
+        function avancarProxima() {
+            const selecionada = document.querySelector('input[name="perguntaAtual"]:checked');
+            if (!selecionada) {
+                alert('Por favor, selecione uma resposta antes de continuar.');
+                return;
+            }
+
+            const itemAtual = questoesAtuais[indiceAtual];
+            respostasUsuario.push({
+                p: itemAtual.p,
+                certa: itemAtual.c,
+                marcada: selecionada.value
+            });
+
+            indiceAtual++;
+            mostrarQuestao();
+        }
+
+        function exibirResultadoFinal() {
+            const container = document.getElementById('quizContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let acertos = 0;
+            let htmlResult = "<div class='space-y-2 mt-4 text-sm'>";
+
+            respostasUsuario.forEach((res, index) => {
+                if (res.marcada === res.certa) {
+                    acertos++;
+                    htmlResult += `<div class="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300"><strong>${index + 1}. ${res.p}</strong><br>Correta: ${res.marcada}</div>`;
+                } else {
+                    htmlResult += `<div class="p-3 rounded-lg bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-300"><strong>${index + 1}. ${res.p}</strong><br>Você marcou: ${res.marcada}<br><strong>Resposta correta: ${res.certa}</strong></div>`;
+                }
+            });
+            htmlResult += '</div>';
+
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            if (usuarioLogado) {
+                const dataAtual = new Date().toLocaleString('pt-BR');
+                historicoQuizzes.push({
+                    emailAluno: usuarioLogado.email,
+                    nomeAluno: usuarioLogado.nome,
+                    acertos: acertos,
+                    data: dataAtual
+                });
+                localStorage.setItem('portal_historico_quizzes', JSON.stringify(historicoQuizzes));
+                if (!usuarioLogado.isAdmin) {
+                    renderizarTabelaHistoricoAluno(usuarioLogado);
+                }
+            }
+
+            if (acertos === 5 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <div class="text-center font-bold text-lg text-slate-800 dark:text-white mb-3">
+                    ${acertos === 5 ? 'Parabéns. Você acertou todas as questões.' : `Você acertou ${acertos} de 5 perguntas.`} (Total: ${acertos} Ponto(s))
+                </div>
+                ${htmlResult}
+                <button onclick="iniciarQuiz()" class="w-full mt-6 py-3 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold rounded-lg text-sm transition shadow">Jogar Novamente</button>
+            `;
+        }
+    </script>
+</body>
+</html>
+```[cite: 2]
