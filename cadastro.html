@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Cadastro de Médium - Casa de São Lázaro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBlue: {
+                            900: '#0B132B',
+                            800: '#1C2541',
+                            700: '#3A506B',
+                        },
+                        brandYellow: {
+                            DEFAULT: '#F4A261',
+                            light: '#E9C46A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-darkBlue-900 font-sans text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <div id="cadastro-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-md rounded-2xl shadow-2xl p-8 relative overflow-hidden transition-colors duration-300">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brandYellow to-amber-500"></div>
+
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brandYellow/10 border-2 border-brandYellow mb-3 shadow-lg overflow-hidden">
+                    <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo Casa de São Lázaro" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-wide">Cadastro de Médium</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Casa de São Lázaro</p>
+            </div>
+
+            <form id="cadastro-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome completo</label>
+                    <input type="text" id="cadastro-nome" required
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Seu nome completo">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">E-mail</label>
+                    <input type="email" id="cadastro-email" required
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="seu-email@exemplo.com">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Telefone/WhatsApp</label>
+                    <input type="tel" id="cadastro-telefone" required
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="(11) 91234-5678">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Senha</label>
+                    <input type="password" id="cadastro-senha" required minlength="6"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Mínimo de 6 caracteres">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Código de Convite</label>
+                    <input type="text" id="cadastro-codigo" required
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors"
+                        placeholder="Fornecido pela Casa de São Lázaro">
+                </div>
+
+                <div id="cadastro-error" class="hidden text-red-600 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 py-1.5 rounded"></div>
+
+                <button type="submit" id="cadastro-submit"
+                    class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const temaSalvo = localStorage.getItem('theme') || 'dark';
+            if (temaSalvo === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZWo-7xKemTANRhcB6eifllgZqDH9ymBk",
+            authDomain: "portal-de-estudo-ciesl.firebaseapp.com",
+            projectId: "portal-de-estudo-ciesl",
+            storageBucket: "portal-de-estudo-ciesl.firebasestorage.app",
+            messagingSenderId: "326189306647",
+            appId: "1:326189306647:web:385a018a65205187589d52"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('cadastro-form');
+        const errorDiv = document.getElementById('cadastro-error');
+        const submitBtn = document.getElementById('cadastro-submit');
+
+        function mostrarErro(msg) {
+            errorDiv.textContent = msg;
+            errorDiv.classList.remove('hidden');
+        }
+        function esconderErro() {
+            errorDiv.classList.add('hidden');
+        }
+        function traduzErro(code) {
+            const mapa = {
+                'auth/email-already-in-use': 'Este e-mail já está cadastrado.',
+                'auth/invalid-email': 'E-mail inválido.',
+                'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.'
+            };
+            return mapa[code] || 'Não foi possível concluir o cadastro. Tente novamente.';
+        }
+
+        // Busca o código de convite vigente assim que a página carrega (não fica fixo no código-fonte).
+        let codigoConvite = null;
+        let configCarregada = false;
+
+        async function carregarConfiguracoes() {
+            try {
+                const snap = await getDoc(doc(db, 'configuracoes', 'geral'));
+                codigoConvite = snap.exists() ? (snap.data().codigoConvite || null) : null;
+            } catch (err) {
+                console.error('Erro ao carregar configurações:', err);
+            } finally {
+                configCarregada = true;
+            }
+        }
+        carregarConfiguracoes();
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            esconderErro();
+
+            const nome = document.getElementById('cadastro-nome').value.trim();
+            const email = document.getElementById('cadastro-email').value.trim();
+            const telefone = document.getElementById('cadastro-telefone').value.trim();
+            const senha = document.getElementById('cadastro-senha').value;
+            const codigoDigitado = document.getElementById('cadastro-codigo').value.trim();
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verificando convite...';
+
+            try {
+                if (!configCarregada) {
+                    await carregarConfiguracoes();
+                }
+                if (!codigoConvite || codigoDigitado !== codigoConvite) {
+                    mostrarErro('Código de convite inválido.');
+                    return;
+                }
+
+                submitBtn.textContent = 'Criando conta...';
+
+                // createUserWithEmailAndPassword já deixa o usuário logado nesta mesma sessão,
+                // que é a que vai ser reaproveitada no redirecionamento para o portal principal.
+                const cred = await createUserWithEmailAndPassword(auth, email, senha);
+
+                await setDoc(doc(db, 'usuarios', cred.user.uid), {
+                    nome,
+                    email,
+                    telefone,
+                    role: 'aluno',
+                    ativo: true,
+                    modulosPermitidos: ['espiritualidade', 'quiz_umbanda'],
+                    criadoEm: serverTimestamp()
+                });
+
+                window.location.href = 'Portal de Estudos CIESL.html';
+            } catch (err) {
+                mostrarErro(traduzErro(err.code));
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Cadastrar';
+            }
+        });
+    </script>
+</body>
+</html>
