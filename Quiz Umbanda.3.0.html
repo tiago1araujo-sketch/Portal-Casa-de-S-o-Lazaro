@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Conhecimento - Umbanda</title>
+    <!-- Biblioteca de Confetes -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { 
+            --surface: #ffffff;
+            --primary: #0f172a;
+            --primary-light: #1e3a8a;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --correct: #10b981; 
+            --wrong: #ef4444;
+            --text-main: #334155;
+            --border-color: #cbd5e1;
+        }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, rgba(5, 8, 22, 0.96), rgba(15, 23, 42, 0.94)), 
+                        url('https://uploads.onecompiler.io/43vaday7q/1786634863920/Orixas_2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px; 
+            margin: 0; 
+            color: var(--text-main);
+        }
+        #quiz-container { 
+            background: rgba(255, 255, 255, 0.96); 
+            padding: 30px 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3); 
+            width: 100%; 
+            max-width: 650px; 
+            border-top: 6px solid var(--accent);
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        h1 { 
+            color: var(--primary); 
+            text-align: center; 
+            margin-top: 0; 
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 8px;
+        }
+        
+        .brand-logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .brand-logo {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--accent);
+        }
+
+        h2 { 
+            color: var(--primary); 
+            text-align: center; 
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        #menu-screen {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .select-wrapper {
+            margin-bottom: 24px;
+        }
+        select.module-select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        select.module-select:hover, select.module-select:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            color: var(--primary);
+        }
+
+        #stats-bar { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px; 
+        }
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .stat-card span {
+            display: block;
+            font-size: 1.05rem;
+            margin-top: 2px;
+        }
+        #timer span { color: var(--wrong); }
+        #streak span { color: var(--accent); }
+        #score-display span { color: var(--primary); }
+
+        #question { 
+            font-size: 1.1rem; 
+            margin-bottom: 20px; 
+            line-height: 1.5; 
+            color: var(--primary); 
+            font-weight: 600;
+        }
+        .option { 
+            display: block; 
+            width: 100%; 
+            padding: 12px 16px; 
+            margin: 10px 0; 
+            border: 1px solid var(--border-color); 
+            cursor: pointer; 
+            border-radius: 8px; 
+            background: #ffffff; 
+            transition: all 0.2s ease; 
+            font-size: 0.95rem; 
+            text-align: left; 
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .option:hover:not(:disabled) { 
+            background: #f1f5f9; 
+            border-color: var(--primary); 
+            color: var(--primary);
+        }
+        .option:disabled { cursor: default; }
+        .correct { background-color: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
+        .wrong { background-color: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; }
+        
+        .gauge-container { 
+            position: relative; 
+            width: 120px; 
+            height: 60px; 
+            margin: 0 auto 15px auto; 
+            overflow: hidden; 
+            text-align: center; 
+        }
+        .gauge-body { 
+            position: absolute; top: 0; left: 0; width: 120px; height: 60px; 
+            border-radius: 60px 60px 0 0; background: #e2e8f0; overflow: hidden; 
+        }
+        .gauge-fill { 
+            position: absolute; top: 0; left: 0; width: 120px; height: 60px; 
+            border-radius: 60px 60px 0 0; background: linear-gradient(90deg, #ef4444, var(--accent), #10b981); 
+            transform-origin: center bottom; transform: rotate(0deg); 
+            transition: transform 0.6s cubic-bezier(0.4, 2.08, 0.55, 0.44); 
+        }
+        .gauge-cover { 
+            position: absolute; bottom: 0; left: 12px; width: 96px; height: 48px; 
+            border-radius: 48px 48px 0 0; background: var(--surface); 
+            display: flex; align-items: flex-end; justify-content: center; 
+            font-size: 1rem; font-weight: 700; color: var(--primary); padding-bottom: 2px;
+        }
+        .gauge-needle {
+            position: absolute; bottom: 0; left: 50%; width: 3px; height: 50px; 
+            background: var(--primary); transform-origin: bottom center; 
+            transform: translateX(-50%) rotate(-90deg); 
+            transition: transform 0.6s cubic-bezier(0.4, 2.08, 0.55, 0.44); 
+            border-radius: 3px 3px 0 0; z-index: 5;
+        }
+        .gauge-center-pin {
+            position: absolute; bottom: -4px; left: 50%; width: 8px; height: 8px; 
+            background: var(--accent); border-radius: 50%; transform: translateX(-50%); z-index: 6;
+        }
+
+        #quiz-screen, #result-screen { display: none; }
+        
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.3);
+            margin-top: 10px;
+        }
+        .btn-action:hover {
+            background: #1e293b;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--primary);
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        /* Estilo da Caixa de Destaque para o Resultado */
+        .feedback-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        #final-score {
+            font-size: 1.15rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin: 0 0 8px 0;
+        }
+        #feedback-msg {
+            font-size: 1rem; 
+            font-weight: 600;
+            color: var(--text-main); 
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Módulo de Avaliação: Teoria e Prática de Umbanda</h1>
+    
+    <!-- Logo da Casa de São Lázaro -->
+    <div class="brand-logo-container">
+        <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo Casa de São Lázaro" class="brand-logo" id="casa-logo">
+    </div>
+
+    <!-- Tela de Seleção Limpa -->
+    <div id="menu-screen">
+        <h2>Selecione o Módulo de Conhecimento</h2>
+        <div class="select-wrapper">
+            <select id="module-select" class="module-select">
+                <option value="" disabled selected>Escolha um módulo para iniciar...</option>
+            </select>
+        </div>
+        <button class="btn-action" onclick="confirmarSelecao()">Iniciar Avaliação ➔</button>
+    </div>
+
+    <!-- Tela do Quiz -->
+    <div id="quiz-screen">
+        <div class="gauge-container" title="Desempenho Atual">
+            <div class="gauge-body">
+                <div class="gauge-fill" id="gauge-fill"></div>
+            </div>
+            <div class="gauge-needle" id="gauge-needle"></div>
+            <div class="gauge-center-pin"></div>
+            <div class="gauge-cover" id="gauge-text">0%</div>
+        </div>
+
+        <div id="stats-bar">
+            <div class="stat-card" id="score-display">Pontuação<span id="score-val">0</span></div>
+            <div class="stat-card" id="streak">Sequência<span id="streak-val">0</span></div>
+            <div class="stat-card" id="timer">Tempo<span id="timer-val">20s</span></div>
+        </div>
+        
+        <div id="question">Carregando...</div>
+        <div id="options"></div>
+        
+        <button class="btn-action btn-secondary" style="padding: 10px; font-size: 0.9rem;" onclick="voltarAoMenu()">Interromper e Voltar ao Menu</button>
+    </div>
+
+    <!-- Tela de Resultado Final -->
+    <div id="result-screen">
+        <h2>Avaliação Concluída</h2>
+        
+        <div class="feedback-box">
+            <p id="final-score"></p>
+            <p id="feedback-msg"></p>
+        </div>
+
+        <button class="btn-action" onclick="location.reload()">Selecionar Outro Módulo</button>
+    </div>
+</div>
+
+<script>
+const blocosDePerguntas = [
+    // Bloco 1: História e Fundamentos
+    [
+        {q: "Quem é considerado o fundador da Umbanda, manifestando o Caboclo das Sete Encruzilhadas em 1908?", a: ["Pai Benedito", "Zélio Fernandino de Moraes", "Allan Kardec", "Chico Xavier"], c: 1},
+        {q: "A Umbanda é uma religião brasileira que se define principalmente como:", a: ["Uma religião de síntese", "Monoteísta estrita", "Um braço exclusivo do Candomblé", "Uma seita secreta"], c: 0},
+        {q: "Em que data oficial ocorreu a proclamação da Umbanda no Rio de Janeiro?", a: ["13 de maio de 1888", "20 de novembro de 1910", "15 de novembro de 1908", "07 de setembro de 1922"], c: 2},
+        {q: "Qual é o princípio teológico fundamental que diferencia a Umbanda?", a: ["A crença na reencarnação apenas dos índios", "A proibição do uso de ervas e velas", "A adoração exclusiva a entidades da esquerda", "A manifestação de espíritos para a caridade e a crença em Deus e nos Orixás"], c: 3},
+        {q: "O que significa a palavra 'Umbanda' na etimologia mais aceita?", a: ["Arte de curar com ervas", "Conjunto de leis divinas ou 'arte de curar'", "Dança sagrada aos antepassados", "Caminho dos mortos"], c: 1},
+        {q: "Qual entidade se apresentou na fundação da Umbanda?", a: ["Caboclo das Sete Encruzilhadas", "Pai João de Aruanda", "Exu Tranca Rua", "Pai Joaquim"], c: 0},
+        {q: "Como a Umbanda enxerga a figura de Jesus Cristo?", a: ["Apenas como um líder político histórico", "Como uma entidade de esquerda", "Como o Maior Guia da Humanidade, associado a Oxalá", "Como um profeta menor"], c: 2},
+        {q: "Qual é a principal ferramenta de trabalho espiritual utilizada nos terreiros?", a: ["O uso exclusivo de cartas de tarô", "A mediunidade de incorporação", "A leitura de mãos", "O isolamento total em mosteiros"], c: 1},
+        {q: "O sincretismo religioso na Umbanda surgiu historicamente devido a quê?", a: ["À proibição e perseguição às religiões de matriz africana", "Ao fato de os Orixás serem santos católicos", "À imposição do espiritismo kardecista", "A uma exigência do governo imperial"], c: 0},
+        {q: "Qual é a base fundamental da prática mediúnica na Umbanda?", a: ["O lucro financeiro", "O controle absoluto de energias", "A caridade espiritual e material", "A realização de rituais de isolamento"], c: 2}
+    ],
+    // Bloco 2: Orixás - Fé e Amor
+    [
+        {q: "Na teologia de Umbanda, como os Orixás são primariamente compreendidos?", a: ["Deuses gregos", "Irradiações divinas de Deus e da natureza", "Espíritos comuns", "Anjos caídos"], c: 1},
+        {q: "Qual Orixá rege a linha da Fé (Senhor do Bonfim)?", a: ["Oxalá", "Xangô", "Ogum", "Oxóssi"], c: 0},
+        {q: "Qual Orixá rege a linha do Amor (Nossa Senhora da Conceição)?", a: ["Iansã", "Iemanjá", "Oxum", "Nanã"], c: 2},
+        {q: "Quais são as cores tradicionalmente associadas a Oxalá?", a: ["Vermelho e preto", "Verde e amarelo", "Branco", "Roxo e dourado"], c: 2},
+        {q: "Qual é o principal elemento da natureza consagrado a Oxum?", a: ["Pedreiras", "Mar aberto", "Matas fechadas", "Cachoeiras"], c: 3},
+        {q: "Qual Orixá feminino é associado ao ouro e à riqueza espiritual?", a: ["Oxum", "Iemanjá", "Egunitá", "Iansã"], c: 0},
+        {q: "O que representa a linha de Oxalá nos Sete Tronos?", a: ["Justiça", "Fé e religiosidade humana", "Guerra", "Morte"], c: 1},
+        {q: "Qual saudação é comumente utilizada para Oxalá?", a: ["Êpa Êpa Babá!", "Oriô!", "Salve a força divina!", "Oke Arô!"], c: 0},
+        {q: "Qual vibração rege sentimentos de união e doçura?", a: ["Ogum", "Exu", "Oxum e Oxalá", "Omolu"], c: 2},
+        {q: "Qual o papel litúrgico das velas brancas para Oxalá?", a: ["Afastar entidades", "Trazer dinheiro", "Queimar oferendas animais", "Conexão de paz e pureza de intenção"], c: 3}
+    ],
+    // Bloco 3: Orixás - Conhecimento, Justiça e Lei
+    [
+        {q: "Qual Orixá é o senhor das matas e expansão mental?", a: ["Xangô", "Oxóssi", "Ogum", "Omolu"], c: 1},
+        {q: "Qual a cor e elemento de Oxóssi?", a: ["Vermelho/Fogo", "Azul/Mar", "Verde/Matas", "Amarelo/Ouro"], c: 2},
+        {q: "Qual Orixá rege a Justiça Divina (pedreiras)?", a: ["Xangô", "Ogum", "Oxalufã", "Exu"], c: 0},
+        {q: "Qual a saudação ritualística de Oxóssi?", a: ["Kaô Kabecilê!", "Patacori Ogum!", "Okê Arô!", "Eparrei Iansã!"], c: 2},
+        {q: "Qual Orixá é senhor dos caminhos e da tecnologia?", a: ["Xangô", "Ogum", "Oxumaré", "Logunedé"], c: 1},
+        {q: "Qual a cor clássica de Ogum (São Jorge)?", a: ["Branco", "Marrom", "Azul escuro ou Verde", "Preto e vermelho"], c: 2},
+        {q: "Qual a saudação sagrada de Xangô?", a: ["Atotô Obaluayê!", "Kaô Kabecilê!", "Òrìshà ô!", "Laroyê Exu!"], c: 1},
+        {q: "Qual Orixá comanda falanges de cura e lei de demanda positiva?", a: ["Oxóssi", "Iemanjá", "Nanã", "Ogum"], c: 3},
+        {q: "Na linha do Conhecimento, o que simboliza Oxóssi?", a: ["Riquezas materiais", "Busca pelo saber divino e sustento da alma", "Destruição da natureza", "Punição aos ignorantes"], c: 1},
+        {q: "Como Xangô atua na vida espiritual?", a: ["Sorte no jogo", "Justiça com base no mérito e ações", "Desavenças familiares", "Impedindo estudo"], c: 1}
+    ],
+    // Bloco 4: Orixás - Evolução e Transmutação
+    [
+        {q: "Qual Orixá rege a Evolução, cura profunda e saúde?", a: ["Oxumaré", "Omolu/Obaluayê", "Xangô", "Ogum"], c: 1},
+        {q: "Qual Orixá feminino está associado aos ventos e raios?", a: ["Iemanjá", "Nanã", "Iansã", "Oxum"], c: 2},
+        {q: "Qual a saudação tradicional de Iansã?", a: ["Odoyá!", "Eparrei Oyá!", "Saluba Nanã!", "Atotô!"], c: 1},
+        {q: "Campo de atuação de Omolu/Obaluayê?", a: ["O mar", "Cemitérios e cura", "Céus", "Fogo"], c: 1},
+        {q: "Qual Orixá é a matriarca ancestral (lama primordial)?", a: ["Nanã", "Iemanjá", "Oxum", "Iansã"], c: 0},
+        {q: "Saudação de Nanã Buruquê?", a: ["Arroboboi", "Saluba Nanã!", "Êpa Êpa", "Ketuê!"], c: 1},
+        {q: "Qual Orixá rege a renovação, serpente e arco-íris?", a: ["Omolu", "Logunedé", "Oxumaré", "Xangô"], c: 2},
+        {q: "Como a Transmutação atua nos descarregos?", a: ["Causando medo", "Eliminando energias densas", "Bloqueando livre-arbítrio", "Cirurgias plásticas"], c: 1},
+        {q: "Qual Orixá é a Grande Mãe, rainha dos mares?", a: ["Oxum", "Nanã", "Iansã", "Iemanjá"], c: 3},
+        {q: "Saudação de Iemanjá?", a: ["Odoyá!", "Eparrei", "Kaô", "Atotô"], c: 0}
+    ],
+    // Bloco 5: Linhas de Trabalho - Pretos Velhos, Caboclos e Erês
+    [
+        {q: "Quem são os Caboclos?", a: ["Europeus colonizadores", "Guerreiros indígenas e caboclos", "Divindades menores", "Crianças"], c: 1},
+        {q: "Característica dos Pretos Velhos?", a: ["Agitação", "Armas de fogo", "Serenidade e sabedoria", "Cobrança"], c: 2},
+        {q: "O que representam os Erês?", a: ["Espíritos zombeteiros", "Energia da alegria e pureza", "Entidades maldosas", "Larvas astrais"], c: 1},
+        {q: "Saudação dos Pretos Velhos?", a: ["Laroyê", "Saravá!", "Okê", "Eparrei"], c: 1},
+        {q: "Bebida associada aos Pretos Velhos?", a: ["Refrigerantes", "Café", "Cerveja preta", "Champanhe"], c: 1},
+        {q: "Elementos associados aos Erês?", a: ["Charutos", "Doces e guaraná", "Velas pretas", "Sal grosso"], c: 1},
+        {q: "Como Caboclos atuam nos passes?", a: ["Cirurgias plásticas", "Tarô", "Ervas e passes magnéticos", "Apenas pontos cantados"], c: 2},
+        {q: "Origem histórica dos Pretos Velhos?", a: ["Reis europeus", "Cientistas", "Escravizados africanos", "Sacerdotes maias"], c: 2},
+        {q: "Por que Pretos Velhos atendem sentados?", a: ["Falta de educação", "Viagem astral", "Evitar o futuro", "Simbolismo de humildade e cansaço"], c: 3},
+        {q: "Saudação típica dos Caboclos?", a: ["Salve as Almas", "Okê, Caboclo!", "Laroyê", "Atotô"], c: 1}
+    ],
+    // Bloco 6: Linhas de Trabalho - Baianos, Boiadeiros, Marinheiros e Malandros
+    [
+        {q: "Principal característica dos Baianos?", a: ["Magia negra", "Alegria e conselhos práticos", "Intelectuais", "Silêncio absoluto"], c: 1},
+        {q: "O que representam os Boiadeiros?", a: ["Entidades marinhas", "Vaqueiros que laçam demandas", "Crianças", "Médicos"], c: 1},
+        {q: "Campo de atuação dos Marinheiros?", a: ["Contabilidade", "Fogo", "Equilíbrio emocional", "Agricultura"], c: 2},
+        {q: "Como atuam os Malandros?", a: ["Crimes", "Taxas abusivas", "Ignorância", "Ajuda moral com malandragem do bem"], c: 3},
+        {q: "Elementos dos Boiadeiros?", a: ["Chapéu de couro e chicote", "Perfumes franceses", "Mamadeiras", "Velas brancas"], c: 0},
+        {q: "Bebida/Vestimenta dos Marinheiros?", a: ["Vinho e capa preta", "Rum e azul/branco", "Cerveja", "Café"], c: 1},
+        {q: "De onde vêm os Baianos?", a: ["Sul", "Sudeste", "Nordeste", "Amazônia"], c: 2},
+        {q: "Visão sobre Zé Pelintra?", a: ["Demônio", "Arquétipo fictício", "Mentor de Oxalá", "Espírito de luz em resgate"], c: 3},
+        {q: "Como Boiadeiros se manifestam?", a: ["Estalos de chicote e brados", "Marchas rígidas", "Choro", "Rodando sem parar"], c: 0},
+        {q: "Lição moral dos Baianos/Malandros?", a: ["Sofrimento", "Dinheiro", "Segredo", "Alegria e dignidade na adversidade"], c: 3}
+    ],
+    // Bloco 7: Linha da Esquerda
+    [
+        {q: "Quem são os Exus?", a: ["Demônios", "Guardiões da Lei", "Animais", "Anjos caídos"], c: 1},
+        {q: "Papel das Pombagiras?", a: ["Separar casais", "Espíritos subalternos", "Guardiãs dos caminhos e autoestima", "Guias de batizado"], c: 2},
+        {q: "Característica dos Exus Mirins?", a: ["Crianças encarnadas", "Seres de baixa vibração", "Lenda", "Corte de magias complexas"], c: 3},
+        {q: "Saudação dos Exus?", a: ["Okê", "Laroyê!", "Atotô", "Patacori"], c: 1},
+        {q: "Saudação das Pombagiras?", a: ["Eparrei", "Laroyê!", "Odoyá", "Kaô"], c: 1},
+        {q: "Por que trabalham em encruzilhadas?", a: ["Assustar", "Pontos de força magnética", "Não entram no templo", "Perseguição"], c: 1},
+        {q: "Cores e elementos de Exus?", a: ["Branco", "Verde e amarelo", "Azul", "Vermelho e preto"], c: 3},
+        {q: "Elementos das Pombagiras?", a: ["Velas brancas", "Cerveja", "Rosas vermelhas e champanhe", "Chá"], c: 2},
+        {q: "Diferença Exu vs Diabo?", a: ["Nenhuma", "Exu é da Lei, Diabo é o mal absoluto", "Exu superior", "Diabo é Orixá"], c: 1},
+        {q: "Função do despacho?", a: ["Subornar", "Agradecer e renovar energia", "Pagar dívidas", "Livrar de consultas"], c: 1}
+    ],
+    // Bloco 8: Rituais, Ervas e Organização do Terreiro
+    [
+        {q: "Função da Defumação?", a: ["Purificar ambientes", "Aromatizar", "Afugentar Orixás", "Limpeza física"], c: 0},
+        {q: "Banhos de ervas?", a: ["Cura instantânea", "Limpar campo áurico", "Ganho na loteria", "Fechar corpo"], c: 1},
+        {q: "Ponto Riscado?", a: ["Enfeite", "Lugar de dormir", "Assinatura energética e proteção", "Substitui incorporação"], c: 2},
+        {q: "Ponto Cantado?", a: ["Entretenimento", "Evocar energias", "Hino político", "Reza"], c: 1},
+        {q: "Roupa branca?", a: ["Absorver pecados", "Moda", "Uniforme", "Pureza e neutralidade"], c: 3},
+        {q: "Bater Cabeça?", a: ["Punição", "Respeito e humildade", "Meditação", "Cumprimento"], c: 1},
+        {q: "Guia de Contas?", a: ["Acessório", "Preço", "Antena sintonizadora", "Isolamento"], c: 2},
+        {q: "Estrutura do terreiro?", a: ["Papa central", "Autonomia por dirigente", "Sem hierarquia", "Controlada por conselhos"], c: 1},
+        {q: "Papel do Cambono?", a: ["Incorporar", "Auxiliar a entidade", "Cobrar", "Tocar tudo"], c: 1},
+        {q: "Máxima da caridade?", a: ["Olho por olho", "Cobrar é força", "Dai de graça", "Ajudar pagantes"], c: 2}
+    ]
+];
+
+let blocoAtual = [];
+let indiceModuloAtual = 0;
+let currentQ = 0, score = 0, streak = 0, timeLeft = 20, timer;
+
+const nomesBlocos = [
+    "Módulo 1: História e Fundamentos",
+    "Módulo 2: Orixás - Fé e Amor",
+    "Módulo 3: Orixás - Conhecimento, Justiça e Lei",
+    "Módulo 4: Orixás - Evolução e Transmutação",
+    "Módulo 5: Linhas de Trabalho - Pretos Velhos, Caboclos e Erês",
+    "Módulo 6: Linhas de Trabalho - Baianos, Boiadeiros e Malandros",
+    "Módulo 7: Linha da Esquerda",
+    "Módulo 8: Rituais, Ervas e Organização"
+];
+
+const selectEl = document.getElementById('module-select');
+nomesBlocos.forEach((nome, index) => {
+    const opt = document.createElement('option');
+    opt.value = index;
+    opt.textContent = nome;
+    selectEl.appendChild(opt);
+});
+
+function confirmarSelecao() {
+    const index = selectEl.value;
+    if (index === "") {
+        alert("Por favor, selecione um módulo.");
+        return;
+    }
+    indiceModuloAtual = parseInt(index);
+    iniciarBloco(indiceModuloAtual);
+}
+
+function iniciarBloco(index) {
+    blocoAtual = blocosDePerguntas[index];
+    currentQ = 0;
+    score = 0;
+    streak = 0;
+    
+    atualizarVelocimetro();
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    loadQuestion();
+}
+
+function voltarAoMenu() {
+    clearInterval(timer);
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'none';
+    document.getElementById('menu-screen').style.display = 'block';
+}
+
+function atualizarVelocimetro() {
+    let totalRespondidas = currentQ;
+    let porcentagem = totalRespondidas === 0 ? 0 : (score / totalRespondidas) * 100;
+    const grausPonteiro = -90 + (porcentagem / 100) * 180;
+    
+    document.getElementById('gauge-fill').style.transform = `rotate(${(porcentagem / 100) * 180}deg)`;
+    document.getElementById('gauge-needle').style.transform = `translateX(-50%) rotate(${grausPonteiro}deg)`;
+    document.getElementById('gauge-text').innerText = Math.round(porcentagem) + "%";
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    if(currentQ >= blocoAtual.length) {
+        finalizarQuiz();
+        return;
+    }
+    
+    timeLeft = 20;
+    document.getElementById('timer-val').innerText = timeLeft + "s";
+    
+    const data = blocoAtual[currentQ];
+    document.getElementById('question').innerText = (currentQ + 1) + ". " + data.q;
+    const opts = document.getElementById('options');
+    opts.innerHTML = '';
+    
+    data.a.forEach((txt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = txt;
+        btn.onclick = () => check(i, btn);
+        opts.appendChild(btn);
+    });
+
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer-val').innerText = timeLeft + "s";
+        if(timeLeft <= 0) check(-1, null);
+    }, 1000);
+}
+
+function check(idx, selectedBtn) {
+    clearInterval(timer);
+    const data = blocoAtual[currentQ];
+    const opts = document.getElementById('options').children;
+
+    for (let btn of opts) {
+        btn.disabled = true;
+    }
+
+    if (idx === data.c) {
+        score++;
+        streak++;
+        if (selectedBtn) selectedBtn.classList.add('correct');
+    } else {
+        streak = 0;
+        if (selectedBtn) selectedBtn.classList.add('wrong');
+        opts[data.c].classList.add('correct');
+    }
+
+    document.getElementById('score-val').innerText = score;
+    document.getElementById('streak-val').innerText = streak;
+    
+    currentQ++;
+    atualizarVelocimetro();
+
+    setTimeout(() => {
+        loadQuestion();
+    }, 1300);
+}
+
+function finalizarQuiz() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    
+    const porcentagemFinal = (score / blocoAtual.length) * 100;
+    document.getElementById('final-score').innerText = `Desempenho Final: ${score} de ${blocoAtual.length} corretas (${Math.round(porcentagemFinal)}%)`;
+    
+    let mensagem = "";
+    if (porcentagemFinal === 100) {
+        mensagem = "Excelente domínio técnico e conceitual do conteúdo avaliado!";
+    } else if (porcentagemFinal >= 70) {
+        mensagem = "Ótimo aproveitamento. Demonstra sólida compreensão dos fundamentos.";
+    } else if (porcentagemFinal >= 40) {
+        mensagem = "Desempenho satisfatório, com margem para revisão de conceitos específicos.";
+    } else {
+        mensagem = "Recomenda-se a revisão do material de estudo para melhor fixação.";
+    }
+    document.getElementById('feedback-msg').innerText = mensagem;
+    
+    // Efeitos visuais dinâmicos por faixa de acerto
+    if (porcentagemFinal === 100) {
+        // Chuva combinada: Explosão forte no centro da tela + cantos laterais
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+
+        // Disparo inicial gigante no centro
+        confetti({
+            particleCount: 100,
+            spread: 360,
+            startVelocity: 30,
+            origin: { x: 0.5, y: 0.5 }
+        });
+
+        // Loop contínuo de reforço lateral e central
+        (function frame() {
+            confetti({
+                particleCount: 4,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0, y: 0.7 }
+            });
+            confetti({
+                particleCount: 4,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1, y: 0.7 }
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+
+    } else if (porcentagemFinal >= 70) {
+        // Confetes normais de celebração para quem atingiu 70% ou mais
+        confetti({
+            particleCount: 120,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+}
+</script>
+</body>
+</html>
