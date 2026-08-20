@@ -301,14 +301,18 @@
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Acompanhe abaixo o desempenho de todos os alunos que responderam aos quizzes (1 ponto por questão correta):</p>
 
+            <input type="text" id="busca-relatorio-quiz" oninput="filtrarResultadosQuiz()" placeholder="Buscar por nome do aluno..."
+                class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brandYellow focus:outline-none mb-4">
+
             <div class="overflow-x-auto flex-1 border border-slate-200 dark:border-darkBlue-700 rounded-lg">
                 <table class="w-full text-left text-sm text-slate-700 dark:text-slate-200">
                     <thead class="bg-slate-100 dark:bg-darkBlue-900 text-xs uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-darkBlue-700">
                         <tr>
                             <th class="px-4 py-3">Aluno</th>
+                            <th class="px-4 py-3">Módulo</th>
+                            <th class="px-4 py-3">Pontuação</th>
+                            <th class="px-4 py-3">Porcentagem</th>
                             <th class="px-4 py-3">Data / Hora</th>
-                            <th class="px-4 py-3">Acertos</th>
-                            <th class="px-4 py-3">Nota Final</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-relatorio-quiz-corpo" class="divide-y divide-slate-200 dark:divide-darkBlue-700"></tbody>
@@ -468,7 +472,7 @@
             createUserWithEmailAndPassword, sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
         import {
-            getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, serverTimestamp
+            getFirestore, collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
         } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -493,7 +497,7 @@
             initializeApp, deleteApp, getAuth, getFirestore,
             signInWithEmailAndPassword, signOut, onAuthStateChanged,
             createUserWithEmailAndPassword, sendPasswordResetEmail,
-            collection, doc, setDoc, getDoc, getDocs, updateDoc, serverTimestamp
+            collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
         };
 
         window.dispatchEvent(new Event('firebase-ready'));
@@ -1916,28 +1920,65 @@
             renderizarAvisos();
         }
 
+        let resultadosQuizCache = [];
+
         function abrirModalRelatorioQuiz() {
+            document.getElementById('busca-relatorio-quiz').value = '';
             atualizarTabelaRelatorioQuizAdmin();
             document.getElementById('manage-quiz-scores-modal').classList.remove('hidden');
         }
         function fecharModalRelatorioQuiz() { document.getElementById('manage-quiz-scores-modal').classList.add('hidden'); }
 
-        function atualizarTabelaRelatorioQuizAdmin() {
+        async function atualizarTabelaRelatorioQuizAdmin() {
             const tbody = document.getElementById('tabela-relatorio-quiz-corpo');
-            if (historicoQuizzes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-400 text-xs">Nenhum registro de quiz encontrado.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-slate-400 text-xs">Carregando...</td></tr>`;
+
+            try {
+                const q = window.fb.query(window.fb.collection(db, 'resultadosQuiz'), window.fb.orderBy('dataHora', 'desc'));
+                const snap = await window.fb.getDocs(q);
+                resultadosQuizCache = snap.docs.map(d => d.data());
+            } catch (err) {
+                console.error('Erro ao carregar resultados dos quizzes:', err);
+                resultadosQuizCache = [];
+            }
+
+            renderizarLinhasRelatorioQuiz(resultadosQuizCache);
+        }
+
+        function filtrarResultadosQuiz() {
+            const termo = document.getElementById('busca-relatorio-quiz').value.trim().toLowerCase();
+            if (!termo) {
+                renderizarLinhasRelatorioQuiz(resultadosQuizCache);
+                return;
+            }
+            const filtrados = resultadosQuizCache.filter(reg => (reg.nome || '').toLowerCase().includes(termo));
+            renderizarLinhasRelatorioQuiz(filtrados, termo);
+        }
+
+        function renderizarLinhasRelatorioQuiz(lista, termoBuscado) {
+            const tbody = document.getElementById('tabela-relatorio-quiz-corpo');
+
+            if (lista.length === 0) {
+                const mensagem = termoBuscado
+                    ? `Nenhum resultado encontrado para "${termoBuscado}".`
+                    : 'Nenhum registro de quiz encontrado.';
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-slate-400 text-xs">${mensagem}</td></tr>`;
                 return;
             }
 
             let html = '';
-            const historicoOrdenado = [...historicoQuizzes].reverse();
-            historicoOrdenado.forEach(reg => {
+            lista.forEach(reg => {
+                const dataFormatada = reg.dataHora && typeof reg.dataHora.toDate === 'function'
+                    ? reg.dataHora.toDate().toLocaleString('pt-BR')
+                    : '—';
+                const porcentagem = reg.porcentagem ?? Math.round((reg.pontuacao / reg.totalPerguntas) * 100);
                 html += `
                     <tr>
-                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${reg.nomeAluno}<br><span class="text-xs text-slate-400">${reg.emailAluno}</span></td>
-                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${reg.modulo ? reg.modulo + '<br>' : ''}${reg.data}</td>
-                        <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${reg.acertos} / ${reg.total || 5}</td>
-                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${(reg.acertos / (reg.total || 5)) >= 0.7 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
+                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${reg.nome}</td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${reg.modulo}</td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${reg.pontuacao} / ${reg.totalPerguntas}</td>
+                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${porcentagem >= 70 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${porcentagem}%</span></td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${dataFormatada}</td>
                     </tr>
                 `;
             });
@@ -2208,7 +2249,7 @@
             }, 1300);
         }
 
-        function finalizarQuizModulo() {
+        async function finalizarQuizModulo() {
             document.getElementById('quiz-play-screen').classList.add('hidden');
             document.getElementById('quiz-result-screen').classList.remove('hidden');
 
@@ -2241,6 +2282,21 @@
                 localStorage.setItem('portal_historico_quizzes', JSON.stringify(historicoQuizzes));
                 if (!usuarioAtual.isAdmin) {
                     renderizarTabelaHistoricoAluno(usuarioAtual);
+                }
+
+                // Registro definitivo no Firestore (histórico completo, uma tentativa = um documento novo).
+                try {
+                    await window.fb.addDoc(window.fb.collection(db, 'resultadosQuiz'), {
+                        uid: usuarioAtual.uid,
+                        nome: usuarioAtual.nome,
+                        modulo: nomesBlocosQuiz[quizIndiceModuloAtual],
+                        pontuacao: quizScore,
+                        totalPerguntas: total,
+                        porcentagem: Math.round(porcentagemFinal),
+                        dataHora: window.fb.serverTimestamp()
+                    });
+                } catch (err) {
+                    console.error('Erro ao salvar resultado do quiz no Firestore:', err);
                 }
             }
 
