@@ -1319,7 +1319,50 @@
                 tag: 'Quiz Interativo',
                 tagNeon: 'neon-badge-yellow',
                 aulas: {
-                    '1 - Quiz Interativo': `<div class="max-w-xl mx-auto"><h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow text-center mb-4">Quiz de Espiritualidade</h3><div id="quizContainer"></div><div id="results" class="mt-4"></div></div>`
+                    '1 - Quiz Interativo': `<div class="max-w-xl mx-auto" id="quiz-umbanda-root">
+                        <div id="quiz-menu-screen" class="text-center">
+                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-1">Avaliação de Conhecimento</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Escolha um módulo temático para iniciar o quiz.</p>
+                            <div class="mb-6 text-left">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Módulo de Conhecimento</label>
+                                <select id="quiz-module-select" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors">
+                                    <option value="" disabled selected>Escolha um módulo para iniciar...</option>
+                                </select>
+                            </div>
+                            <button onclick="confirmarSelecaoQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Iniciar Avaliação</button>
+                        </div>
+
+                        <div id="quiz-play-screen" class="hidden">
+                            <div class="grid grid-cols-3 gap-3 mb-5">
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Pontuação</span>
+                                    <span id="quiz-score-val" class="block text-lg font-bold text-slate-900 dark:text-white mt-0.5">0</span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Sequência</span>
+                                    <span id="quiz-streak-val" class="block text-lg font-bold text-amber-600 dark:text-brandYellow mt-0.5">0</span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Tempo</span>
+                                    <span id="quiz-timer-val" class="block text-lg font-bold text-red-600 dark:text-red-400 mt-0.5">20s</span>
+                                </div>
+                            </div>
+
+                            <div id="quiz-question" class="font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed">Carregando...</div>
+                            <div id="quiz-options"></div>
+
+                            <button onclick="voltarAoMenuQuiz()" class="w-full mt-4 py-2.5 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg text-xs transition">Interromper e Voltar ao Menu</button>
+                        </div>
+
+                        <div id="quiz-result-screen" class="hidden text-center">
+                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-4">Avaliação Concluída</h3>
+                            <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 border-l-4 border-l-brandYellow rounded-r-lg p-5 mb-6 text-left">
+                                <p id="quiz-final-score" class="text-base font-bold text-slate-900 dark:text-white mb-1"></p>
+                                <p id="quiz-feedback-msg" class="text-sm font-medium text-slate-700 dark:text-slate-300"></p>
+                            </div>
+                            <button onclick="iniciarQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Selecionar Outro Módulo</button>
+                        </div>
+                    </div>`
                 }
             }
         };
@@ -1400,9 +1443,9 @@
             registrosDoAluno.forEach((reg, idx) => {
                 html += `
                     <tr>
-                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">Tentativa ${idx + 1} <span class="block text-xs text-slate-400">${reg.data}</span></td>
-                        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">${reg.acertos} / 5</td>
-                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${reg.acertos >= 4 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
+                        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${reg.modulo || ('Tentativa ' + (idx + 1))} <span class="block text-xs text-slate-400">${reg.data}</span></td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">${reg.acertos} / ${reg.total || 5}</td>
+                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${(reg.acertos / (reg.total || 5)) >= 0.7 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
                     </tr>
                 `;
             });
@@ -1892,9 +1935,9 @@
                 html += `
                     <tr>
                         <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${reg.nomeAluno}<br><span class="text-xs text-slate-400">${reg.emailAluno}</span></td>
-                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${reg.data}</td>
-                        <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${reg.acertos} / 5</td>
-                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${reg.acertos >= 4 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300 text-xs">${reg.modulo ? reg.modulo + '<br>' : ''}${reg.data}</td>
+                        <td class="px-4 py-3 text-slate-700 dark:text-slate-200">${reg.acertos} / ${reg.total || 5}</td>
+                        <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${(reg.acertos / (reg.total || 5)) >= 0.7 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-brandYellow'}">${reg.acertos} Ponto(s)</span></td>
                     </tr>
                 `;
             });
@@ -1929,128 +1972,270 @@
             }
         }
 
-        const bancoCompleto = [
-            { id: 1, p: 'Em que ano e país a Umbanda foi fundada?', r: ['1908, Brasil', '1888, Portugal', '1930, Argentina'], c: '1908, Brasil' },
-            { id: 2, p: 'Quem manifestou a Umbanda pela primeira vez?', r: ['Pai João', 'Caboclo das Sete Encruzilhadas', 'Tranca Rua'], c: 'Caboclo das Sete Encruzilhadas' },
-            { id: 3, p: 'Qual o lema da Umbanda?', r: ['Olho por olho', 'Caridade', 'Culto ao dinheiro'], c: 'Caridade' },
-            { id: 4, p: 'Qual Orixá rege a paz e usa branco?', r: ['Oxalá', 'Ogum', 'Xangô'], c: 'Oxalá' },
-            { id: 5, p: 'Quem rege as matas?', r: ['Oxóssi', 'Ogum', 'Iansã'], c: 'Oxóssi' },
-            { id: 6, p: 'Qual Orixá é sincretizado com São Jorge?', r: ['Ogum', 'Xangô', 'Omulú'], c: 'Ogum' },
-            { id: 7, p: 'O que significa Axé?', r: ['Força vital', 'Tristeza', 'Algo ruim'], c: 'Força vital' },
-            { id: 8, p: 'O que faz um Ogã?', r: ['Toca atabaque', 'Cobra caro', 'Não faz nada'], c: 'Toca atabaque' },
-            { id: 9, p: 'Quem rege os rios e o amor?', r: ['Oxum', 'Iemanjá', 'Nanã'], c: 'Oxum' },
-            { id: 10, p: 'O que são Erês?', r: ['Espíritos infantis', 'Velhos', 'Guerreiros'], c: 'Espíritos infantis' }
+        const blocosDePerguntasQuiz = [
+            // Bloco 1: História e Fundamentos
+            [
+                {q: "Quem é considerado o fundador da Umbanda, manifestando o Caboclo das Sete Encruzilhadas em 1908?", a: ["Pai Benedito", "Zélio Fernandino de Moraes", "Allan Kardec", "Chico Xavier"], c: 1},
+                {q: "A Umbanda é uma religião brasileira que se define principalmente como:", a: ["Uma religião de síntese", "Monoteísta estrita", "Um braço exclusivo do Candomblé", "Uma seita secreta"], c: 0},
+                {q: "Em que data oficial ocorreu a proclamação da Umbanda no Rio de Janeiro?", a: ["13 de maio de 1888", "20 de novembro de 1910", "15 de novembro de 1908", "07 de setembro de 1922"], c: 2},
+                {q: "Qual é o princípio teológico fundamental que diferencia a Umbanda?", a: ["A crença na reencarnação apenas dos índios", "A proibição do uso de ervas e velas", "A adoração exclusiva a entidades da esquerda", "A manifestação de espíritos para a caridade e a crença em Deus e nos Orixás"], c: 3},
+                {q: "O que significa a palavra 'Umbanda' na etimologia mais aceita?", a: ["Arte de curar com ervas", "Conjunto de leis divinas ou 'arte de curar'", "Dança sagrada aos antepassados", "Caminho dos mortos"], c: 1},
+                {q: "Qual entidade se apresentou na fundação da Umbanda?", a: ["Caboclo das Sete Encruzilhadas", "Pai João de Aruanda", "Exu Tranca Rua", "Pai Joaquim"], c: 0},
+                {q: "Como a Umbanda enxerga a figura de Jesus Cristo?", a: ["Apenas como um líder político histórico", "Como uma entidade de esquerda", "Como o Maior Guia da Humanidade, associado a Oxalá", "Como um profeta menor"], c: 2},
+                {q: "Qual é a principal ferramenta de trabalho espiritual utilizada nos terreiros?", a: ["O uso exclusivo de cartas de tarô", "A mediunidade de incorporação", "A leitura de mãos", "O isolamento total em mosteiros"], c: 1},
+                {q: "O sincretismo religioso na Umbanda surgiu historicamente devido a quê?", a: ["À proibição e perseguição às religiões de matriz africana", "Ao fato de os Orixás serem santos católicos", "À imposição do espiritismo kardecista", "A uma exigência do governo imperial"], c: 0},
+                {q: "Qual é a base fundamental da prática mediúnica na Umbanda?", a: ["O lucro financeiro", "O controle absoluto de energias", "A caridade espiritual e material", "A realização de rituais de isolamento"], c: 2}
+            ],
+            // Bloco 2: Orixás - Fé e Amor
+            [
+                {q: "Na teologia de Umbanda, como os Orixás são primariamente compreendidos?", a: ["Deuses gregos", "Irradiações divinas de Deus e da natureza", "Espíritos comuns", "Anjos caídos"], c: 1},
+                {q: "Qual Orixá rege a linha da Fé (Senhor do Bonfim)?", a: ["Oxalá", "Xangô", "Ogum", "Oxóssi"], c: 0},
+                {q: "Qual Orixá rege a linha do Amor (Nossa Senhora da Conceição)?", a: ["Iansã", "Iemanjá", "Oxum", "Nanã"], c: 2},
+                {q: "Quais são as cores tradicionalmente associadas a Oxalá?", a: ["Vermelho e preto", "Verde e amarelo", "Branco", "Roxo e dourado"], c: 2},
+                {q: "Qual é o principal elemento da natureza consagrado a Oxum?", a: ["Pedreiras", "Mar aberto", "Matas fechadas", "Cachoeiras"], c: 3},
+                {q: "Qual Orixá feminino é associado ao ouro e à riqueza espiritual?", a: ["Oxum", "Iemanjá", "Egunitá", "Iansã"], c: 0},
+                {q: "O que representa a linha de Oxalá nos Sete Tronos?", a: ["Justiça", "Fé e religiosidade humana", "Guerra", "Morte"], c: 1},
+                {q: "Qual saudação é comumente utilizada para Oxalá?", a: ["Êpa Êpa Babá!", "Oriô!", "Salve a força divina!", "Oke Arô!"], c: 0},
+                {q: "Qual vibração rege sentimentos de união e doçura?", a: ["Ogum", "Exu", "Oxum e Oxalá", "Omolu"], c: 2},
+                {q: "Qual o papel litúrgico das velas brancas para Oxalá?", a: ["Afastar entidades", "Trazer dinheiro", "Queimar oferendas animais", "Conexão de paz e pureza de intenção"], c: 3}
+            ],
+            // Bloco 3: Orixás - Conhecimento, Justiça e Lei
+            [
+                {q: "Qual Orixá é o senhor das matas e expansão mental?", a: ["Xangô", "Oxóssi", "Ogum", "Omolu"], c: 1},
+                {q: "Qual a cor e elemento de Oxóssi?", a: ["Vermelho/Fogo", "Azul/Mar", "Verde/Matas", "Amarelo/Ouro"], c: 2},
+                {q: "Qual Orixá rege a Justiça Divina (pedreiras)?", a: ["Xangô", "Ogum", "Oxalufã", "Exu"], c: 0},
+                {q: "Qual a saudação ritualística de Oxóssi?", a: ["Kaô Kabecilê!", "Patacori Ogum!", "Okê Arô!", "Eparrei Iansã!"], c: 2},
+                {q: "Qual Orixá é senhor dos caminhos e da tecnologia?", a: ["Xangô", "Ogum", "Oxumaré", "Logunedé"], c: 1},
+                {q: "Qual a cor clássica de Ogum (São Jorge)?", a: ["Branco", "Marrom", "Azul escuro ou Verde", "Preto e vermelho"], c: 2},
+                {q: "Qual a saudação sagrada de Xangô?", a: ["Atotô Obaluayê!", "Kaô Kabecilê!", "Òrìshà ô!", "Laroyê Exu!"], c: 1},
+                {q: "Qual Orixá comanda falanges de cura e lei de demanda positiva?", a: ["Oxóssi", "Iemanjá", "Nanã", "Ogum"], c: 3},
+                {q: "Na linha do Conhecimento, o que simboliza Oxóssi?", a: ["Riquezas materiais", "Busca pelo saber divino e sustento da alma", "Destruição da natureza", "Punição aos ignorantes"], c: 1},
+                {q: "Como Xangô atua na vida espiritual?", a: ["Sorte no jogo", "Justiça com base no mérito e ações", "Desavenças familiares", "Impedindo estudo"], c: 1}
+            ],
+            // Bloco 4: Orixás - Evolução e Transmutação
+            [
+                {q: "Qual Orixá rege a Evolução, cura profunda e saúde?", a: ["Oxumaré", "Omolu/Obaluayê", "Xangô", "Ogum"], c: 1},
+                {q: "Qual Orixá feminino está associado aos ventos e raios?", a: ["Iemanjá", "Nanã", "Iansã", "Oxum"], c: 2},
+                {q: "Qual a saudação tradicional de Iansã?", a: ["Odoyá!", "Eparrei Oyá!", "Saluba Nanã!", "Atotô!"], c: 1},
+                {q: "Campo de atuação de Omolu/Obaluayê?", a: ["O mar", "Cemitérios e cura", "Céus", "Fogo"], c: 1},
+                {q: "Qual Orixá é a matriarca ancestral (lama primordial)?", a: ["Nanã", "Iemanjá", "Oxum", "Iansã"], c: 0},
+                {q: "Saudação de Nanã Buruquê?", a: ["Arroboboi", "Saluba Nanã!", "Êpa Êpa", "Ketuê!"], c: 1},
+                {q: "Qual Orixá rege a renovação, serpente e arco-íris?", a: ["Omolu", "Logunedé", "Oxumaré", "Xangô"], c: 2},
+                {q: "Como a Transmutação atua nos descarregos?", a: ["Causando medo", "Eliminando energias densas", "Bloqueando livre-arbítrio", "Cirurgias plásticas"], c: 1},
+                {q: "Qual Orixá é a Grande Mãe, rainha dos mares?", a: ["Oxum", "Nanã", "Iansã", "Iemanjá"], c: 3},
+                {q: "Saudação de Iemanjá?", a: ["Odoyá!", "Eparrei", "Kaô", "Atotô"], c: 0}
+            ],
+            // Bloco 5: Linhas de Trabalho - Pretos Velhos, Caboclos e Erês
+            [
+                {q: "Quem são os Caboclos?", a: ["Europeus colonizadores", "Guerreiros indígenas e caboclos", "Divindades menores", "Crianças"], c: 1},
+                {q: "Característica dos Pretos Velhos?", a: ["Agitação", "Armas de fogo", "Serenidade e sabedoria", "Cobrança"], c: 2},
+                {q: "O que representam os Erês?", a: ["Espíritos zombeteiros", "Energia da alegria e pureza", "Entidades maldosas", "Larvas astrais"], c: 1},
+                {q: "Saudação dos Pretos Velhos?", a: ["Laroyê", "Saravá!", "Okê", "Eparrei"], c: 1},
+                {q: "Bebida associada aos Pretos Velhos?", a: ["Refrigerantes", "Café", "Cerveja preta", "Champanhe"], c: 1},
+                {q: "Elementos associados aos Erês?", a: ["Charutos", "Doces e guaraná", "Velas pretas", "Sal grosso"], c: 1},
+                {q: "Como Caboclos atuam nos passes?", a: ["Cirurgias plásticas", "Tarô", "Ervas e passes magnéticos", "Apenas pontos cantados"], c: 2},
+                {q: "Origem histórica dos Pretos Velhos?", a: ["Reis europeus", "Cientistas", "Escravizados africanos", "Sacerdotes maias"], c: 2},
+                {q: "Por que Pretos Velhos atendem sentados?", a: ["Falta de educação", "Viagem astral", "Evitar o futuro", "Simbolismo de humildade e cansaço"], c: 3},
+                {q: "Saudação típica dos Caboclos?", a: ["Salve as Almas", "Okê, Caboclo!", "Laroyê", "Atotô"], c: 1}
+            ],
+            // Bloco 6: Linhas de Trabalho - Baianos, Boiadeiros, Marinheiros e Malandros
+            [
+                {q: "Principal característica dos Baianos?", a: ["Magia negra", "Alegria e conselhos práticos", "Intelectuais", "Silêncio absoluto"], c: 1},
+                {q: "O que representam os Boiadeiros?", a: ["Entidades marinhas", "Vaqueiros que laçam demandas", "Crianças", "Médicos"], c: 1},
+                {q: "Campo de atuação dos Marinheiros?", a: ["Contabilidade", "Fogo", "Equilíbrio emocional", "Agricultura"], c: 2},
+                {q: "Como atuam os Malandros?", a: ["Crimes", "Taxas abusivas", "Ignorância", "Ajuda moral com malandragem do bem"], c: 3},
+                {q: "Elementos dos Boiadeiros?", a: ["Chapéu de couro e chicote", "Perfumes franceses", "Mamadeiras", "Velas brancas"], c: 0},
+                {q: "Bebida/Vestimenta dos Marinheiros?", a: ["Vinho e capa preta", "Rum e azul/branco", "Cerveja", "Café"], c: 1},
+                {q: "De onde vêm os Baianos?", a: ["Sul", "Sudeste", "Nordeste", "Amazônia"], c: 2},
+                {q: "Visão sobre Zé Pelintra?", a: ["Demônio", "Arquétipo fictício", "Mentor de Oxalá", "Espírito de luz em resgate"], c: 3},
+                {q: "Como Boiadeiros se manifestam?", a: ["Estalos de chicote e brados", "Marchas rígidas", "Choro", "Rodando sem parar"], c: 0},
+                {q: "Lição moral dos Baianos/Malandros?", a: ["Sofrimento", "Dinheiro", "Segredo", "Alegria e dignidade na adversidade"], c: 3}
+            ],
+            // Bloco 7: Linha da Esquerda
+            [
+                {q: "Quem são os Exus?", a: ["Demônios", "Guardiões da Lei", "Animais", "Anjos caídos"], c: 1},
+                {q: "Papel das Pombagiras?", a: ["Separar casais", "Espíritos subalternos", "Guardiãs dos caminhos e autoestima", "Guias de batizado"], c: 2},
+                {q: "Característica dos Exus Mirins?", a: ["Crianças encarnadas", "Seres de baixa vibração", "Lenda", "Corte de magias complexas"], c: 3},
+                {q: "Saudação dos Exus?", a: ["Okê", "Laroyê!", "Atotô", "Patacori"], c: 1},
+                {q: "Saudação das Pombagiras?", a: ["Eparrei", "Laroyê!", "Odoyá", "Kaô"], c: 1},
+                {q: "Por que trabalham em encruzilhadas?", a: ["Assustar", "Pontos de força magnética", "Não entram no templo", "Perseguição"], c: 1},
+                {q: "Cores e elementos de Exus?", a: ["Branco", "Verde e amarelo", "Azul", "Vermelho e preto"], c: 3},
+                {q: "Elementos das Pombagiras?", a: ["Velas brancas", "Cerveja", "Rosas vermelhas e champanhe", "Chá"], c: 2},
+                {q: "Diferença Exu vs Diabo?", a: ["Nenhuma", "Exu é da Lei, Diabo é o mal absoluto", "Exu superior", "Diabo é Orixá"], c: 1},
+                {q: "Função do despacho?", a: ["Subornar", "Agradecer e renovar energia", "Pagar dívidas", "Livrar de consultas"], c: 1}
+            ],
+            // Bloco 8: Rituais, Ervas e Organização do Terreiro
+            [
+                {q: "Função da Defumação?", a: ["Purificar ambientes", "Aromatizar", "Afugentar Orixás", "Limpeza física"], c: 0},
+                {q: "Banhos de ervas?", a: ["Cura instantânea", "Limpar campo áurico", "Ganho na loteria", "Fechar corpo"], c: 1},
+                {q: "Ponto Riscado?", a: ["Enfeite", "Lugar de dormir", "Assinatura energética e proteção", "Substitui incorporação"], c: 2},
+                {q: "Ponto Cantado?", a: ["Entretenimento", "Evocar energias", "Hino político", "Reza"], c: 1},
+                {q: "Roupa branca?", a: ["Absorver pecados", "Moda", "Uniforme", "Pureza e neutralidade"], c: 3},
+                {q: "Bater Cabeça?", a: ["Punição", "Respeito e humildade", "Meditação", "Cumprimento"], c: 1},
+                {q: "Guia de Contas?", a: ["Acessório", "Preço", "Antena sintonizadora", "Isolamento"], c: 2},
+                {q: "Estrutura do terreiro?", a: ["Papa central", "Autonomia por dirigente", "Sem hierarquia", "Controlada por conselhos"], c: 1},
+                {q: "Papel do Cambono?", a: ["Incorporar", "Auxiliar a entidade", "Cobrar", "Tocar tudo"], c: 1},
+                {q: "Máxima da caridade?", a: ["Olho por olho", "Cobrar é força", "Dai de graça", "Ajudar pagantes"], c: 2}
+            ]
         ];
 
-        let questoesAtuais = [];
-        let indiceAtual = 0;
-        let respostasUsuario = [];
+        const nomesBlocosQuiz = [
+            "Módulo 1: História e Fundamentos",
+            "Módulo 2: Orixás - Fé e Amor",
+            "Módulo 3: Orixás - Conhecimento, Justiça e Lei",
+            "Módulo 4: Orixás - Evolução e Transmutação",
+            "Módulo 5: Linhas de Trabalho - Pretos Velhos, Caboclos e Erês",
+            "Módulo 6: Linhas de Trabalho - Baianos, Boiadeiros e Malandros",
+            "Módulo 7: Linha da Esquerda",
+            "Módulo 8: Rituais, Ervas e Organização"
+        ];
+
+        let quizBlocoAtual = [];
+        let quizIndiceModuloAtual = 0;
+        let quizCurrentQ = 0, quizScore = 0, quizStreak = 0, quizTimeLeft = 20, quizTimer;
 
         function iniciarQuiz() {
-            const containerQuiz = document.getElementById('quizContainer');
-            if (!containerQuiz) return;
+            const raiz = document.getElementById('quiz-umbanda-root');
+            if (!raiz) return;
 
-            questoesAtuais = [...bancoCompleto].sort(() => 0.5 - Math.random()).slice(0, 5);
-            indiceAtual = 0;
-            respostasUsuario = [];
-            const resultsEl = document.getElementById('results');
-            if (resultsEl) {
-                resultsEl.style.display = 'none';
-                resultsEl.innerHTML = '';
-            }
-            mostrarQuestao();
+            const selectEl = document.getElementById('quiz-module-select');
+            selectEl.innerHTML = '<option value="" disabled selected>Escolha um módulo para iniciar...</option>';
+            nomesBlocosQuiz.forEach((nome, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = nome;
+                selectEl.appendChild(opt);
+            });
+
+            document.getElementById('quiz-menu-screen').classList.remove('hidden');
+            document.getElementById('quiz-play-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
         }
 
-        function mostrarQuestao() {
-            const container = document.getElementById('quizContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (indiceAtual < questoesAtuais.length) {
-                const item = questoesAtuais[indiceAtual];
-                const div = document.createElement('div');
-                div.className = 'bg-slate-50 dark:bg-darkBlue-900 border-l-4 border-amber-500 dark:border-brandYellow rounded-xl p-4 mb-4 shadow-sm';
-
-                const progresso = document.createElement('div');
-                progresso.className = 'text-center font-bold text-slate-500 dark:text-slate-400 mb-3 text-xs uppercase';
-                progresso.innerText = `Pergunta ${indiceAtual + 1} de 5`;
-                container.appendChild(progresso);
-
-                const pPergunta = document.createElement('p');
-                pPergunta.className = 'font-medium text-slate-800 dark:text-slate-200 mb-3';
-                pPergunta.innerText = item.p;
-                div.appendChild(pPergunta);
-
-                const respostasEmbaralhadas = [...item.r].sort(() => 0.5 - Math.random());
-                respostasEmbaralhadas.forEach(res => {
-                    const label = document.createElement('label');
-                    label.className = 'block my-2 cursor-pointer p-2.5 rounded-lg border border-slate-200 dark:border-darkBlue-700 bg-white dark:bg-darkBlue-800 hover:bg-amber-50 dark:hover:bg-darkBlue-700/50 text-sm text-slate-700 dark:text-slate-300 transition';
-
-                    const input = document.createElement('input');
-                    input.type = 'radio';
-                    input.name = 'perguntaAtual';
-                    input.value = res;
-                    input.className = 'mr-2 accent-amber-500';
-
-                    label.appendChild(input);
-                    label.append(res);
-                    div.appendChild(label);
-                });
-
-                container.appendChild(div);
-
-                const btn = document.createElement('button');
-                btn.className = 'w-full mt-2 py-3 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold rounded-lg text-sm transition shadow';
-                btn.innerText = indiceAtual === questoesAtuais.length - 1 ? 'Finalizar e Ver Resultado' : 'Próxima Pergunta';
-                btn.onclick = avancarProxima;
-                container.appendChild(btn);
-            } else {
-                exibirResultadoFinal();
+        function confirmarSelecaoQuiz() {
+            const selectEl = document.getElementById('quiz-module-select');
+            const index = selectEl.value;
+            if (index === "") {
+                alert("Por favor, selecione um módulo.");
+                return;
             }
+            quizIndiceModuloAtual = parseInt(index);
+            iniciarBlocoQuiz(quizIndiceModuloAtual);
         }
 
-        function avancarProxima() {
-            const selecionada = document.querySelector('input[name="perguntaAtual"]:checked');
-            if (!selecionada) {
-                alert('Por favor, selecione uma resposta antes de continuar.');
+        function iniciarBlocoQuiz(index) {
+            quizBlocoAtual = blocosDePerguntasQuiz[index];
+            quizCurrentQ = 0;
+            quizScore = 0;
+            quizStreak = 0;
+
+            document.getElementById('quiz-menu-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-play-screen').classList.remove('hidden');
+            carregarPerguntaQuiz();
+        }
+
+        function voltarAoMenuQuiz() {
+            clearInterval(quizTimer);
+            document.getElementById('quiz-play-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-menu-screen').classList.remove('hidden');
+        }
+
+        function carregarPerguntaQuiz() {
+            clearInterval(quizTimer);
+            if (quizCurrentQ >= quizBlocoAtual.length) {
+                finalizarQuizModulo();
                 return;
             }
 
-            const itemAtual = questoesAtuais[indiceAtual];
-            respostasUsuario.push({
-                p: itemAtual.p,
-                certa: itemAtual.c,
-                marcada: selecionada.value
+            quizTimeLeft = 20;
+            document.getElementById('quiz-timer-val').innerText = quizTimeLeft + "s";
+
+            const data = quizBlocoAtual[quizCurrentQ];
+            document.getElementById('quiz-question').innerText = (quizCurrentQ + 1) + ". " + data.q;
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+
+            data.a.forEach((txt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'block w-full text-left px-4 py-3 my-2 rounded-lg border border-slate-300 dark:border-darkBlue-700 bg-white dark:bg-darkBlue-800 text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-100 dark:hover:bg-darkBlue-700/60 hover:border-amber-500 dark:hover:border-brandYellow transition shadow-sm';
+                btn.innerText = txt;
+                btn.onclick = () => verificarRespostaQuiz(i, btn);
+                opts.appendChild(btn);
             });
 
-            indiceAtual++;
-            mostrarQuestao();
+            quizTimer = setInterval(() => {
+                quizTimeLeft--;
+                document.getElementById('quiz-timer-val').innerText = quizTimeLeft + "s";
+                if (quizTimeLeft <= 0) verificarRespostaQuiz(-1, null);
+            }, 1000);
         }
 
-        function exibirResultadoFinal() {
-            const container = document.getElementById('quizContainer');
-            if (!container) return;
-            container.innerHTML = '';
+        function verificarRespostaQuiz(idx, selectedBtn) {
+            clearInterval(quizTimer);
+            const data = quizBlocoAtual[quizCurrentQ];
+            const opts = document.getElementById('quiz-options').children;
 
-            let acertos = 0;
-            let htmlResult = "<div class='space-y-2 mt-4 text-sm'>";
+            for (const btn of opts) {
+                btn.disabled = true;
+            }
 
-            respostasUsuario.forEach((res, index) => {
-                if (res.marcada === res.certa) {
-                    acertos++;
-                    htmlResult += `<div class="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300"><strong>${index + 1}. ${res.p}</strong><br>Correta: ${res.marcada}</div>`;
-                } else {
-                    htmlResult += `<div class="p-3 rounded-lg bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-300"><strong>${index + 1}. ${res.p}</strong><br>Você marcou: ${res.marcada}<br><strong>Resposta correta: ${res.certa}</strong></div>`;
+            if (idx === data.c) {
+                quizScore++;
+                quizStreak++;
+                if (selectedBtn) {
+                    selectedBtn.classList.remove('bg-white', 'dark:bg-darkBlue-800');
+                    selectedBtn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
                 }
-            });
-            htmlResult += '</div>';
+            } else {
+                quizStreak = 0;
+                if (selectedBtn) {
+                    selectedBtn.classList.remove('bg-white', 'dark:bg-darkBlue-800');
+                    selectedBtn.classList.add('bg-red-500', 'text-white', 'border-red-500');
+                }
+                opts[data.c].classList.remove('bg-white', 'dark:bg-darkBlue-800');
+                opts[data.c].classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
+            }
+
+            document.getElementById('quiz-score-val').innerText = quizScore;
+            document.getElementById('quiz-streak-val').innerText = quizStreak;
+
+            quizCurrentQ++;
+
+            setTimeout(() => {
+                carregarPerguntaQuiz();
+            }, 1300);
+        }
+
+        function finalizarQuizModulo() {
+            document.getElementById('quiz-play-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+
+            const total = quizBlocoAtual.length;
+            const porcentagemFinal = (quizScore / total) * 100;
+            document.getElementById('quiz-final-score').innerText = `Desempenho: ${quizScore} de ${total} corretas (${Math.round(porcentagemFinal)}%)`;
+
+            let mensagem = "";
+            if (porcentagemFinal === 100) {
+                mensagem = "Excelente domínio técnico e conceitual do conteúdo avaliado!";
+            } else if (porcentagemFinal >= 70) {
+                mensagem = "Ótimo aproveitamento. Demonstra sólida compreensão dos fundamentos.";
+            } else if (porcentagemFinal >= 40) {
+                mensagem = "Desempenho satisfatório, com margem para revisão de conceitos específicos.";
+            } else {
+                mensagem = "Recomenda-se a revisão do material de estudo para melhor fixação.";
+            }
+            document.getElementById('quiz-feedback-msg').innerText = mensagem;
 
             if (usuarioAtual) {
                 const dataAtual = new Date().toLocaleString('pt-BR');
                 historicoQuizzes.push({
                     emailAluno: usuarioAtual.email,
                     nomeAluno: usuarioAtual.nome,
-                    acertos: acertos,
+                    modulo: nomesBlocosQuiz[quizIndiceModuloAtual],
+                    acertos: quizScore,
+                    total: total,
                     data: dataAtual
                 });
                 localStorage.setItem('portal_historico_quizzes', JSON.stringify(historicoQuizzes));
@@ -2059,23 +2244,42 @@
                 }
             }
 
-            if (acertos === 5 && typeof confetti === 'function') {
+            if (porcentagemFinal === 100 && typeof confetti === 'function') {
+                const duration = 3 * 1000;
+                const end = Date.now() + duration;
+
+                confetti({
+                    particleCount: 100,
+                    spread: 360,
+                    startVelocity: 30,
+                    origin: { x: 0.5, y: 0.5 }
+                });
+
+                (function frame() {
+                    confetti({
+                        particleCount: 4,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0, y: 0.7 }
+                    });
+                    confetti({
+                        particleCount: 4,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1, y: 0.7 }
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                })();
+            } else if (porcentagemFinal >= 70 && typeof confetti === 'function') {
                 confetti({
                     particleCount: 120,
-                    spread: 80,
+                    spread: 70,
                     origin: { y: 0.6 }
                 });
             }
-
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = `
-                <div class="text-center font-bold text-lg text-slate-800 dark:text-white mb-3">
-                    ${acertos === 5 ? 'Parabéns. Você acertou todas as questões.' : `Você acertou ${acertos} de 5 perguntas.`} (Total: ${acertos} Ponto(s))
-                </div>
-                ${htmlResult}
-                <button onclick="iniciarQuiz()" class="w-full mt-6 py-3 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold rounded-lg text-sm transition shadow">Jogar Novamente</button>
-            `;
         }
     </script>
 </body>
