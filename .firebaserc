@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "portal-de-estudo-ciesl"
-  }
+  },
+  "targets": {
+    "portal-de-estudo-ciesl": {
+      "hosting": {
+        "censo": [
+          "censo-casa-sao-lazaro"
+        ],
+        "portal": [
+          "portal-de-estudo-ciesl"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
