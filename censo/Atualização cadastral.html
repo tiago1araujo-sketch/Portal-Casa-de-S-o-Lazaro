@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Censo Institucional de Médiuns - CIESL</title>
+    <style>
+        :root {
+            --bg-color: #0b132b;         /* Azul Escuro Profundo */
+            --card-bg: #1c2541;          /* Azul Escuro Intermediário para Cards */
+            --card-inner: #0b132b;       /* Fundo interno dos campos */
+            --primary: #ffb703;          /* Amarelo de Destaque */
+            --gold-gradient: linear-gradient(135deg, #ffd166 0%, #f39c12 50%, #d4af37 100%); /* Degradê Dourado */
+            --text-main: #edf2f4;        /* Texto Clara / Branca */
+            --text-muted: #8d99ae;       /* Texto Secundário */
+            --border: #3a506b;           /* Borda em Tom Azul/Cinza */
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            letter-spacing: 0.2px;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 520px; 
+            background: var(--card-bg); 
+            padding: 36px 32px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 183, 3, 0.2); 
+            border-top: 6px solid;
+            border-image: var(--gold-gradient) 1;
+            margin-bottom: 20px;
+        }
+
+        .header { 
+            text-align: center; 
+            margin-bottom: 28px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 20px; 
+        }
+
+        .logo-container { 
+            width: 80px; 
+            height: 80px; 
+            margin: 0 auto 16px auto; 
+            border-radius: 50%; 
+            overflow: hidden; 
+            background: transparent; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border-radius: 50%; 
+        }
+
+        h1 { 
+            font-size: 1.35rem; 
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700; 
+            margin-bottom: 6px; 
+            letter-spacing: 0.3px;
+        }
+
+        .subtitle { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            line-height: 1.4; 
+        }
+
+        .section-title { 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin: 24px 0 12px 0; 
+            padding-bottom: 6px; 
+            border-bottom: 1px solid var(--border); 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+        }
+
+        .form-group { 
+            margin-bottom: 18px; 
+        }
+
+        label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            font-size: 0.88rem; 
+            color: var(--text-main); 
+        }
+
+        input[type="text"], input[type="tel"], input[type="email"], select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            font-size: 0.95rem; 
+            background: var(--card-inner); 
+            color: var(--text-main); 
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.15); 
+        }
+
+        .checkbox-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-top: 6px; 
+            background: var(--card-inner); 
+            padding: 14px; 
+            border-radius: 10px; 
+            border: 1px solid var(--border); 
+        }
+
+        .checkbox-label { 
+            display: flex; 
+            align-items: center; 
+            font-weight: normal; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            color: var(--text-main); 
+            user-select: none;
+        }
+
+        .checkbox-label input { 
+            margin-right: 12px; 
+            width: 18px; 
+            height: 18px; 
+            accent-color: var(--primary); 
+            cursor: pointer;
+        }
+
+        .btn-submit { 
+            width: 100%; 
+            background: var(--gold-gradient);
+            color: #0b132b; 
+            border: none; 
+            padding: 14px; 
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            margin-top: 28px; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-submit:hover { 
+            opacity: 0.95; 
+            transform: translateY(-1px);
+        }
+
+        .admin-link { 
+            display: block; 
+            text-align: center; 
+            margin-top: 20px; 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .admin-link:hover { 
+            color: var(--primary); 
+        }
+
+        /* Rodapé de Direitos Autorais Padronizado */
+        .portal-footer {
+            text-align: center;
+            padding: 10px 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            max-width: 520px;
+            width: 100%;
+        }
+
+        .portal-footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo CIESL">
+            </div>
+            <h1>Censo Institucional de Médiuns</h1>
+            <div class="subtitle">Atualização cadastral e levantamento de atividades da nossa Casa.</div>
+        </div>
+
+        <form id="censusForm">
+            <div class="section-title">1. Identificação</div>
+            <div class="form-group">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" required placeholder="Digite seu nome completo">
+            </div>
+            <div class="form-group">
+                <label for="telefone">WhatsApp / Celular:</label>
+                <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail (Opcional):</label>
+                <input type="email" id="email" placeholder="seu.email@exemplo.com">
+            </div>
+            <div class="form-group">
+                <label>É batizado(a)?</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="radio" name="batizado" value="sim" required> Sim</label>
+                    <label class="checkbox-label"><input type="radio" name="batizado" value="nao" required> Não</label>
+                </div>
+            </div>
+
+            <div class="section-title">2. Histórico na Casa</div>
+            <div class="form-group">
+                <label for="tempoCasa">Tempo de Casa:</label>
+                <select id="tempoCasa" required>
+                    <option value="">Selecione...</option>
+                    <option value="Menos de 1 ano">Menos de 1 ano</option>
+                    <option value="1 a 3 anos">1 a 3 anos</option>
+                    <option value="3 a 5 anos">3 a 5 anos</option>
+                    <option value="De 5 a 10 anos">De 5 a 10 anos</option>
+                    <option value="Mais de 10 anos">Mais de 10 anos</option>
+                </select>
+            </div>
+
+            <div class="section-title">3. Atividades e Tarefas</div>
+            <div class="form-group">
+                <label>Tarefas / Atividades que Desenvolve:</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Gira de Desobsessão"> Gira de Desobsessão</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Mesa Branca"> Mesa Branca</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Gira Trabalhos agendados"> Gira Trabalhos agendados</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Gira de Passe e Consulta"> Gira de Passe e Consulta</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Gira dos Animais"> Gira dos Animais</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Gira de desenvolvimento"> Gira de desenvolvimento</label>
+                    <label class="checkbox-label"><input type="checkbox" name="tarefa" value="Outros Apoio em Geral"> Outros Apoio em Geral</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tipoAtuacao">Frente de Atuação Principal:</label>
+                <select id="tipoAtuacao" required>
+                    <option value="">Selecione...</option>
+                    <option value="Passe Consulta">Passe Consulta</option>
+                    <option value="Cambones">Cambone</option>
+                    <option value="Iabá ">Iabá </option>
+                    <option value="Pai ou Mãe de Santo">Pai ou Mãe de Santo</option>
+                    <option value="Não se aplica">Não se aplica</option>
+                </select>
+            </div>
+
+            <div class="section-title">4. Disponibilidade</div>
+            <div class="form-group">
+                <label>Dias de Atuação (Turmas / Dias):</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Segunda-feira"> Segunda-feira</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Terça-feira"> Terça-feira</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Quarta-feira"> Quarta-feira</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Quinta-feira"> Quinta-feira</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Sexta-feira"> Sexta-feira</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Sábado"> Sábado</label>
+                    <label class="checkbox-label"><input type="checkbox" name="dia" value="Domingo"> Domingo</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Registrar Informações</button>
+        </form>
+
+        <a href="Admin do Censo.html" class="admin-link">Acesso Restrito à Gestão / Administração</a>
+    </div>
+
+    <!-- RODAPÉ DE DIREITOS AUTORAIS -->
+    <footer class="portal-footer">
+        <div><span>Casa de São Lázaro (CIESL)</span> &copy; Todos os direitos reservados.</div>
+        <div style="margin-top: 2px;">Desenvolvido por <span>Tiago Araújo</span> &amp; <span>Bruno Tonicelli</span></div>
+    </footer>
+
+    <!-- ================= FIREBASE (Firestore) ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1qwNpQIX0oWaxJIGpGLxYqwzYDvtXvVU",
+            authDomain: "censo-ciesl-2026.firebaseapp.com",
+            projectId: "censo-ciesl-2026",
+            storageBucket: "censo-ciesl-2026.firebasestorage.app",
+            messagingSenderId: "947776611002",
+            appId: "1:947776611002:web:66e1ca73ba91208e5e1883"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Ponte para o script clássico abaixo (mantém onsubmit inline funcionando).
+        window.fb = { db, collection, doc, getDoc, writeBatch, serverTimestamp };
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
+    <script>
+        function whenFirebaseReady(callback) {
+            if (window.fb) { callback(); } else { window.addEventListener('firebase-ready', callback, { once: true }); }
+        }
+
+        document.getElementById('censusForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = this;
+
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const tempoCasa = document.getElementById('tempoCasa').value;
+            const tipoAtuacao = document.getElementById('tipoAtuacao').value;
+
+            const batizadoEl = document.querySelector('input[name="batizado"]:checked');
+            const batizado = batizadoEl ? batizadoEl.value === 'sim' : false;
+
+            const tarefas = [];
+            document.querySelectorAll('input[name="tarefa"]:checked').forEach(cb => tarefas.push(cb.value));
+
+            const dias = [];
+            document.querySelectorAll('input[name="dia"]:checked').forEach(cb => dias.push(cb.value));
+
+            const novoRegistro = {
+                nome,
+                telefone,
+                email,
+                tempoCasa,
+                tarefas: tarefas.join(', '),
+                tipoAtuacao,
+                dias: dias.join(', '),
+                batizado
+            };
+
+            // Só os dígitos do telefone, para não deixar formatações diferentes do
+            // mesmo número (com ou sem parênteses/hífen/espaço) passarem como distintas.
+            const telefoneNormalizado = telefone.replace(/\D/g, '');
+
+            const enviar = async () => {
+                if (!window.fb) {
+                    alert('Ainda carregando o sistema. Aguarde um instante e tente novamente.');
+                    return;
+                }
+                if (!telefoneNormalizado) {
+                    alert('Por favor, informe um telefone válido.');
+                    return;
+                }
+                try {
+                    const refIndiceTelefone = window.fb.doc(window.fb.db, 'telefonesRegistrados', telefoneNormalizado);
+                    const indiceExistente = await window.fb.getDoc(refIndiceTelefone);
+
+                    if (indiceExistente.exists()) {
+                        alert('Já existe um cadastro com este número de telefone. Se você já se cadastrou anteriormente, não é necessário enviar novamente. Em caso de dúvida, entre em contato com a administração.');
+                        return;
+                    }
+
+                    // Grava o registro completo e o "índice" de telefone (usado só para
+                    // detectar duplicatas, sem nome/e-mail) em uma única operação atômica.
+                    const refNovoCenso = window.fb.doc(window.fb.collection(window.fb.db, 'censo'));
+                    const batch = window.fb.writeBatch(window.fb.db);
+                    batch.set(refNovoCenso, {
+                        ...novoRegistro,
+                        dataEnvio: window.fb.serverTimestamp()
+                    });
+                    batch.set(refIndiceTelefone, {
+                        criadoEm: window.fb.serverTimestamp()
+                    });
+                    await batch.commit();
+
+                    alert('Informações registradas.');
+                    form.reset();
+                } catch (err) {
+                    console.error('Erro ao salvar censo:', err);
+                    alert('Não foi possível salvar sua resposta. Verifique sua conexão e tente novamente.');
+                }
+            };
+
+            whenFirebaseReady(enviar);
+        });
+    </script>
+</body>
+</html>
