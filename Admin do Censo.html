@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Censo CIESL</title>
+    <style>
+        :root {
+            --bg-color: #0b132b;         /* Azul Escuro Profundo */
+            --card-bg: #1c2541;          /* Azul Escuro Intermediário para Cards */
+            --card-inner: #0b132b;       /* Fundo interno / Inputs */
+            --primary: #ffb703;          /* Amarelo de Destaque */
+            --gold-gradient: linear-gradient(135deg, #ffd166 0%, #f39c12 50%, #d4af37 100%); /* Degradê Dourado */
+            --text-main: #edf2f4;        /* Texto Clara / Branca */
+            --text-muted: #8d99ae;       /* Texto Secundário */
+            --border: #3a506b;           /* Borda em Tom Azul/Cinza */
+            --success: #2ec4b6;          /* Verde moderno para ações de sucesso */
+            --danger: #e71d36;           /* Vermelho elegante para sair/excluir */
+            --warning: #f77f00;          /* Laranja para edição */
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            padding: 24px; 
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            letter-spacing: 0.2px;
+        }
+
+        /* Estrutura Principal */
+        .container { 
+            width: 100%; 
+            max-width: 1100px; 
+            background: var(--card-bg); 
+            padding: 36px 32px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 183, 3, 0.2); 
+            border-top: 6px solid;
+            border-image: var(--gold-gradient) 1;
+            margin-bottom: 20px;
+        }
+        
+        /* Tela de Login Organizada */
+        #loginScreen { 
+            width: 100%;
+            max-width: 420px; 
+            margin: auto; 
+            padding: 40px 32px; 
+            background: var(--card-bg); 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+            text-align: center; 
+            border: 1px solid rgba(255, 183, 3, 0.2);
+            border-top: 6px solid;
+            border-image: var(--gold-gradient) 1;
+        }
+
+        #loginScreen h2 { 
+            font-size: 1.35rem; 
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 24px; 
+            letter-spacing: 0.3px;
+        }
+        
+        /* Logo Circular */
+        .logo-container { 
+            width: 80px; 
+            height: 80px; 
+            margin: 0 auto 20px auto; 
+            border-radius: 50%; 
+            overflow: hidden; 
+            background: transparent; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border-radius: 50%; 
+        }
+
+        /* Rodapé de Direitos Autorais */
+        .portal-footer {
+            text-align: center;
+            padding: 15px 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .portal-footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Cabeçalho do Dashboard */
+        .dashboard-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 20px; 
+            margin-bottom: 24px; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+        }
+
+        .dashboard-header h1 { 
+            font-size: 1.5rem; 
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .dashboard-header p {
+            line-height: 1.4;
+        }
+
+        /* Abas de Navegação Interna */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 9px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 183, 3, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(255, 183, 3, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Barra de Ferramentas e Filtros */
+        .toolbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 15px; 
+            margin-bottom: 24px; 
+            flex-wrap: wrap; 
+        }
+
+        .filters { 
+            display: flex; 
+            gap: 12px; 
+            flex: 1; 
+            min-width: 280px; 
+            flex-wrap: wrap; 
+        }
+
+        .filters input, .filters select, .form-group input { 
+            width: 100%;
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            font-size: 0.95rem; 
+            background: var(--card-inner); 
+            color: var(--text-main); 
+            transition: all 0.2s ease;
+        }
+
+        .filters input { flex: 2; min-width: 220px; }
+        .filters select { flex: 1; min-width: 180px; }
+
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.15); 
+        }
+        
+        .actions-bar { 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+        }
+
+        /* Botões Modernos */
+        button { 
+            padding: 10px 18px; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 0.88rem; 
+            transition: all 0.2s ease; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        button:hover { 
+            transform: translateY(-1px);
+            opacity: 0.95; 
+        }
+
+        .btn-excel { background-color: var(--success); color: #0b132b; }
+        .btn-admin { background: var(--gold-gradient); color: #0b132b; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .btn-logout { background-color: rgba(231, 29, 54, 0.15); color: #ff6b6b; border: 1px solid rgba(231, 29, 54, 0.3); }
+        .btn-logout:hover { background-color: var(--danger); color: white; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* Botões Discretos de Ação na Tabela */
+        .btn-action-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-edit { color: var(--warning); background: rgba(247, 127, 0, 0.1); }
+        .btn-edit:hover { background: rgba(247, 127, 0, 0.2); transform: none; }
+        .btn-delete { color: var(--danger); background: rgba(231, 29, 54, 0.1); }
+        .btn-delete:hover { background: rgba(231, 29, 54, 0.2); transform: none; }
+        
+        /* Tabela Organizada */
+        .table-responsive { 
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--card-inner);
+            overflow: hidden;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.9rem; 
+            text-align: left; 
+        }
+
+        th, td { 
+            padding: 16px; 
+            border-bottom: 1px solid var(--border); 
+            line-height: 1.4;
+        }
+
+        th { 
+            background: rgba(11, 19, 43, 0.8); 
+            color: var(--primary); 
+            font-weight: 700; 
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.8px;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .badge-dia {
+            background: rgba(255, 183, 3, 0.1); 
+            color: var(--primary); 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 183, 3, 0.2);
+            display: inline-block;
+        }
+
+        /* Modal Sofisticado */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(5, 9, 20, 0.8); 
+            backdrop-filter: blur(4px);
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-content { 
+            background: var(--card-bg); 
+            padding: 32px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 420px; 
+            border: 1px solid rgba(255, 183, 3, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.88rem; color: var(--text-main); }
+
+        .form-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN DE GESTORES -->
+    <div id="loginScreen">
+        <div class="logo-container">
+            <img src="https://uploads.onecompiler.io/43vaday7q/1786632662019/logon%20Ciesl.jpg" alt="Logo CIESL">
+        </div>
+        <h2>Área Restrita - Gestão CIESL</h2>
+        <div class="form-group">
+            <label>Usuário de Acesso:</label>
+            <input type="text" id="loginUser" placeholder="Digite seu usuário">
+        </div>
+        <div class="form-group">
+            <label>Senha de Segurança:</label>
+            <input type="password" id="loginPass" placeholder="Digite sua senha">
+        </div>
+        <button class="btn-admin" style="width:100%; margin-top:6px;" onclick="fazerLogin()">Acessar Painel</button>
+        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+            <a href="index.html" style="font-size:0.85rem; color:var(--primary); text-decoration:none; font-weight: 600;">← Voltar para o Formulário do Censo</a>
+        </div>
+    </div>
+
+    <!-- PAINEL ADMINISTRATIVO -->
+    <div id="adminDashboard" class="container" style="display: none;">
+        <div class="dashboard-header">
+            <div>
+                <h1>Painel de Controle</h1>
+                <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Gerenciamento de cadastros e credenciais do portal</p>
+            </div>
+            <button class="btn-logout" onclick="fazerLogout()">Encerrar Sessão</button>
+        </div>
+
+        <!-- Abas do Painel -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="mudarAba('censos')">📋 Cadastros do Censo</button>
+            <button class="tab-btn" onclick="mudarAba('gestores')">🔐 Gestores do Portal</button>
+        </div>
+
+        <!-- ABA 1: CENSOS -->
+        <div id="abaCensos" class="tab-content active">
+            <div class="toolbar">
+                <div class="filters">
+                    <input type="text" id="filtroBusca" placeholder="🔍 Buscar por Nome ou Telefone..." onkeyup="filtrarDados()">
+                    <select id="filtroTurma" onchange="filtrarDados()">
+                        <option value="">Filtrar por Turma / Dia...</option>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
+
+                <div class="actions-bar">
+                    <button class="btn-excel" onclick="exportarExcel()">📊 Exportar Excel</button>
+                    <a href="index.html" style="text-decoration:none;"><button class="btn-secondary">Formulário</button></a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data do Censo</th>
+                            <th>Nome Completo</th>
+                            <th>Telefone / WhatsApp</th>
+                            <th>Tempo de Casa</th>
+                            <th>Tarefas Atribuídas</th>
+                            <th>Frente de Atuação</th>
+                            <th>Dias / Turmas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorpo">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABA 2: GESTORES -->
+        <div id="abaGestores" class="tab-content">
+            <div class="toolbar">
+                <div>
+                    <h3 style="font-size: 1.05rem; color: var(--text-main); font-weight: 600;">Administradores Autorizados</h3>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Controle de quem possui credenciais de acesso ao painel.</p>
+                </div>
+                <div class="actions-bar">
+                    <button class="btn-admin" onclick="abrirModalAdmin()">➕ Novo Gestor</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data de Cadastro</th>
+                            <th>Nome Completo / Usuário</th>
+                            <th style="text-align: right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaGestoresCorpo">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- RODAPÉ DE DIREITOS AUTORAIS -->
+    <footer class="portal-footer">
+        <div><span>Casa de São Lázaro (CIESL)</span> &copy; Todos os direitos reservados.</div>
+        <div style="margin-top: 2px;">Desenvolvido por <span>Tiago Araújo</span> &amp; <span>Bruno Tonicelli</span></div>
+    </footer>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE GESTOR -->
+    <div id="modalAdmin" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitulo" style="color:var(--primary); margin-bottom:8px; font-size: 1.15rem; font-weight: 700;">Cadastrar Novo Gestor</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Gerencie as credenciais de acesso para a equipe administrativa.</p>
+            
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-group">
+                <label>Nome de Usuário / Completo:</label>
+                <input type="text" id="novoUser" placeholder="Ex: gestor.joao">
+            </div>
+            <div class="form-group">
+                <label>Senha de Acesso:</label>
+                <input type="password" id="novoPass" placeholder="Digite uma senha segura">
+            </div>
+            
+            <div class="form-footer">
+                <button class="btn-secondary" onclick="fecharModalAdmin()">Cancelar</button>
+                <button class="btn-admin" onclick="salvarAdmin()">Salvar Gestor</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar administrador padrão se não existir
+        if (!localStorage.getItem('admins_ciesl')) {
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+            const adminInicial = [{ usuario: 'admin', senha: 'admin123', dataCadastro: dataHoje }];
+            localStorage.setItem('admins_ciesl', JSON.stringify(adminInicial));
+        }
+
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            if (aba === 'censos') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('abaCensos').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('abaGestores').classList.add('active');
+                carregarGestores();
+            }
+        }
+
+        function fazerLogin() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const admins = JSON.parse(localStorage.getItem('admins_ciesl'));
+
+            const encontrado = admins.find(a => a.usuario === user && a.senha === pass);
+            if (encontrado) {
+                localStorage.setItem('sessao_ativa', 'true');
+                verificarSessao();
+            } else {
+                alert('⚠️ Credenciais inválidas. Verifique usuário e senha.');
+            }
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem('sessao_ativa');
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+        }
+
+        function verificarSessao() {
+            if (localStorage.getItem('sessao_ativa') === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                carregarTabela();
+                carregarGestores();
+            }
+        }
+
+        function carregarTabela() {
+            const banco = JSON.parse(localStorage.getItem('banco_censo_ciesl')) || [];
+            preencherTabelaHtml(banco);
+        }
+
+        function preencherTabelaHtml(dados) {
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            if (dados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color:var(--text-muted);">Nenhum registro encontrado no banco de dados.</td></tr>`;
+                return;
+            }
+
+            dados.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">${item.dataEnvio}</td>
+                    <td><b style="color: var(--text-main); font-weight: 600;">${item.nome}</b></td>
+                    <td>${item.telefone}</td>
+                    <td>${item.tempoCasa}</td>
+                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;" title="${item.tarefas}">${item.tarefas}</td>
+                    <td>${item.tipoAtuacao}</td>
+                    <td><span class="badge-dia">${item.dias}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function carregarGestores() {
+            const admins = JSON.parse(localStorage.getItem('admins_ciesl')) || [];
+            const tbody = document.getElementById('tabelaGestoresCorpo');
+            tbody.innerHTML = '';
+
+            admins.forEach((adm, index) => {
+                const dataCad = adm.dataCadastro || '18/02/2026';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">${dataCad}</td>
+                    <td><b style="color: var(--text-main); font-weight: 600;">${adm.usuario}</b></td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button class="btn-action-icon btn-edit" onclick="abrirModalEditarAdmin(${index})">Editar</button>
+                        <button class="btn-action-icon btn-delete" onclick="excluirAdmin(${index})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filtrarDados() {
+            const busca = document.getElementById('filtroBusca').value.toLowerCase();
+            const turma = document.getElementById('filtroTurma').value;
+            const banco = JSON.parse(localStorage.getItem('banco_censo_ciesl')) || [];
+
+            const filtrados = banco.filter(item => {
+                const matchBusca = item.nome.toLowerCase().includes(busca) || item.telefone.includes(busca);
+                const matchTurma = turma === "" || item.dias.includes(turma);
+                return matchBusca && matchTurma;
+            });
+
+            preencherTabelaHtml(filtrados);
+        }
+
+        function exportarExcel() {
+            const banco = JSON.parse(localStorage.getItem('banco_censo_ciesl')) || [];
+            if (banco.length === 0) {
+                alert('Não há dados salvos para exportar.');
+                return;
+            }
+
+            let htmlTabela = `<table border="1">
+                <tr>
+                    <th>Data</th><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Tempo de Casa</th><th>Tarefas</th><th>Atuação</th><th>Dias/Turmas</th>
+                </tr>`;
+
+            banco.forEach(i => {
+                htmlTabela += `<tr>
+                    <td>${i.dataEnvio}</td><td>${i.nome}</td><td>${i.telefone}</td><td>${i.email || ''}</td><td>${i.tempoCasa}</td><td>${i.tarefas}</td><td>${i.tipoAtuacao}</td><td>${i.dias}</td>
+                </tr>`;
+            });
+            htmlTabela += `</table>`;
+
+            const blob = new Blob(["\ufeff" + htmlTabela], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Relatorio_Censo_Mediuns_CIESL.xls';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function abrirModalAdmin() {
+            document.getElementById('modalTitulo').innerText = 'Cadastrar Novo Gestor';
+            document.getElementById('editIndex').value = '-1';
+            document.getElementById('novoUser').value = '';
+            document.getElementById('novoPass').value = '';
+            document.getElementById('modalAdmin').style.display = 'flex';
+        }
+
+        function abrirModalEditarAdmin(index) {
+            const admins = JSON.parse(localStorage.getItem('admins_ciesl')) || [];
+            const adm = admins[index];
+            document.getElementById('modalTitulo').innerText = 'Editar Gestor';
+            document.getElementById('editIndex').value = index;
+            document.getElementById('novoUser').value = adm.usuario;
+            document.getElementById('novoPass').value = adm.senha;
+            document.getElementById('modalAdmin').style.display = 'flex';
+        }
+
+        function fecharModalAdmin() { 
+            document.getElementById('modalAdmin').style.display = 'none'; 
+        }
+
+        function salvarAdmin() {
+            const user = document.getElementById('novoUser').value.trim();
+            const pass = document.getElementById('novoPass').value.trim();
+            const index = parseInt(document.getElementById('editIndex').value);
+
+            if (!user || !pass) {
+                alert('Por favor, preencha o usuário e a senha.');
+                return;
+            }
+
+            let admins = JSON.parse(localStorage.getItem('admins_ciesl')) || [];
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+            if (index === -1) {
+                admins.push({ usuario: user, senha: pass, dataCadastro: dataHoje });
+                alert('✅ Novo gestor cadastrado com sucesso!');
+            } else {
+                admins[index].usuario = user;
+                admins[index].senha = pass;
+                alert('✅ Dados do gestor atualizados com sucesso!');
+            }
+
+            localStorage.setItem('admins_ciesl', JSON.stringify(admins));
+            fecharModalAdmin();
+            carregarGestores();
+        }
+
+        function excluirAdmin(index) {
+            let admins = JSON.parse(localStorage.getItem('admins_ciesl')) || [];
+            
+            if (admins.length <= 1) {
+                alert('⚠️ O sistema precisa ter pelo menos um gestor cadastrado.');
+                return;
+            }
+
+            if (confirm(`Tem certeza que deseja excluir o gestor "${admins[index].usuario}"?`)) {
+                admins.splice(index, 1);
+                localStorage.setItem('admins_ciesl', JSON.stringify(admins));
+                carregarGestores();
+            }
+        }
+
+        window.onload = verificarSessao;
+    </script>
+</body>
+</html>
