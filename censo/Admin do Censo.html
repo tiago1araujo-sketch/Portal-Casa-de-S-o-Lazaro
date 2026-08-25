@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Censo CIESL</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --bg-color: #0b132b;         /* Azul Escuro Profundo */
@@ -195,7 +196,7 @@
             flex-wrap: wrap; 
         }
 
-        .filters input, .filters select, .form-group input { 
+        .filters input, .filters select, .form-group input, .form-group select {
             width: 100%;
             padding: 12px 16px; 
             border: 1px solid var(--border); 
@@ -329,11 +330,13 @@
             background: var(--card-bg); 
             padding: 32px; 
             border-radius: 20px; 
-            width: 100%; 
-            max-width: 420px; 
+            width: 100%;
+            max-width: 420px;
             border: 1px solid rgba(255, 183, 3, 0.3);
             box-shadow: 0 20px 40px rgba(0,0,0,0.7);
             animation: modalFadeIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalFadeIn {
@@ -349,6 +352,36 @@
             gap: 12px;
             justify-content: flex-end;
             margin-top: 24px;
+        }
+
+        /* Grupos de checkbox/radio (reaproveitados do formulário público do Censo) */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+            background: var(--card-inner);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-main);
+            user-select: none;
+        }
+
+        .checkbox-label input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -497,6 +530,27 @@
         </div>
     </div>
 
+    <!-- MODAL DE DETALHES DO CADASTRO DO CENSO -->
+    <div id="modalDetalhesCenso" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--primary); margin-bottom:8px; font-size: 1.15rem; font-weight: 700;">Detalhes do Cadastro</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Informações completas enviadas pelo médium.</p>
+
+            <div id="detalhesCensoConteudo" style="text-align:left; font-size:0.92rem; line-height:1.8;"></div>
+
+            <div class="form-footer" id="footerVisualizacaoCenso">
+                <button class="btn-secondary" onclick="fecharModalDetalhesCenso()">Fechar</button>
+                <button class="btn-secondary" id="btnEditarCenso" style="color:var(--warning); border-color:rgba(247,127,0,0.4);" onclick="abrirEdicaoCenso()">Editar</button>
+                <button class="btn-logout" id="btnRemoverCenso" onclick="confirmarRemocaoCenso()">Remover Cadastro</button>
+            </div>
+
+            <div class="form-footer" id="footerEdicaoCenso" style="display:none;">
+                <button class="btn-secondary" onclick="cancelarEdicaoCenso()">Cancelar</button>
+                <button class="btn-admin" onclick="salvarEdicaoCenso()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= FIREBASE (Authentication + Firestore) ================= -->
     <script type="module">
         import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -504,7 +558,7 @@
             getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
         import {
-            getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, serverTimestamp, query, orderBy
+            getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDoc, getDocs, writeBatch, serverTimestamp, query, orderBy
         } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -528,7 +582,7 @@
             auth, db,
             initializeApp, deleteApp, getAuth, getFirestore,
             signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword,
-            collection, doc, setDoc, updateDoc, deleteDoc, getDocs, serverTimestamp, query, orderBy
+            collection, doc, setDoc, updateDoc, deleteDoc, getDoc, getDocs, writeBatch, serverTimestamp, query, orderBy
         };
 
         window.dispatchEvent(new Event('firebase-ready'));
@@ -539,6 +593,19 @@
         let adminAtual = null;
         let censoCache = [];
         let gestoresCache = [];
+        let censoSelecionadoId = null;
+        let confirmacaoRemocaoTimeout = null;
+
+        function formatarTelefone(bruto) {
+            const digitos = (bruto || '').replace(/\D/g, '');
+            if (digitos.length === 11) {
+                return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+            }
+            if (digitos.length === 10) {
+                return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+            }
+            return bruto;
+        }
 
         function whenFirebaseReady(callback) {
             if (window.fb) { callback(); } else { window.addEventListener('firebase-ready', callback, { once: true }); }
@@ -613,7 +680,9 @@
             try {
                 const q = window.fb.query(window.fb.collection(db, 'censo'), window.fb.orderBy('dataEnvio', 'desc'));
                 const snap = await window.fb.getDocs(q);
-                censoCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Registros marcados como "oculto" (removidos pelo admin) somem de toda a
+                // interface — tabela, busca e exportação — sem excluir o documento de verdade.
+                censoCache = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => !item.oculto);
             } catch (err) {
                 console.error('Erro ao carregar censo:', err);
                 censoCache = [];
@@ -632,10 +701,12 @@
 
             dados.forEach(item => {
                 const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                tr.onclick = () => abrirModalDetalhesCenso(item.id);
                 tr.innerHTML = `
                     <td style="color: var(--text-muted);">${formatarDataFirestore(item.dataEnvio)}</td>
                     <td><b style="color: var(--text-main); font-weight: 600;">${item.nome}</b></td>
-                    <td>${item.telefone}</td>
+                    <td>${formatarTelefone(item.telefone)}</td>
                     <td>${item.tempoCasa}</td>
                     <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;" title="${item.tarefas}">${item.tarefas}</td>
                     <td>${item.tipoAtuacao}</td>
@@ -644,6 +715,200 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function abrirModalDetalhesCenso(id) {
+            const item = censoCache.find(c => c.id === id);
+            if (!item) return;
+            censoSelecionadoId = id;
+
+            document.getElementById('detalhesCensoConteudo').innerHTML = `
+                <p><b style="color:var(--text-main);">Nome:</b> ${item.nome}</p>
+                <p><b style="color:var(--text-main);">Telefone:</b> ${formatarTelefone(item.telefone)}</p>
+                <p><b style="color:var(--text-main);">E-mail:</b> ${item.email || '—'}</p>
+                <p><b style="color:var(--text-main);">Tempo de Casa:</b> ${item.tempoCasa}</p>
+                <p><b style="color:var(--text-main);">Tarefas:</b> ${item.tarefas || '—'}</p>
+                <p><b style="color:var(--text-main);">Frente de Atuação:</b> ${item.tipoAtuacao}</p>
+                <p><b style="color:var(--text-main);">Dias / Turmas:</b> ${item.dias || '—'}</p>
+                <p><b style="color:var(--text-main);">Batizado(a)?</b> ${item.batizado ? 'Sim' : 'Não'}</p>
+                <p><b style="color:var(--text-main);">Data de Envio:</b> ${formatarDataFirestore(item.dataEnvio)}</p>
+            `;
+
+            resetarBotaoRemoverCenso();
+            document.getElementById('footerEdicaoCenso').style.display = 'none';
+            document.getElementById('footerVisualizacaoCenso').style.display = 'flex';
+            document.getElementById('modalDetalhesCenso').style.display = 'flex';
+        }
+
+        function fecharModalDetalhesCenso() {
+            document.getElementById('modalDetalhesCenso').style.display = 'none';
+            censoSelecionadoId = null;
+            resetarBotaoRemoverCenso();
+        }
+
+        function resetarBotaoRemoverCenso() {
+            clearTimeout(confirmacaoRemocaoTimeout);
+            const btn = document.getElementById('btnRemoverCenso');
+            btn.textContent = 'Remover Cadastro';
+            btn.onclick = confirmarRemocaoCenso;
+        }
+
+        function confirmarRemocaoCenso() {
+            const btn = document.getElementById('btnRemoverCenso');
+            btn.textContent = 'Tem certeza?';
+            btn.onclick = executarRemocaoCenso;
+            clearTimeout(confirmacaoRemocaoTimeout);
+            confirmacaoRemocaoTimeout = setTimeout(resetarBotaoRemoverCenso, 4000);
+        }
+
+        async function executarRemocaoCenso() {
+            if (!censoSelecionadoId) return;
+            clearTimeout(confirmacaoRemocaoTimeout);
+            try {
+                await window.fb.updateDoc(window.fb.doc(db, 'censo', censoSelecionadoId), { oculto: true });
+                fecharModalDetalhesCenso();
+                carregarTabela();
+            } catch (err) {
+                console.error('Erro ao remover cadastro:', err);
+                alert('Não foi possível remover o cadastro.');
+            }
+        }
+
+        function abrirEdicaoCenso() {
+            const item = censoCache.find(c => c.id === censoSelecionadoId);
+            if (!item) return;
+
+            const tarefasOpcoes = ['Gira de Desobsessão', 'Mesa Branca', 'Gira Trabalhos agendados', 'Gira de Passe e Consulta', 'Gira dos Animais', 'Gira de desenvolvimento', 'Outros Apoio em Geral'];
+            const diasOpcoes = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
+            const tarefasSelecionadas = (item.tarefas || '').split(',').map(t => t.trim()).filter(Boolean);
+            const diasSelecionados = (item.dias || '').split(',').map(d => d.trim()).filter(Boolean);
+
+            document.getElementById('detalhesCensoConteudo').innerHTML = `
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="editNome" value="${item.nome || ''}">
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp / Celular:</label>
+                    <input type="tel" id="editTelefone" value="${formatarTelefone(item.telefone)}">
+                </div>
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <input type="email" id="editEmail" value="${item.email || ''}">
+                </div>
+                <div class="form-group">
+                    <label>É batizado(a)?</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="radio" name="editBatizado" value="sim" ${item.batizado ? 'checked' : ''}> Sim</label>
+                        <label class="checkbox-label"><input type="radio" name="editBatizado" value="nao" ${!item.batizado ? 'checked' : ''}> Não</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tempo de Casa:</label>
+                    <select id="editTempoCasa">
+                        <option value="Menos de 1 ano" ${item.tempoCasa === 'Menos de 1 ano' ? 'selected' : ''}>Menos de 1 ano</option>
+                        <option value="1 a 3 anos" ${item.tempoCasa === '1 a 3 anos' ? 'selected' : ''}>1 a 3 anos</option>
+                        <option value="3 a 5 anos" ${item.tempoCasa === '3 a 5 anos' ? 'selected' : ''}>3 a 5 anos</option>
+                        <option value="De 5 a 10 anos" ${item.tempoCasa === 'De 5 a 10 anos' ? 'selected' : ''}>De 5 a 10 anos</option>
+                        <option value="Mais de 10 anos" ${item.tempoCasa === 'Mais de 10 anos' ? 'selected' : ''}>Mais de 10 anos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tarefas / Atividades que Desenvolve:</label>
+                    <div class="checkbox-group">
+                        ${tarefasOpcoes.map(t => `<label class="checkbox-label"><input type="checkbox" name="editTarefa" value="${t}" ${tarefasSelecionadas.includes(t) ? 'checked' : ''}> ${t}</label>`).join('')}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Frente de Atuação Principal:</label>
+                    <select id="editTipoAtuacao">
+                        <option value="Passe Consulta" ${item.tipoAtuacao === 'Passe Consulta' ? 'selected' : ''}>Passe Consulta</option>
+                        <option value="Cambones" ${item.tipoAtuacao === 'Cambones' ? 'selected' : ''}>Cambone</option>
+                        <option value="Iabá " ${item.tipoAtuacao === 'Iabá ' ? 'selected' : ''}>Iabá </option>
+                        <option value="Pai ou Mãe de Santo" ${item.tipoAtuacao === 'Pai ou Mãe de Santo' ? 'selected' : ''}>Pai ou Mãe de Santo</option>
+                        <option value="Não se aplica" ${item.tipoAtuacao === 'Não se aplica' ? 'selected' : ''}>Não se aplica</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dias de Atuação (Turmas / Dias):</label>
+                    <div class="checkbox-group">
+                        ${diasOpcoes.map(d => `<label class="checkbox-label"><input type="checkbox" name="editDia" value="${d}" ${diasSelecionados.includes(d) ? 'checked' : ''}> ${d}</label>`).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('footerVisualizacaoCenso').style.display = 'none';
+            document.getElementById('footerEdicaoCenso').style.display = 'flex';
+        }
+
+        function cancelarEdicaoCenso() {
+            abrirModalDetalhesCenso(censoSelecionadoId);
+        }
+
+        async function salvarEdicaoCenso() {
+            const item = censoCache.find(c => c.id === censoSelecionadoId);
+            if (!item) return;
+
+            const nome = document.getElementById('editNome').value.trim();
+            const telefone = document.getElementById('editTelefone').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const tempoCasa = document.getElementById('editTempoCasa').value;
+            const tipoAtuacao = document.getElementById('editTipoAtuacao').value;
+            const batizadoEl = document.querySelector('input[name="editBatizado"]:checked');
+            const batizado = batizadoEl ? batizadoEl.value === 'sim' : false;
+
+            const tarefas = [];
+            document.querySelectorAll('input[name="editTarefa"]:checked').forEach(cb => tarefas.push(cb.value));
+            const dias = [];
+            document.querySelectorAll('input[name="editDia"]:checked').forEach(cb => dias.push(cb.value));
+
+            if (!nome || !telefone || !tempoCasa || !tipoAtuacao) {
+                alert('Por favor, preencha ao menos nome, telefone, tempo de casa e frente de atuação.');
+                return;
+            }
+
+            const digitosNovos = telefone.replace(/\D/g, '');
+            const digitosAntigos = (item.telefone || '').replace(/\D/g, '');
+
+            if (!digitosNovos) {
+                alert('Por favor, informe um telefone válido.');
+                return;
+            }
+
+            const dadosAtualizados = { nome, telefone, email, tempoCasa, tarefas: tarefas.join(', '), tipoAtuacao, dias: dias.join(', '), batizado };
+
+            try {
+                const refCenso = window.fb.doc(db, 'censo', censoSelecionadoId);
+
+                if (digitosNovos === digitosAntigos) {
+                    // Telefone não mudou: não mexe na coleção-espelho de duplicatas.
+                    await window.fb.updateDoc(refCenso, dadosAtualizados);
+                } else {
+                    // Telefone mudou: verifica se o novo número já pertence a OUTRO cadastro
+                    // antes de salvar, sem comparar a pessoa com o próprio registro antigo.
+                    const refIndiceNovo = window.fb.doc(db, 'telefonesRegistrados', digitosNovos);
+                    const indiceExistente = await window.fb.getDoc(refIndiceNovo);
+                    if (indiceExistente.exists()) {
+                        alert('Já existe outro cadastro com este número de telefone.');
+                        return;
+                    }
+
+                    const batch = window.fb.writeBatch(db);
+                    batch.update(refCenso, dadosAtualizados);
+                    batch.set(refIndiceNovo, { criadoEm: window.fb.serverTimestamp() });
+                    if (digitosAntigos) {
+                        batch.delete(window.fb.doc(db, 'telefonesRegistrados', digitosAntigos));
+                    }
+                    await batch.commit();
+                }
+
+                Object.assign(item, dadosAtualizados);
+                fecharModalDetalhesCenso();
+                filtrarDados();
+            } catch (err) {
+                console.error('Erro ao salvar alterações do cadastro:', err);
+                alert('Não foi possível salvar as alterações.');
+            }
         }
 
         async function carregarGestores() {
@@ -691,26 +956,22 @@
                 return;
             }
 
-            let htmlTabela = `<table border="1">
-                <tr>
-                    <th>Data</th><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Tempo de Casa</th><th>Tarefas</th><th>Atuação</th><th>Dias/Turmas</th><th>Batizado(a)</th>
-                </tr>`;
+            const linhas = censoCache.map(i => ({
+                'Data': formatarDataFirestore(i.dataEnvio),
+                'Nome': i.nome,
+                'Telefone': formatarTelefone(i.telefone),
+                'E-mail': i.email || '',
+                'Tempo de Casa': i.tempoCasa,
+                'Tarefas': i.tarefas,
+                'Atuação': i.tipoAtuacao,
+                'Dias/Turmas': i.dias,
+                'Batizado(a)': i.batizado ? 'Sim' : 'Não'
+            }));
 
-            censoCache.forEach(i => {
-                htmlTabela += `<tr>
-                    <td>${formatarDataFirestore(i.dataEnvio)}</td><td>${i.nome}</td><td>${i.telefone}</td><td>${i.email || ''}</td><td>${i.tempoCasa}</td><td>${i.tarefas}</td><td>${i.tipoAtuacao}</td><td>${i.dias}</td><td>${i.batizado ? 'Sim' : 'Não'}</td>
-                </tr>`;
-            });
-            htmlTabela += `</table>`;
-
-            const blob = new Blob(["\ufeff" + htmlTabela], { type: 'application/vnd.ms-excel' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Relatorio_Censo_Mediuns_CIESL.xls';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const planilha = XLSX.utils.json_to_sheet(linhas);
+            const livro = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(livro, planilha, 'Censo CIESL');
+            XLSX.writeFile(livro, 'Relatorio_Censo_Mediuns_CIESL.xlsx');
         }
 
         function abrirModalAdmin() {
