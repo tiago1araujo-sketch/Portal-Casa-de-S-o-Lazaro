@@ -179,9 +179,20 @@
             letter-spacing: 0.3px;
         }
 
-        .btn-submit:hover { 
-            opacity: 0.95; 
+        .btn-submit:hover {
+            opacity: 0.95;
             transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-submit:disabled:hover {
+            opacity: 0.5;
+            transform: none;
         }
 
         .admin-link { 
@@ -195,8 +206,158 @@
             transition: color 0.2s;
         }
 
-        .admin-link:hover { 
-            color: var(--primary); 
+        .admin-link:hover {
+            color: var(--primary);
+        }
+
+        /* Botão discreto (contorno) para abrir o modal de Termos de Consentimento */
+        .btn-outline-termos {
+            display: inline-block;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-outline-termos:hover {
+            background: rgba(255, 183, 3, 0.1);
+        }
+
+        .btn-outline-termos.aceito {
+            background: rgba(255, 183, 3, 0.15);
+        }
+
+        /* Modal de Termos de Consentimento (LGPD) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 9, 20, 0.8);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 560px;
+            border: 1px solid rgba(255, 183, 3, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .termos-scroll {
+            overflow-y: auto;
+            background: var(--card-inner);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            margin: 16px 0;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .termos-scroll h4 {
+            color: var(--primary);
+            font-size: 0.92rem;
+            margin: 16px 0 6px 0;
+            border-left: 3px solid var(--primary);
+            padding-left: 8px;
+        }
+
+        .termos-scroll h4:first-child { margin-top: 0; }
+        .termos-scroll p, .termos-scroll ul { margin-bottom: 10px; }
+        .termos-scroll ul { padding-left: 20px; }
+        .termos-scroll li { margin-bottom: 5px; }
+
+        .termos-destaque {
+            background: rgba(255, 183, 3, 0.08);
+            border: 1px solid rgba(255, 183, 3, 0.25);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 12px 0;
+        }
+
+        .termos-declaracao {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary);
+            padding: 10px 12px;
+            margin: 12px 0;
+            font-style: italic;
+            color: var(--text-main);
+        }
+
+        .checkbox-consentimento {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+        }
+
+        .checkbox-consentimento.habilitado { opacity: 1; }
+
+        .checkbox-consentimento input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .form-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .btn-confirmar-termos {
+            background: var(--gold-gradient);
+            color: #0b132b;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+        .btn-confirmar-termos:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* Rodapé de Direitos Autorais Padronizado */
@@ -302,7 +463,14 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Registrar Informações</button>
+            <div class="section-title">5. Consentimento (LGPD)</div>
+            <div class="form-group">
+                <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 10px;">Ao enviar este formulário, você autoriza a Casa de São Lázaro (CIESL) a coletar e armazenar seus dados cadastrais e religiosos estritamente para fins de organização interna, escalas de trabalho e gestão administrativa da casa, ciente de que poderá revogar este consentimento a qualquer momento.</p>
+                <button type="button" id="linkTermosLGPD" class="btn-outline-termos" onclick="abrirModalTermos(event)">Ler Termos de Consentimento (LGPD) na íntegra</button>
+                <p style="color: var(--text-muted); font-size: 0.78rem; margin-top: 6px; line-height: 1.4;">Leitura obrigatória antes de enviar o formulário.</p>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnEnviarCenso" disabled>Registrar Informações</button>
         </form>
 
         <a href="Admin do Censo.html" class="admin-link">Acesso Restrito à Gestão / Administração</a>
@@ -313,6 +481,73 @@
         <div><span>Casa de São Lázaro (CIESL)</span> &copy; Todos os direitos reservados.</div>
         <div style="margin-top: 2px;">Desenvolvido por <span>Tiago Araújo</span> &amp; <span>Bruno Tonicelli</span></div>
     </footer>
+
+    <!-- MODAL DE TERMOS DE CONSENTIMENTO (LGPD) -->
+    <div id="modalTermosLGPD" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--primary); margin-bottom:4px; font-size: 1.1rem; font-weight: 700;">Termo de Consentimento e Transparência na Tratativa de Dados (LGPD)</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem;">Casa de São Lázaro (CIESL)</p>
+
+            <div class="termos-scroll" id="termosScrollArea" onscroll="verificarScrollTermos()">
+                <p>A <strong>Casa de São Lázaro (CIESL)</strong> preza pela transparência, ética e respeito aos princípios fundamentais que regem a privacidade e a proteção de dados de seus frequentadores, colaboradores, tarefeiros e voluntários. Este documento tem por finalidade formalizar o consentimento livre, informado e inequívoco para o tratamento de dados pessoais e religiosos, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018)</strong>.</p>
+
+                <h4>1. O que está sendo coletado?</h4>
+                <p>Para assegurar a organização das atividades doutrinárias e administrativas da instituição, coletamos apenas os dados estritamente necessários divididos nas seguintes categorias:</p>
+                <ul>
+                    <li><strong>Dados Pessoais Cadastrais:</strong> Nome completo, números de telefone (WhatsApp/contato direto), endereço de e-mail e informações básicas de identificação.</li>
+                    <li><strong>Dados Religiosos e Operacionais:</strong> Preferências de atuação, aptidões para tarefas específicas, restrições e disponibilidades de horários vinculadas diretamente às práticas, escalas de trabalho e atividades doutrinárias da casa.</li>
+                </ul>
+
+                <h4>2. Para qual motivo os dados são coletados (Finalidade)?</h4>
+                <p>O tratamento das informações coletadas possui finalidade exclusiva e restrita à gestão interna da CIESL. Os dados são utilizados para:</p>
+                <ul>
+                    <li>Elaboração e otimização de escalas de trabalho e equipes de atendimento voluntário;</li>
+                    <li>Organização logística de eventos, reuniões e cultos doutrinários;</li>
+                    <li>Comunicação direta entre a administração da casa e os colaboradores/frequentadores sobre avisos, escalas e convocatórias institucionais;</li>
+                    <li>Gestão administrativa geral e controle interno das atividades da instituição.</li>
+                </ul>
+
+                <div class="termos-destaque">
+                    <p style="margin:0;"><strong>Compromisso de Não-Compartilhamento:</strong> A Casa de São Lázaro garante que os dados coletados <strong>não serão comercializados, cedidos ou compartilhados</strong> com terceiros sob nenhuma hipótese, sendo de uso exclusivo e restrito à equipe administrativa autorizada.</p>
+                </div>
+
+                <h4>3. Base Legal para o Tratamento</h4>
+                <p>Em conformidade com a LGPD, o tratamento dos dados pessoais descritos neste termo é realizado estritamente com base no <strong>consentimento explícito do titular</strong> (Art. 7º, inciso I, da Lei nº 13.709/2018), que pode manifestar sua anuência ao preencher os formulários físicos ou digitais da instituição.</p>
+
+                <h4>4. Armazenamento, Segurança e Retenção</h4>
+                <p>Os dados cadastrais e religiosos armazenados são mantidos em ambiente seguro, protegido por senhas e restrições de acesso digital e físico, limitados apenas aos administradores legalmente designados pela CIESL.</p>
+                <p>Os registros serão mantidos apenas pelo período necessário para o cumprimento das finalidades descritas, ou até que o titular manifeste formalmente o seu desejo de revogação ou exclusão.</p>
+
+                <h4>5. Direitos do Titular de Dados</h4>
+                <p>Como titular de dados, o frequentador ou colaborador possui total autonomia para exercer a qualquer momento os direitos garantidos pelo <strong>Artigo 18 da LGPD</strong>, incluindo:</p>
+                <ul>
+                    <li>Confirmação da existência de tratamento de seus dados;</li>
+                    <li>Acesso facilitado aos dados armazenados;</li>
+                    <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
+                    <li>Eliminação dos dados pessoais tratados mediante consentimento;</li>
+                    <li>Revogação do consentimento e oposição ao tratamento, de forma simples e gratuita.</li>
+                </ul>
+
+                <h4>6. Canal de Contato (Encarregado / DPO)</h4>
+                <p>Para o esclarecimento de dúvidas sobre este termo, solicitações referentes à privacidade ou exercício dos direitos previstos na LGPD, o titular poderá entrar em contato diretamente com a administração da <strong>Casa de São Lázaro (CIESL)</strong> por meio dos canais oficiais de atendimento interno da instituição.</p>
+
+                <div class="termos-declaracao">
+                    <strong>Declaração de Consentimento:</strong><br>
+                    "Ao preencher, assinar e enviar este formulário, autorizo expressamente a administração da Casa de São Lázaro (CIESL) a coletar e armazenar meus dados cadastrais e religiosos estritamente para fins de organização interna, escalas de trabalho e gestão administrativa da casa, ciente de que poderei revogar este consentimento a qualquer momento."
+                </div>
+            </div>
+
+            <label class="checkbox-consentimento" id="labelConsentimentoLGPD">
+                <input type="checkbox" id="checkboxConsentimentoLGPD" disabled onchange="atualizarBotaoConfirmarTermos()">
+                Li e concordo com os termos acima
+            </label>
+
+            <div class="form-footer">
+                <button type="button" class="btn-secondary" onclick="fecharModalTermos()">Fechar</button>
+                <button type="button" class="btn-confirmar-termos" id="btnConfirmarTermos" disabled onclick="confirmarTermosLGPD()">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ================= FIREBASE (Firestore) ================= -->
     <script type="module">
@@ -341,9 +576,55 @@
             if (window.fb) { callback(); } else { window.addEventListener('firebase-ready', callback, { once: true }); }
         }
 
+        let consentimentoLGPDDado = false;
+        let textoTermoAceito = '';
+
+        function abrirModalTermos(e) {
+            if (e) e.preventDefault();
+            document.getElementById('modalTermosLGPD').style.display = 'flex';
+            // Se o conteúdo já couber sem precisar de rolagem, libera o checkbox de imediato.
+            requestAnimationFrame(verificarScrollTermos);
+        }
+
+        function fecharModalTermos() {
+            document.getElementById('modalTermosLGPD').style.display = 'none';
+        }
+
+        function verificarScrollTermos() {
+            const area = document.getElementById('termosScrollArea');
+            const chegouAoFim = area.scrollTop + area.clientHeight >= area.scrollHeight - 4;
+            if (chegouAoFim) {
+                document.getElementById('checkboxConsentimentoLGPD').disabled = false;
+                document.getElementById('labelConsentimentoLGPD').classList.add('habilitado');
+            }
+        }
+
+        function atualizarBotaoConfirmarTermos() {
+            const marcado = document.getElementById('checkboxConsentimentoLGPD').checked;
+            document.getElementById('btnConfirmarTermos').disabled = !marcado;
+        }
+
+        function confirmarTermosLGPD() {
+            if (!document.getElementById('checkboxConsentimentoLGPD').checked) return;
+            consentimentoLGPDDado = true;
+            // Guarda o texto exatamente como foi lido/aceito, para manter um registro
+            // fiel mesmo que o termo seja alterado no futuro.
+            textoTermoAceito = document.getElementById('termosScrollArea').innerText.trim();
+            const link = document.getElementById('linkTermosLGPD');
+            link.textContent = 'Termos lidos e aceitos.';
+            link.classList.add('aceito');
+            document.getElementById('btnEnviarCenso').disabled = false;
+            fecharModalTermos();
+        }
+
         document.getElementById('censusForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = this;
+
+            if (!consentimentoLGPDDado) {
+                alert('Por favor, leia e aceite os Termos de Consentimento (LGPD) antes de enviar o formulário.');
+                return;
+            }
 
             const nome = document.getElementById('nome').value.trim();
             const telefone = document.getElementById('telefone').value.trim();
@@ -368,7 +649,9 @@
                 tarefas: tarefas.join(', '),
                 tipoAtuacao,
                 dias: dias.join(', '),
-                batizado
+                batizado,
+                consentimentoLGPD: true,
+                termoAceito: textoTermoAceito
             };
 
             // Só os dígitos do telefone, para não deixar formatações diferentes do
@@ -399,7 +682,8 @@
                     const batch = window.fb.writeBatch(window.fb.db);
                     batch.set(refNovoCenso, {
                         ...novoRegistro,
-                        dataEnvio: window.fb.serverTimestamp()
+                        dataEnvio: window.fb.serverTimestamp(),
+                        dataConsentimento: window.fb.serverTimestamp()
                     });
                     batch.set(refIndiceTelefone, {
                         criadoEm: window.fb.serverTimestamp()
@@ -408,6 +692,19 @@
 
                     alert('Informações registradas.');
                     form.reset();
+
+                    // Exige um novo aceite dos termos a cada envio (form.reset() não
+                    // reverte o estado do consentimento nem o texto do link).
+                    consentimentoLGPDDado = false;
+                    textoTermoAceito = '';
+                    document.getElementById('checkboxConsentimentoLGPD').checked = false;
+                    document.getElementById('checkboxConsentimentoLGPD').disabled = true;
+                    document.getElementById('labelConsentimentoLGPD').classList.remove('habilitado');
+                    document.getElementById('btnConfirmarTermos').disabled = true;
+                    document.getElementById('btnEnviarCenso').disabled = true;
+                    const linkTermos = document.getElementById('linkTermosLGPD');
+                    linkTermos.textContent = 'Ler Termos de Consentimento (LGPD) na íntegra';
+                    linkTermos.classList.remove('aceito');
                 } catch (err) {
                     console.error('Erro ao salvar censo:', err);
                     alert('Não foi possível salvar sua resposta. Verifique sua conexão e tente novamente.');

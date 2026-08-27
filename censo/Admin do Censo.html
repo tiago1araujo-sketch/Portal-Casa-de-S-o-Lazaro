@@ -383,6 +383,48 @@
             accent-color: var(--primary);
             cursor: pointer;
         }
+
+        /* Impressão do Comprovante de Consentimento: some com tudo, menos o comprovante */
+        @media print {
+            body * { visibility: hidden; }
+            #modalComprovanteConsentimento, #modalComprovanteConsentimento * { visibility: visible; }
+
+            /* O modal de leitura obrigatória do formulário público tem sua própria
+               folha de estilos (outro arquivo) e não é afetado por esta regra — ela
+               é restrita, por seletor de ID, apenas ao comprovante do painel admin. */
+            #modalComprovanteConsentimento,
+            #modalComprovanteConsentimento * {
+                overflow: visible !important;
+                height: auto !important;
+                max-height: none !important;
+            }
+
+            #modalComprovanteConsentimento {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background: #ffffff;
+                padding: 0;
+            }
+            #modalComprovanteConsentimento .modal-content {
+                display: block;
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+                background: #ffffff;
+                color: #000000;
+                padding: 20px;
+            }
+            #modalComprovanteConsentimento h3,
+            #modalComprovanteConsentimento p,
+            #modalComprovanteConsentimento b,
+            #modalComprovanteConsentimento div {
+                color: #000000 !important;
+            }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -551,6 +593,20 @@
         </div>
     </div>
 
+    <!-- MODAL DE COMPROVANTE DE CONSENTIMENTO LGPD (imprimível) -->
+    <div id="modalComprovanteConsentimento" class="modal">
+        <div class="modal-content" style="max-width:600px;">
+            <h3 style="color:var(--primary); margin-bottom:16px; font-size: 1.1rem; font-weight: 700;">Comprovante de Consentimento LGPD - Casa de São Lázaro (CIESL)</h3>
+
+            <div id="comprovanteConteudo" style="text-align:left; font-size:1rem; line-height:1.8;"></div>
+
+            <div class="form-footer no-print">
+                <button class="btn-secondary" onclick="fecharModalComprovante()">Fechar</button>
+                <button class="btn-admin" onclick="imprimirComprovante()">Imprimir / Salvar como PDF</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= FIREBASE (Authentication + Firestore) ================= -->
     <script type="module">
         import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -674,6 +730,20 @@
                 : '—';
         }
 
+        function formatarDataHoraFirestore(timestamp) {
+            if (!timestamp || typeof timestamp.toDate !== 'function') return '—';
+            const data = timestamp.toDate();
+            const dataFormatada = data.toLocaleDateString('pt-BR');
+            const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            return `${dataFormatada} às ${horaFormatada}`;
+        }
+
+        function escapeHtml(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto || '';
+            return div.innerHTML;
+        }
+
         async function carregarTabela() {
             const tbody = document.getElementById('tabelaCorpo');
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color:var(--text-muted);">Carregando...</td></tr>`;
@@ -732,6 +802,14 @@
                 <p><b style="color:var(--text-main);">Dias / Turmas:</b> ${item.dias || '—'}</p>
                 <p><b style="color:var(--text-main);">Batizado(a)?</b> ${item.batizado ? 'Sim' : 'Não'}</p>
                 <p><b style="color:var(--text-main);">Data de Envio:</b> ${formatarDataFirestore(item.dataEnvio)}</p>
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 14px 0;">
+                <p><b style="color:var(--text-main);">Consentimento LGPD:</b> ${item.consentimentoLGPD
+                    ? '<span style="color:var(--success); font-weight:700;">Aceito</span>'
+                    : '<span style="color:var(--text-muted);">Sem registro</span>'}</p>
+                ${item.consentimentoLGPD ? `
+                <p><b style="color:var(--text-main);">Data do aceite:</b> ${formatarDataHoraFirestore(item.dataConsentimento)}</p>
+                <button type="button" class="btn-secondary" style="margin-top:6px;" onclick="abrirComprovanteConsentimento()">Ver Comprovante de Consentimento</button>
+                ` : ''}
             `;
 
             resetarBotaoRemoverCenso();
@@ -751,6 +829,57 @@
             const btn = document.getElementById('btnRemoverCenso');
             btn.textContent = 'Remover Cadastro';
             btn.onclick = confirmarRemocaoCenso;
+        }
+
+        function abrirComprovanteConsentimento() {
+            const item = censoCache.find(c => c.id === censoSelecionadoId);
+            if (!item) return;
+
+            const dataHora = formatarDataHoraFirestore(item.dataConsentimento);
+            const termo = item.termoAceito
+                ? escapeHtml(item.termoAceito)
+                : 'Texto do termo não disponível para este registro.';
+
+            document.getElementById('comprovanteConteudo').innerHTML = `
+                <p><b>Nome completo:</b> ${escapeHtml(item.nome)}</p>
+                <p><b>Data e hora do aceite:</b> ${dataHora}</p>
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 16px 0;">
+                <div style="white-space: pre-wrap; font-size: 0.85rem; line-height: 1.7;">${termo}</div>
+            `;
+
+            document.getElementById('modalComprovanteConsentimento').style.display = 'flex';
+        }
+
+        function fecharModalComprovante() {
+            document.getElementById('modalComprovanteConsentimento').style.display = 'none';
+        }
+
+        function sanitizarNomeArquivo(texto) {
+            return (texto || '')
+                .replace(/[\\/:*?"<>|]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function imprimirComprovante() {
+            const item = censoCache.find(c => c.id === censoSelecionadoId);
+            const nomeArquivo = 'Termo de Consentimento - ' + sanitizarNomeArquivo(item ? item.nome : '');
+
+            const tituloOriginal = document.title;
+            let restaurado = false;
+            const restaurarTitulo = () => {
+                if (restaurado) return;
+                restaurado = true;
+                document.title = tituloOriginal;
+                window.removeEventListener('afterprint', restaurarTitulo);
+            };
+
+            document.title = nomeArquivo;
+            window.addEventListener('afterprint', restaurarTitulo);
+            window.print();
+            // Salvaguarda para navegadores/fluxos onde "afterprint" não dispara de
+            // forma confiável (ex.: alguns diálogos de "Salvar como PDF").
+            setTimeout(restaurarTitulo, 5000);
         }
 
         function confirmarRemocaoCenso() {
