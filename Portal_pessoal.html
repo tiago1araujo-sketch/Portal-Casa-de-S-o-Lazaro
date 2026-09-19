@@ -302,8 +302,6 @@
                         <button type="button" onclick="redefinirSenhaAlunoSelecionado()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkBlue-700 hover:text-amber-600 dark:hover:text-brandYellow transition"><i class="fas fa-key text-xs"></i> Redefinir senha</button>
                         <span class="hidden sm:block h-4 w-px bg-slate-200 dark:bg-darkBlue-600"></span>
                         <button type="button" id="botao-detalhe-status" onclick="alternarStatusAlunoSelecionado()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkBlue-700 transition"></button>
-                        <span class="hidden sm:block h-4 w-px bg-slate-200 dark:bg-darkBlue-600"></span>
-                        <button type="button" onclick="excluirAlunoSelecionado()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-300 transition"><i class="fas fa-trash text-xs"></i> Excluir</button>
                     </div>
                 </div>
             </div>
@@ -431,10 +429,9 @@
                     <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-6">
                         O Portal de Estudos nasceu como um projeto de estudo pessoal, mas escolhemos transbordar esse conhecimento e compartilhá-lo com você. Por isso, estamos totalmente abertos a sugestões, críticas construtivas e melhorias para crescermos juntos.
 
-Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar lado a lado no aprimoramento moral, espiritual e intelectual. Aqui, cada conteúdo foi preparado com muito carinho para nutrir a sua alma e expandir a sua consciência. 
-</p>
-Seja muito bem-vindo.
+Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar lado a lado no aprimoramento moral, espiritual e intelectual. Aqui, cada conteúdo foi preparado com muito carinho para nutrir a sua alma e expandir a sua consciência.
                     </p>
+                    <p class="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-6">Seja muito bem-vindo.</p>
 
 
                     <div class="border-t border-slate-200 dark:border-darkBlue-700 pt-6 mt-6">
@@ -550,7 +547,6 @@ Seja muito bem-vindo.
         import {
             getFirestore, collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
         } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAZWo-7xKemTANRhcB6eifllgZqDH9ymBk",
@@ -565,14 +561,13 @@ Seja muito bem-vindo.
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const functions = getFunctions(app, 'southamerica-east1');
 
         // Ponte para o script clássico do restante do site (que usa onclick="..." inline e
         // por isso não pode ser convertido para type="module" sem quebrar todos os botões).
         window.fb = {
             firebaseConfig,
-            auth, db, functions,
-            initializeApp, deleteApp, getAuth, getFirestore, getFunctions, httpsCallable,
+            auth, db,
+            initializeApp, deleteApp, getAuth, getFirestore,
             signInWithEmailAndPassword, signOut, onAuthStateChanged,
             createUserWithEmailAndPassword, sendPasswordResetEmail,
             collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
@@ -720,18 +715,6 @@ Seja muito bem-vindo.
                 </ul>
             `,
                     "2 - Pessoal": `
-                <p class="mb-4">O Círculo de Irradiações Espirituais São Lázaro nasce, em São Paulo, por volta de 1950, através da trajetória de uma portuguesa chamado Dona Maria de Lourdes da Silva e Senhor Antônio Martins que tinha o codinome espiritual de Vô Vitorino. Fugindo da fome na Europa no período pós-guerra, eles chegam ao Brasil e se estabelecem no interior de São Paulo. Nesta época se intensificam as manifestações espirituais deste casal que começam então a acolher e cuidar das pessoas desta região. Perseguidos pelo pensamento da Igreja naquela época, são obrigados a mudar de cidade e chegam a capital paulista.</p>
-                
-                <p class="mb-4">Na década de 60 abre o CIESL na Rua Irerê, no Planalto Paulista. Por esta casa passaram milhões de pessoas que foram cuidadas e auxiliadas. Muitas eram influenciadores da política e da cultura e faziam parte do cenário intelectual da época. Esta casa foi definitivamente um dos pilares na construção da Umbanda neste país. Alexandre Meireles chega à casa de São Lázaro em 1989, logo após o falecimento de seus fundadores. No ano de 1991, os trabalhos passam por uma pausa.</p>
-                
-                <p class="mb-4">Mas como uma casa de Obaluaiê ou Omulu nunca fecha, em 1996 ela é reabrerta por Alexandre Meireles, com apenas 24 anos de idade.</p>
-
-                <p class="mb-4">Uma entidade chamada Zé Baiano, que trabalhava com uma Mãe no Santo chamada Marieta, que não tinham nenhuma ligação com laços formalis com a Pessoal, o comunica que Dona Maria e Seu Antônio junto com toda a egrégora do CIESL esperavam que ele reabrisse a Casa. Neste mesmo ano, no dia 27 de novembro, Alexandre é coroado Pai no Santo. No dia 21 de janeiro de 1996, em um pequeno cômodo, com a presença de 7 médiuns, reabre a Pessoal sob o comando do Pai Alexandre Meireles. E o crescimento foi rápido. Na segunda gira já eram 16 médiuns, na terceira gira eram 30 e no final do ano a casa já contava com uma corrente de mais de 70 médiuns. A casa teve mais 3 endereços até chegar onde está hoje.</p>
-                
-                <p class="mb-4">Nestes 30 anos de história, já foram realizados milhares de atendimentos, com uma média de 40 mil pessoas por ano, de segunda a domingo. As atividades estão divididas em aulas de desenvolvimento espiritual, atendimentos de passe e consulta, atendimentos para animais, medicina espiritual, giras especiais de educação e cuidados para crianças, núcleos que tentam sintetizar e criar protocolos de trabalho para tratamento de adictos e suporte no tratamento de câncer, para dar acesso à justiça, além de projetos sociais.</p>
-                
-                <p class="mb-4">Os trabalhos já estão expandidos para fora de São Paulo. Hoje existem o CIESL em Uberlândia, com mais de 7 anos, o CIESL Vitória - ES, o CIESL Alemanha, na cidade de Colônia, com uma ação pioneira de levar a Umbanda para uma cultura completamente distinta, e o CIESL Cachoeira Dourada, no meio da floresta, no estado de SP, a primeira sede própria da instituição e um espaço multireligioso.</p>
-
                 <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mt-6 mb-3">Os Tipos de Trabalhos na Casa</h3>
                 <p class="mb-4">A Umbanda é uma religião dinâmica e estruturada em diferentes tipos de rituais, conhecidos popularmente como trabalhos da casa. Cada atividade possui uma finalidade espiritual específica, atendendo desde o descarrego cotidiano até tratamentos espirituais mais profundos. Abaixo estão explicados os principais trabalhos realizados nos terreiros:</p>
                 
@@ -1904,13 +1887,6 @@ Seja muito bem-vindo.
             await alternarStatusAluno(uid, ativo);
         }
 
-        async function excluirAlunoSelecionado() {
-            const uid = document.getElementById('detalhe-aluno-uid').value;
-            const nome = document.getElementById('detalhe-aluno-nome').textContent;
-            fecharModalDetalhesAluno();
-            await excluirAlunoDefinitivamente(uid, nome);
-        }
-
         async function abrirModalEditarAluno(uid) {
             const snap = await window.fb.getDoc(window.fb.doc(db, 'usuarios', uid));
             if (!snap.exists()) {
@@ -1957,20 +1933,6 @@ Seja muito bem-vindo.
             } catch (err) {
                 console.error('Erro ao enviar redefinição de senha:', err);
                 alert('Não foi possível enviar o e-mail de redefinição. Verifique a configuração de e-mail do Firebase.');
-            }
-        }
-
-        async function excluirAlunoDefinitivamente(uid, nome) {
-            if (!confirm(`Excluir definitivamente o aluno "${nome}"? Esta ação remove o acesso e não pode ser desfeita.`)) return;
-            try {
-                const excluirAluno = window.fb.httpsCallable(window.fb.functions, 'excluirAluno');
-                await excluirAluno({ uid });
-                alert('Aluno excluído definitivamente.');
-                await atualizarTabelaAlunos();
-            } catch (err) {
-                console.error('Erro ao excluir aluno:', err);
-                const mensagem = err?.message || 'Não foi possível excluir o aluno.';
-                alert(`Não foi possível excluir o aluno: ${mensagem}`);
             }
         }
 

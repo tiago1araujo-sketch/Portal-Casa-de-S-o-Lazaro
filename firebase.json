@@ -12,7 +12,7 @@
       "rewrites": [
         {
           "source": "/",
-          "destination": "/Portal de Estudos CIESL.html"
+          "destination": "/Portal_pessoal.html"
         },
         {
           "source": "/cadastro",
