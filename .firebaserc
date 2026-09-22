@@ -9,6 +9,9 @@
           "censo-casa-sao-lazaro"
         ],
         "portal": [
+          "portal-de-estudos"
+        ],
+        "portal-antigo": [
           "portal-de-estudo-ciesl"
         ]
       }

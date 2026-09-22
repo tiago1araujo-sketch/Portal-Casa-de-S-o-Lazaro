@@ -7,7 +7,9 @@
         "firebase.json",
         "**/.*",
         "**/node_modules/**",
-        "censo/**"
+        "censo/**",
+        "Portal de Estudos CIESL.html",
+        "redirect-antigo/**"
       ],
       "rewrites": [
         {
@@ -32,6 +34,22 @@
         {
           "source": "/",
           "destination": "/Atualização cadastral.html"
+        }
+      ]
+    },
+    {
+      "target": "portal-antigo",
+      "public": "redirect-antigo",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "redirects": [
+        {
+          "source": "/:caminho*",
+          "destination": "https://portal-de-estudos.web.app/:caminho",
+          "type": 301
         }
       ]
     }
