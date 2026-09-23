@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -71,6 +75,75 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        /* Módulos em preparação: visíveis como prévia, mas bloqueados para alunos. */
+        .module-locked { position: relative; overflow: hidden; isolation: isolate; cursor: not-allowed; user-select: none; }
+        .module-locked::before { content: ''; position: absolute; inset: 0; z-index: 1; background: rgba(11, 19, 43, 0.48); backdrop-filter: grayscale(0.8) blur(1.5px); }
+        .module-locked::after { content: 'GARANTA JÁ'; position: absolute; z-index: 2; top: 50%; left: 50%; width: 150%; padding: 0.45rem 0; transform: translate(-50%, -50%) rotate(-24deg); background: rgba(244, 162, 97, 0.92); color: #0B132B; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.24em; text-align: center; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35); }
+        .module-locked > * { position: relative; z-index: 0; }
+        .module-locked .locked-message { position: relative; z-index: 3; display: inline-flex; align-items: center; gap: 0.4rem; color: #0B132B; background: rgba(255, 255, 255, 0.95); border-radius: 9999px; padding: 0.45rem 0.75rem; font-size: 0.75rem; font-weight: 700; }
+        .module-locked button { pointer-events: none; }
+
+        /* ===== Conteúdo das aulas salvas pelo editor visual (fica dentro de .aula-editor) ===== */
+        .aula-editor { line-height: 1.75; }
+        .aula-editor > :first-child { margin-top: 0; }
+        .aula-editor h2 { font-size: 1.4rem; font-weight: 700; line-height: 1.3; color: #d97706; margin: 1.75rem 0 0.75rem; }
+        .aula-editor h3 { font-size: 1.15rem; font-weight: 600; line-height: 1.35; color: #d97706; margin: 1.5rem 0 0.5rem; }
+        .aula-editor h4, .aula-editor h5, .aula-editor h6 { font-size: 1rem; font-weight: 600; color: #d97706; margin: 1.25rem 0 0.5rem; }
+        .dark .aula-editor h2, .dark .aula-editor h3, .dark .aula-editor h4, .dark .aula-editor h5, .dark .aula-editor h6 { color: #F4A261; }
+        .aula-editor p { margin: 0 0 1rem; }
+        .aula-editor ul, .aula-editor ol { margin: 0 0 1rem; padding-left: 1.5rem; }
+        .aula-editor ul { list-style: disc; }
+        .aula-editor ol { list-style: decimal; }
+        .aula-editor li { margin-bottom: 0.35rem; }
+        .aula-editor blockquote { margin: 0 0 1rem; padding: 0.75rem 1rem; border-left: 4px solid #F4A261; background: rgba(244, 162, 97, 0.08); border-radius: 0 0.5rem 0.5rem 0; font-style: italic; color: #475569; }
+        .dark .aula-editor blockquote { color: #cbd5e1; }
+        .aula-editor a { color: #d97706; text-decoration: underline; text-underline-offset: 2px; }
+        .dark .aula-editor a { color: #F4A261; }
+        .aula-editor img { display: inline-block; max-width: 100%; height: auto; border-radius: 0.75rem; margin: 0.5rem 0; }
+        .aula-editor .ql-align-center { text-align: center; }
+        .aula-editor .ql-align-right { text-align: right; }
+        .aula-editor .caixa-destaque { margin: 0 0 1rem; }
+        .aula-editor .caixa-destaque > :first-child { margin-top: 0; }
+        .aula-editor .caixa-destaque > :last-child { margin-bottom: 0; }
+        .aula-editor .caixa-destaque p { margin-bottom: 0.5rem; }
+
+        /* ===== Editor visual das aulas (Quill) ===== */
+        #editor-aula-container .ql-toolbar.ql-snow { position: sticky; top: 0; z-index: 5; background: #ffffff; border-color: #cbd5e1; border-radius: 0.5rem 0.5rem 0 0; }
+        #editor-aula-container .ql-container.ql-snow { border-color: #cbd5e1; border-radius: 0 0 0.5rem 0.5rem; font-family: inherit; font-size: 1rem; }
+        #editor-aula-container .ql-editor { min-height: 320px; line-height: 1.75; color: #334155; }
+        #editor-aula-container .ql-editor.ql-blank::before { color: #94a3b8; font-style: normal; }
+        #editor-aula-container .ql-editor h2 { font-size: 1.4rem; font-weight: 700; color: #d97706; margin: 1.25rem 0 0.5rem; }
+        #editor-aula-container .ql-editor h3 { font-size: 1.15rem; font-weight: 600; color: #d97706; margin: 1rem 0 0.5rem; }
+        #editor-aula-container .ql-editor h4, #editor-aula-container .ql-editor h5, #editor-aula-container .ql-editor h6 { font-size: 1rem; font-weight: 600; color: #d97706; margin: 1rem 0 0.5rem; }
+        #editor-aula-container .ql-editor p { margin-bottom: 0.5rem; }
+        #editor-aula-container .ql-editor blockquote { margin: 0 0 0.5rem; padding: 0.5rem 1rem; border-left: 4px solid #F4A261; background: rgba(244, 162, 97, 0.08); font-style: italic; }
+        #editor-aula-container .ql-editor a { color: #d97706; }
+        #editor-aula-container .ql-editor img { display: inline-block; max-width: 100%; border-radius: 0.5rem; }
+        #editor-aula-container .ql-editor .ql-caixa-destaque { margin: 0; padding: 0.35rem 1rem; background: #f8fafc; box-shadow: inset 3px 0 0 #94a3b8; }
+        #editor-aula-container .ql-snow.ql-toolbar button:hover .ql-stroke, #editor-aula-container .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #d97706; }
+        #editor-aula-container .ql-snow.ql-toolbar button:hover .ql-fill, #editor-aula-container .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #d97706; }
+        #editor-aula-container .ql-snow .ql-tooltip { z-index: 10; }
+        #editor-aula-container .ql-snow .ql-tooltip::before { content: "Abrir link:"; }
+        #editor-aula-container .ql-snow .ql-tooltip[data-mode=link]::before { content: "Endereço do link:"; }
+        #editor-aula-container .ql-snow .ql-tooltip a.ql-action::after { content: "Editar"; }
+        #editor-aula-container .ql-snow .ql-tooltip.ql-editing a.ql-action::after { content: "Salvar"; }
+        #editor-aula-container .ql-snow .ql-tooltip a.ql-remove::before { content: "Remover"; }
+        .dark #editor-aula-container .ql-toolbar.ql-snow { background: #0B132B; border-color: #3A506B; }
+        .dark #editor-aula-container .ql-container.ql-snow { background: #0B132B; border-color: #3A506B; }
+        .dark #editor-aula-container .ql-editor { color: #e2e8f0; }
+        .dark #editor-aula-container .ql-editor.ql-blank::before { color: #64748b; }
+        .dark #editor-aula-container .ql-editor h2, .dark #editor-aula-container .ql-editor h3, .dark #editor-aula-container .ql-editor h4, .dark #editor-aula-container .ql-editor a { color: #F4A261; }
+        .dark #editor-aula-container .ql-editor blockquote { color: #cbd5e1; }
+        .dark #editor-aula-container .ql-editor .ql-caixa-destaque { background: #1C2541; box-shadow: inset 3px 0 0 #3A506B; }
+        .dark #editor-aula-container .ql-snow .ql-stroke { stroke: #cbd5e1; }
+        .dark #editor-aula-container .ql-snow .ql-fill { fill: #cbd5e1; }
+        .dark #editor-aula-container .ql-snow.ql-toolbar button:hover .ql-stroke, .dark #editor-aula-container .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #F4A261; }
+        .dark #editor-aula-container .ql-snow.ql-toolbar button:hover .ql-fill, .dark #editor-aula-container .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: #F4A261; }
+        .dark #editor-aula-container .ql-snow .ql-tooltip { background: #1C2541; color: #e2e8f0; border-color: #3A506B; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+        .dark #editor-aula-container .ql-snow .ql-tooltip input[type=text] { background: #0B132B; color: #ffffff; border-color: #3A506B; }
+
+        /* Lista de aulas arrastável (SortableJS) */
+        #gm-lista-aulas .sortable-ghost { opacity: 0.4; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-darkBlue-900 font-sans text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
@@ -160,28 +233,76 @@
         </div>
     </div>
 
-    <div id="edit-course-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-lg rounded-xl p-6 shadow-2xl transition-colors duration-300">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Editar Módulo / Curso</h3>
-            <input type="hidden" id="edit-course-key">
+    <!-- MODAL GERENCIAR MÓDULO (nome, descrição e aulas) -->
+    <div id="gerenciar-modulo-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-2xl rounded-xl shadow-2xl transition-colors duration-300 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center px-6 pt-6 pb-4">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Gerenciar módulo</h3>
+                <button type="button" onclick="fecharGerenciarModulo()" class="text-slate-500 hover:text-slate-700 dark:hover:text-white font-bold text-xl leading-none" aria-label="Fechar">&times;</button>
+            </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome do Curso / Módulo</label>
-                    <input type="text" id="edit-course-title" 
-                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
-                </div>
+            <div class="px-6 pb-6 overflow-y-auto flex-1 space-y-6">
+                <form onsubmit="salvarDadosModulo(event)" class="space-y-3">
+                    <div>
+                        <label for="gm-titulo" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome do módulo</label>
+                        <input type="text" id="gm-titulo" required
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                    </div>
+                    <div>
+                        <label for="gm-descricao" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Descrição do card</label>
+                        <textarea id="gm-descricao" rows="2"
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors"></textarea>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Texto curto que aparece no card do módulo, na tela inicial.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button type="submit" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 px-4 py-2 rounded-lg text-sm font-bold transition">Salvar nome e descrição</button>
+                        <span id="gm-status" class="text-xs"></span>
+                    </div>
+                </form>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Conteúdo HTML da Aula Principal</label>
-                    <textarea id="edit-course-content" rows="8"
-                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-xs font-mono transition-colors"></textarea>
+                <p id="gm-aviso-quiz" class="hidden text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg p-3">
+                    <i class="fas fa-circle-info text-amber-500 mr-1"></i> Este módulo é um quiz. Aqui você pode alterar apenas o nome e a descrição; as perguntas continuam as mesmas.
+                </p>
+
+                <div id="gm-secao-aulas" class="border-t border-slate-200 dark:border-darkBlue-700 pt-5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                        <h4 class="text-base font-bold text-slate-900 dark:text-white">Aulas do módulo</h4>
+                        <button type="button" onclick="adicionarAula()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 px-3 py-1.5 rounded-lg text-sm font-bold transition"><i class="fas fa-plus mr-1"></i> Adicionar aula</button>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Para mudar a ordem, segure a alça <i class="fas fa-grip-vertical"></i> e arraste a aula para cima ou para baixo. A numeração se ajusta sozinha.</p>
+                    <ul id="gm-lista-aulas" class="space-y-2"></ul>
                 </div>
             </div>
 
-            <div class="flex space-x-2 mt-6">
-                <button onclick="fecharModalEdicao()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
-                <button onclick="salvarEdicaoCurso()" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Salvar Alterações</button>
+            <div class="px-6 py-4 border-t border-slate-200 dark:border-darkBlue-700 flex justify-end">
+                <button type="button" onclick="fecharGerenciarModulo()" class="bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 px-5 py-2 rounded-lg text-sm font-medium transition">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITOR DE CONTEÚDO DA AULA -->
+    <div id="editor-aula-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-[60]">
+        <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-4xl rounded-xl shadow-2xl transition-colors duration-300 max-h-[95vh] flex flex-col">
+            <div class="flex justify-between items-start gap-3 px-5 pt-5 pb-3 border-b border-slate-200 dark:border-darkBlue-700">
+                <div class="min-w-0">
+                    <p class="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">Editando a aula</p>
+                    <h3 id="editor-aula-titulo" class="text-lg font-bold text-slate-900 dark:text-white break-words"></h3>
+                </div>
+                <button type="button" onclick="cancelarEdicaoAula()" class="text-slate-500 hover:text-slate-700 dark:hover:text-white font-bold text-xl leading-none" aria-label="Fechar">&times;</button>
+            </div>
+
+            <div id="editor-aula-aviso-layout" class="hidden mx-5 mt-4 p-3 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 text-sm"></div>
+            <div id="editor-aula-dica" class="hidden mx-5 mt-4 p-3 rounded-lg border border-slate-300 dark:border-darkBlue-600 bg-slate-50 dark:bg-darkBlue-900 text-slate-700 dark:text-slate-200 text-sm"></div>
+
+            <div id="editor-aula-rolagem" class="flex-1 overflow-y-auto px-5 py-4">
+                <div id="editor-aula-container">
+                    <div id="editor-aula"></div>
+                </div>
+            </div>
+
+            <div class="px-5 py-4 border-t border-slate-200 dark:border-darkBlue-700 flex justify-end gap-2">
+                <button type="button" onclick="cancelarEdicaoAula()" class="bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 px-5 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
+                <button type="button" id="botao-salvar-aula" onclick="salvarAula()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 px-6 py-2 rounded-lg text-sm font-bold transition disabled:opacity-60 disabled:cursor-not-allowed">Salvar</button>
             </div>
         </div>
     </div>
@@ -189,35 +310,31 @@
     <div id="add-course-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 w-full max-w-lg rounded-xl p-6 shadow-2xl transition-colors duration-300">
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Adicionar Novo Curso / Módulo</h3>
-            
+
             <form onsubmit="salvarNovoCurso(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Identificador Único (Chave sem espaços, ex: <span class="font-mono text-amber-600 dark:text-brandYellow">tarot</span>)</label>
-                    <input type="text" id="new-course-key" required placeholder="ex: tarot"
-                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Título do Curso</label>
+                    <label for="new-course-title" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome do módulo</label>
                     <input type="text" id="new-course-title" required placeholder="ex: Curso de Tarô"
                         class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Breve Descrição do Card</label>
-                    <input type="text" id="new-course-desc" required placeholder="ex: Fundamentos e tiragem de cartas..."
+                    <label for="new-course-desc" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Descrição do card</label>
+                    <input type="text" id="new-course-desc" required placeholder="ex: Fundamentos e tiragem de cartas"
                         class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Texto curto que aparece no card do módulo, na tela inicial.</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Conteúdo da Primeira Aula (HTML)</label>
-                    <textarea id="new-course-content" rows="4" required placeholder="<p class='mb-4'>Introdução ao curso...</p>"
-                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-xs font-mono transition-colors"></textarea>
+                    <label for="new-course-first-lesson" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Título da primeira aula</label>
+                    <input type="text" id="new-course-first-lesson" required placeholder="ex: Introdução"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none text-sm transition-colors">
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Depois de criar, você poderá escrever o conteúdo desta aula e adicionar outras.</p>
                 </div>
 
                 <div class="flex space-x-2 mt-6">
                     <button type="button" onclick="fecharModalNovoCurso()" class="flex-1 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 py-2 rounded-lg text-sm font-medium transition">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition">Criar Curso</button>
+                    <button type="submit" id="botao-criar-modulo" class="flex-1 bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 py-2 rounded-lg text-sm font-bold transition disabled:opacity-60 disabled:cursor-not-allowed">Criar módulo</button>
                 </div>
             </form>
         </div>
@@ -479,6 +596,11 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                     <div class="absolute top-0 right-0 w-32 h-32 bg-brandYellow/5 rounded-full blur-2xl pointer-events-none"></div>
                     <h3 class="text-lg font-bold text-amber-600 dark:text-brandYellow mb-2">Painel do Administrador</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">Você possui privilégios administrativos para gerenciar conteúdos, alunos, permissões e avisos.</p>
+                    <div id="aviso-importacao-modulos" class="hidden mb-4 p-4 rounded-xl border border-amber-300 dark:border-brandYellow/40 bg-amber-50 dark:bg-darkBlue-900/60">
+                        <p class="text-sm font-bold text-amber-800 dark:text-brandYellow mb-1"><i class="fas fa-database mr-1"></i> Os módulos ainda não estão no banco de dados</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">Enquanto isso não for feito, os alunos não conseguem ver os módulos. Clique no botão abaixo para copiar os módulos atuais para o banco de dados. Isso só precisa ser feito uma vez.</p>
+                        <button id="botao-importar-modulos" onclick="importarModulos()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold px-4 py-2 rounded-lg text-sm transition shadow disabled:opacity-60 disabled:cursor-not-allowed">Importar módulos para o banco de dados</button>
+                    </div>
                     <div class="flex flex-wrap gap-3">
                         <button onclick="abrirModalNovoCurso()" class="bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold px-4 py-2 rounded-lg text-sm transition shadow">Adicionar Novo Curso</button>
                         <button onclick="abrirModalGerenciarAlunos()" class="bg-slate-200 dark:bg-darkBlue-700 border border-slate-300 dark:border-darkBlue-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-darkBlue-600 px-4 py-2 rounded-lg text-sm font-medium transition">Gerenciar Alunos & Permissões</button>
@@ -545,7 +667,8 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             createUserWithEmailAndPassword, sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
         import {
-            getFirestore, collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
+            getFirestore, collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, deleteDoc, writeBatch,
+            serverTimestamp, query, orderBy, limit
         } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -570,7 +693,8 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             initializeApp, deleteApp, getAuth, getFirestore,
             signInWithEmailAndPassword, signOut, onAuthStateChanged,
             createUserWithEmailAndPassword, sendPasswordResetEmail,
-            collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy
+            collection, doc, setDoc, addDoc, getDoc, getDocs, updateDoc, deleteDoc, writeBatch,
+            serverTimestamp, query, orderBy, limit
         };
 
         window.dispatchEvent(new Event('firebase-ready'));
@@ -588,10 +712,6 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
         const avisosPadrao = [
             { id: 1, texto: 'Bem-vindos ao novo Portal de Estudos! Verifiquem seus módulos liberados.', imagem: '' }
         ];
-
-        function salvarCursos() {
-            localStorage.setItem('portal_cursos_dados', JSON.stringify(configCursos));
-        }
 
         function salvarAvisos() {
             localStorage.setItem('portal_avisos_dados', JSON.stringify(avisosGlobais));
@@ -656,6 +776,52 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             carregarPortal(perfil);
         }
 
+        // Tela do quiz: continua no código; no banco de dados fica só o card do módulo.
+        const TEMPLATE_QUIZ = `<div class="max-w-xl mx-auto" id="quiz-umbanda-root">
+                        <div id="quiz-menu-screen" class="text-center">
+                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-1">Avaliação de Conhecimento</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Escolha um módulo temático para iniciar o quiz.</p>
+                            <div class="mb-6 text-left">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Módulo de Conhecimento</label>
+                                <select id="quiz-module-select" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors">
+                                    <option value="" disabled selected>Escolha um módulo para iniciar...</option>
+                                </select>
+                            </div>
+                            <button onclick="confirmarSelecaoQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Iniciar Avaliação</button>
+                        </div>
+
+                        <div id="quiz-play-screen" class="hidden">
+                            <div class="grid grid-cols-3 gap-3 mb-5">
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Pontuação</span>
+                                    <span id="quiz-score-val" class="block text-lg font-bold text-slate-900 dark:text-white mt-0.5">0</span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Sequência</span>
+                                    <span id="quiz-streak-val" class="block text-lg font-bold text-amber-600 dark:text-brandYellow mt-0.5">0</span>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
+                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Tempo</span>
+                                    <span id="quiz-timer-val" class="block text-lg font-bold text-red-600 dark:text-red-400 mt-0.5">20s</span>
+                                </div>
+                            </div>
+
+                            <div id="quiz-question" class="font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed">Carregando...</div>
+                            <div id="quiz-options"></div>
+
+                            <button onclick="voltarAoMenuQuiz()" class="w-full mt-4 py-2.5 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg text-xs transition">Interromper e Voltar ao Menu</button>
+                        </div>
+
+                        <div id="quiz-result-screen" class="hidden text-center">
+                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-4">Avaliação Concluída</h3>
+                            <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 border-l-4 border-l-brandYellow rounded-r-lg p-5 mb-6 text-left">
+                                <p id="quiz-final-score" class="text-base font-bold text-slate-900 dark:text-white mb-1"></p>
+                                <p id="quiz-feedback-msg" class="text-sm font-medium text-slate-700 dark:text-slate-300"></p>
+                            </div>
+                            <button onclick="iniciarQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Selecionar Outro Módulo</button>
+                        </div>
+                    </div>`;
+
         const cursosPadrao = {
             espiritualidade: {
                 titulo: 'Introdução à Umbanda',
@@ -715,6 +881,18 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                 </ul>
             `,
                     "2 - Pessoal": `
+                <p class="mb-4">O Círculo de Irradiações Espirituais São Lázaro nasce, em São Paulo, por volta de 1950, através da trajetória de uma portuguesa chamado Dona Maria de Lourdes da Silva e Senhor Antônio Martins que tinha o codinome espiritual de Vô Vitorino. Fugindo da fome na Europa no período pós-guerra, eles chegam ao Brasil e se estabelecem no interior de São Paulo. Nesta época se intensificam as manifestações espirituais deste casal que começam então a acolher e cuidar das pessoas desta região. Perseguidos pelo pensamento da Igreja naquela época, são obrigados a mudar de cidade e chegam a capital paulista.</p>
+                
+                <p class="mb-4">Na década de 60 abre o CIESL na Rua Irerê, no Planalto Paulista. Por esta casa passaram milhões de pessoas que foram cuidadas e auxiliadas. Muitas eram influenciadores da política e da cultura e faziam parte do cenário intelectual da época. Esta casa foi definitivamente um dos pilares na construção da Umbanda neste país. Alexandre Meireles chega à casa de São Lázaro em 1989, logo após o falecimento de seus fundadores. No ano de 1991, os trabalhos passam por uma pausa.</p>
+                
+                <p class="mb-4">Mas como uma casa de Obaluaiê ou Omulu nunca fecha, em 1996 ela é reabrerta por Alexandre Meireles, com apenas 24 anos de idade.</p>
+
+                <p class="mb-4">Uma entidade chamada Zé Baiano, que trabalhava com uma Mãe no Santo chamada Marieta, que não tinham nenhuma ligação com laços formalis com a Pessoal, o comunica que Dona Maria e Seu Antônio junto com toda a egrégora do CIESL esperavam que ele reabrisse a Casa. Neste mesmo ano, no dia 27 de novembro, Alexandre é coroado Pai no Santo. No dia 21 de janeiro de 1996, em um pequeno cômodo, com a presença de 7 médiuns, reabre a Pessoal sob o comando do Pai Alexandre Meireles. E o crescimento foi rápido. Na segunda gira já eram 16 médiuns, na terceira gira eram 30 e no final do ano a casa já contava com uma corrente de mais de 70 médiuns. A casa teve mais 3 endereços até chegar onde está hoje.</p>
+                
+                <p class="mb-4">Nestes 30 anos de história, já foram realizados milhares de atendimentos, com uma média de 40 mil pessoas por ano, de segunda a domingo. As atividades estão divididas em aulas de desenvolvimento espiritual, atendimentos de passe e consulta, atendimentos para animais, medicina espiritual, giras especiais de educação e cuidados para crianças, núcleos que tentam sintetizar e criar protocolos de trabalho para tratamento de adictos e suporte no tratamento de câncer, para dar acesso à justiça, além de projetos sociais.</p>
+                
+                <p class="mb-4">Os trabalhos já estão expandidos para fora de São Paulo. Hoje existem o CIESL em Uberlândia, com mais de 7 anos, o CIESL Vitória - ES, o CIESL Alemanha, na cidade de Colônia, com uma ação pioneira de levar a Umbanda para uma cultura completamente distinta, e o CIESL Cachoeira Dourada, no meio da floresta, no estado de SP, a primeira sede própria da instituição e um espaço multireligioso.</p>
+
                 <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mt-6 mb-3">Os Tipos de Trabalhos na Casa</h3>
                 <p class="mb-4">A Umbanda é uma religião dinâmica e estruturada em diferentes tipos de rituais, conhecidos popularmente como trabalhos da casa. Cada atividade possui uma finalidade espiritual específica, atendendo desde o descarrego cotidiano até tratamentos espirituais mais profundos. Abaixo estão explicados os principais trabalhos realizados nos terreiros:</p>
                 
@@ -770,21 +948,60 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                     </div>
                 </div>
             `,
-                    "3 - Oração da Pessoal": `
-                <div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center space-y-4">
-                    <p class="text-amber-600 dark:text-brandYellow font-semibold text-base not-italic">"Eu desejo Harmonia, Amor, Verdade e Justiça, a todos os filhos do Círculo de Irradiações Espirituais São Lázaro."</p>
-                    
-                    <p>Com as forças reunidas e silenciosas dos nossos pensamentos, somos Fortes, Felizes e Sadios, formando assim, um elo de confraternização universal.</p>
-                    
-                    <p>Estou satisfeito e em paz com o universo inteiro, e desejo que todos se realizem nas suas aspirações mais íntimas.</p>
-                    
-                    <p>Dou graças ao pai infinito por ter estabelecido o Amor, a Verdade, e a Justiça a todos os filhos.</p>
-                    
-                    <p class="font-medium">Os filhos do Círculo de Irradiações Espirituais São Lázaro em comunhão com firmamento espírito universal vos é e serão sempre União, Amor, Fraternidade e Justiça.</p>
-                    
-                    <p class="text-amber-600 dark:text-brandYellow font-bold tracking-wider not-italic pt-2">Amém</p>
-                </div>
-            `,
+                    "3 - Orações": {
+                        tipo: 'submenu',
+                        itens: {
+                            "1 - Pai Nosso": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center whitespace-pre-line leading-relaxed">Pai Nosso, que estais nos céus,
+santificado seja o vosso nome;
+venha a nós o vosso reino;
+seja feita a vossa vontade,
+assim na terra como no céu.
+O pão nosso de cada dia nos dai hoje;
+perdoai-nos as nossas ofensas,
+assim como nós perdoamos a quem nos tem ofendido;
+e não nos deixeis cair em tentação,
+mas livrai-nos do mal.
+Amém</div>`,
+                            "2 - Salve Rainha": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center whitespace-pre-line leading-relaxed">Salve, Rainha,
+mãe de misericórdia,
+vida, doçura, esperança nossa, salve!
+A Vós bradamos,
+os degredados filhos de Eva.
+A Vós suspiramos, gemendo e chorando
+neste vale de lágrimas.
+Eia, pois, advogada nossa,
+esses Vossos olhos misericordiosos
+a nós volvei.
+E, depois deste desterro,
+nos mostrai Jesus, bendito fruto
+do Vosso ventre.
+Ó clemente, ó piedosa,
+ó doce Virgem Maria.
+Rogai por nós, Santa Mãe de Deus,
+para que sejamos dignos das promessas de Cristo.</div>`,
+                            "3 - Ave Maria": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center whitespace-pre-line leading-relaxed">Ave Maria, cheia de graça,
+o Senhor é convosco,
+bendita sois vós entre as mulheres
+e bendito é o fruto do vosso ventre, Jesus.
+Santa Maria, Mãe de Deus,
+rogai por nós pecadores,
+agora e na hora da nossa morte. Amém</div>`,
+                            "4 - São Miguel Arcanjo": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center whitespace-pre-line leading-relaxed">São Miguel Arcanjo, defendei-nos no combate.
+Sede o nosso refúgio contra as maldades e ciladas do demônio.
+Que Deus manifeste o seu poder sobre ele. Eis a nossa humilde súplica.
+E vós, Príncipe da Milícia Celeste, com o poder que Deus vos conferiu,
+precipitai no inferno Satanás e os outros espíritos malignos,
+que andam pelo mundo tentando as almas. Amém.</div>`,
+                            "5 - Oração de São Jorge": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center whitespace-pre-line leading-relaxed">Eu andarei vestido e armado com as armas de São Jorge, para que meus inimigos, tendo pés não me alcancem, tendo mãos não me peguem, tendo olhos não me vejam, e nem em pensamentos eles possam me fazer mal.
+
+Armas de fogo o meu corpo não alcançarão, facas e lanças se quebram sem o meu corpo tocar, cordas e correntes se arrebentem sem o meu corpo amarram.
+
+Jesus Cristo, me proteja e me defenda com o poder da sua santa e divina graça, Virgem de Nazaré me cubra com seu manto sagrado e divino, protegendo-me em todas as minhas dores e aflições, e Deus com sua divina misericórdia e grande poder, seja meu defensor contra as maldades e perseguições dos meus inimigos.
+
+Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosas armas, defendendo-me com a sua força e com a sua grandeza, e que debaixo das patas de seu fiel ginete, meus inimigos fiquem humildes e submissos a vós. Assim seja, com o poder de Deus, de Jesus, e da falange do Divino Espírito Santo.</div>`,
+                            "6 - Oração da Casa de São Lázaro": `<div class="bg-slate-50 dark:bg-darkBlue-900/60 border border-brandYellow/30 p-6 rounded-xl shadow-inner italic text-center space-y-4"><p class="text-amber-600 dark:text-brandYellow font-semibold text-base not-italic">“Eu desejo Harmonia, Amor, Verdade e Justiça, a todos os filhos do Círculo de Irradiações Espirituais São Lázaro.”</p><p>Com as forças reunidas e silenciosas dos nossos pensamentos, somos Fortes, Felizes e Sadios, formando assim, um elo de confraternização universal.</p><p>Estou satisfeito e em paz com o universo inteiro, e desejo que todos se realizem nas suas aspirações mais íntimas.</p><p>Dou graças ao pai infinito por ter estabelecido o Amor, a Verdade, e a Justiça a todos os filhos.</p><p class="font-medium">Os filhos do Círculo de Irradiações Espirituais São Lázaro em comunhão com firmamento espírito universal vos é e serão sempre União, Amor, Fraternidade e Justiça.</p><p class="text-amber-600 dark:text-brandYellow font-bold tracking-wider not-italic pt-2">Amém</p></div>`
+                        }
+                    },
                     "4 - Ponto Cantado": `
                 <p class="mb-4">O ponto cantado é uma das expressões mais importantes e sagradas da Umbanda. Trata-se de um cântico rítmico, acompanhado geralmente por palmas e instrumentos (como o atabaque, o agogô ou o pandeiro), que serve como uma ferramenta de conexão espiritual, invocação, magia e comunicação com as divindades (Orixás) e os espíritos (Guias e Guardiões).</p>
                 
@@ -1384,56 +1601,111 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                 tag: 'Quiz Interativo',
                 tagNeon: 'neon-badge-yellow',
                 aulas: {
-                    '1 - Quiz Interativo': `<div class="max-w-xl mx-auto" id="quiz-umbanda-root">
-                        <div id="quiz-menu-screen" class="text-center">
-                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-1">Avaliação de Conhecimento</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Escolha um módulo temático para iniciar o quiz.</p>
-                            <div class="mb-6 text-left">
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Módulo de Conhecimento</label>
-                                <select id="quiz-module-select" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-300 dark:border-darkBlue-700 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brandYellow focus:outline-none transition-colors">
-                                    <option value="" disabled selected>Escolha um módulo para iniciar...</option>
-                                </select>
-                            </div>
-                            <button onclick="confirmarSelecaoQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Iniciar Avaliação</button>
-                        </div>
-
-                        <div id="quiz-play-screen" class="hidden">
-                            <div class="grid grid-cols-3 gap-3 mb-5">
-                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
-                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Pontuação</span>
-                                    <span id="quiz-score-val" class="block text-lg font-bold text-slate-900 dark:text-white mt-0.5">0</span>
-                                </div>
-                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
-                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Sequência</span>
-                                    <span id="quiz-streak-val" class="block text-lg font-bold text-amber-600 dark:text-brandYellow mt-0.5">0</span>
-                                </div>
-                                <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg text-center px-3 py-2">
-                                    <span class="block text-xs font-semibold text-slate-500 dark:text-slate-400">Tempo</span>
-                                    <span id="quiz-timer-val" class="block text-lg font-bold text-red-600 dark:text-red-400 mt-0.5">20s</span>
-                                </div>
-                            </div>
-
-                            <div id="quiz-question" class="font-semibold text-slate-900 dark:text-white mb-4 leading-relaxed">Carregando...</div>
-                            <div id="quiz-options"></div>
-
-                            <button onclick="voltarAoMenuQuiz()" class="w-full mt-4 py-2.5 bg-slate-200 dark:bg-darkBlue-700 hover:bg-slate-300 dark:hover:bg-darkBlue-600 text-slate-700 dark:text-slate-200 font-medium rounded-lg text-xs transition">Interromper e Voltar ao Menu</button>
-                        </div>
-
-                        <div id="quiz-result-screen" class="hidden text-center">
-                            <h3 class="text-xl font-bold text-amber-600 dark:text-brandYellow mb-4">Avaliação Concluída</h3>
-                            <div class="bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 border-l-4 border-l-brandYellow rounded-r-lg p-5 mb-6 text-left">
-                                <p id="quiz-final-score" class="text-base font-bold text-slate-900 dark:text-white mb-1"></p>
-                                <p id="quiz-feedback-msg" class="text-sm font-medium text-slate-700 dark:text-slate-300"></p>
-                            </div>
-                            <button onclick="iniciarQuiz()" class="w-full bg-brandYellow hover:bg-brandYellow-light text-darkBlue-900 font-bold py-3 rounded-lg text-sm transition shadow">Selecionar Outro Módulo</button>
-                        </div>
-                    </div>`
+                    '1 - Quiz Interativo': TEMPLATE_QUIZ
                 }
             }
         };
 
-        let configCursos = JSON.parse(localStorage.getItem('portal_cursos_dados')) || cursosPadrao;
-        salvarCursos();
+        // ================= MÓDULOS E AULAS (Firestore) =================
+        const CHAVE_CURSOS_ANTIGA = 'portal_cursos_dados';
+        const CLASSES_CAIXA_DESTAQUE = 'caixa-destaque bg-slate-50 dark:bg-darkBlue-900/50 border border-slate-200 dark:border-darkBlue-700 p-4 rounded-xl';
+        const ETIQUETAS_NEON = ['neon-badge-yellow', 'neon-badge-purple', 'neon-badge-emerald'];
+
+        let modulos = [];          // cards dos módulos (coleção "cursos"), já em ordem
+        let aulasPorModulo = {};   // cursoId -> aulas já carregadas, em ordem
+        let promessaModulos = null;
+        let modulosLocaisAntigos = lerModulosLocaisAntigos();
+
+        // Versões antigas guardavam os módulos no navegador. A chave é apagada ao abrir a página,
+        // exceto se houver módulos criados aqui que ainda não foram levados ao banco de dados.
+        function lerModulosLocaisAntigos() {
+            let salvos = null;
+            try { salvos = JSON.parse(localStorage.getItem(CHAVE_CURSOS_ANTIGA)); } catch (err) { salvos = null; }
+            const extras = {};
+            if (salvos && typeof salvos === 'object') {
+                Object.keys(salvos).forEach(chave => {
+                    if (!cursosPadrao[chave] && salvos[chave] && salvos[chave].aulas) extras[chave] = salvos[chave];
+                });
+            }
+            if (Object.keys(extras).length === 0) localStorage.removeItem(CHAVE_CURSOS_ANTIGA);
+            return extras;
+        }
+
+        function descartarModulosLocaisAntigos() {
+            modulosLocaisAntigos = {};
+            localStorage.removeItem(CHAVE_CURSOS_ANTIGA);
+        }
+
+        if (window.DOMPurify) {
+            DOMPurify.addHook('afterSanitizeAttributes', no => {
+                if (no.tagName === 'A' && no.hasAttribute('target')) {
+                    no.setAttribute('target', '_blank');
+                    no.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+        }
+
+        function limparHtml(html) {
+            if (!window.DOMPurify) return '';
+            return DOMPurify.sanitize(html || '', { ADD_ATTR: ['target'] });
+        }
+
+        function escaparHtml(texto) {
+            return String(texto ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function removerNumeroDoTitulo(titulo) {
+            const texto = String(titulo).trim();
+            return texto.replace(/^\d+\s*[-–.)]\s*/, '').trim() || texto;
+        }
+
+        function gerarChaveModulo(titulo) {
+            const chave = String(titulo).normalize('NFD').replace(/[̀-ͯ]/g, '')
+                .toLowerCase().trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            return chave || 'modulo';
+        }
+
+        function chaveValida(chave) {
+            return /^[A-Za-z0-9_-]+$/.test(chave) ? chave : gerarChaveModulo(chave);
+        }
+
+        function plural(quantidade, singular, pluralTexto) {
+            return `${quantidade} ${quantidade === 1 ? singular : pluralTexto}`;
+        }
+
+        function obterModulo(cursoId) {
+            return modulos.find(m => m.id === cursoId);
+        }
+
+        async function carregarModulos() {
+            const consulta = window.fb.query(window.fb.collection(db, 'cursos'), window.fb.orderBy('ordem'));
+            const snap = await window.fb.getDocs(consulta);
+            modulos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            aulasPorModulo = {};
+            return modulos;
+        }
+
+        async function carregarAulas(cursoId, recarregar = false) {
+            if (aulasPorModulo[cursoId] && !recarregar) return aulasPorModulo[cursoId];
+            const consulta = window.fb.query(window.fb.collection(db, 'cursos', cursoId, 'aulas'), window.fb.orderBy('ordem'));
+            const snap = await window.fb.getDocs(consulta);
+            aulasPorModulo[cursoId] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            return aulasPorModulo[cursoId];
+        }
+
+        async function executarEmLotes(operacoes) {
+            for (let i = 0; i < operacoes.length; i += 400) {
+                const lote = window.fb.writeBatch(db);
+                operacoes.slice(i, i + 400).forEach(operacao => operacao(lote));
+                await lote.commit();
+            }
+        }
 
         (function() {
             const temaSalvo = localStorage.getItem('theme') || 'dark';
@@ -1478,7 +1750,7 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             document.getElementById('user-display-name').textContent = `Olá, ${usuario.nome}`;
 
             renderizarAvisos();
-            renderizarGradesCursos(usuario);
+            exibirModulos(usuario);
             verificarExibicaoAvisoFluante(usuario);
 
             const secaoHistoricoAluno = document.getElementById('aluno-perfil-quiz-section');
@@ -1609,41 +1881,73 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             container.innerHTML = html;
         }
 
+        function mensagemGradeModulos(texto) {
+            return `<div class="md:col-span-3 bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 rounded-xl p-6 text-center text-sm text-slate-500 dark:text-slate-400">${texto}</div>`;
+        }
+
+        async function exibirModulos(usuario) {
+            const container = document.getElementById('grades-cursos-container');
+            container.innerHTML = mensagemGradeModulos('Carregando módulos...');
+            try {
+                promessaModulos = carregarModulos();
+                await promessaModulos;
+            } catch (err) {
+                console.error('Erro ao carregar os módulos:', err);
+                container.innerHTML = mensagemGradeModulos('Não foi possível carregar os módulos. Verifique sua conexão e tente novamente em alguns minutos.');
+                return;
+            }
+            if (usuario !== usuarioAtual) return;
+            renderizarGradesCursos(usuario);
+            if (usuario.isAdmin && modulos.length > 0 && Object.keys(modulosLocaisAntigos).length > 0) {
+                await oferecerImportacaoModulosLocais();
+            }
+        }
+
         function renderizarGradesCursos(usuario) {
             const container = document.getElementById('grades-cursos-container');
+            if (usuario.isAdmin) {
+                document.getElementById('aviso-importacao-modulos').classList.toggle('hidden', modulos.length > 0);
+            }
+            if (modulos.length === 0) {
+                container.innerHTML = mensagemGradeModulos(usuario.isAdmin
+                    ? 'Ainda não há módulos no banco de dados. Use o botão "Importar módulos para o banco de dados" no Painel do Administrador.'
+                    : 'Os módulos estão sendo atualizados. Tente novamente em alguns minutos.');
+                return;
+            }
             container.innerHTML = '';
 
-            Object.keys(configCursos).forEach(chave => {
-                if (!usuario.isAdmin && (!usuario.modulosPermitidos || !usuario.modulosPermitidos.includes(chave))) {
-                    return;
-                }
-
-                const curso = configCursos[chave];
+            modulos.forEach(modulo => {
+                const chave = modulo.id;
+                const moduloLiberado = usuario.isAdmin || (usuario.modulosPermitidos || []).includes(chave);
+                const etiqueta = ETIQUETAS_NEON.includes(modulo.tagNeon) ? modulo.tagNeon : 'neon-badge-yellow';
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'bg-white dark:bg-darkBlue-800 border border-slate-200 dark:border-darkBlue-700 rounded-xl p-6 shadow-md flex flex-col justify-between transition-colors duration-300 hover:border-brandYellow/50';
+                if (!moduloLiberado) cardDiv.classList.add('module-locked');
 
                 let botoesAdmin = '';
                 if (usuario.isAdmin) {
                     botoesAdmin = `
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-darkBlue-700 flex justify-end items-center space-x-1">
-                            <button onclick="abrirModalEdicao('${chave}')" class="btn-acao btn-editar" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                            <button onclick="excluirCurso('${chave}')" class="btn-acao btn-excluir" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                            <button onclick="abrirGerenciarModulo('${chave}')" class="btn-acao btn-editar" title="Gerenciar módulo e aulas"><i class="fas fa-pencil-alt"></i></button>
+                            <button onclick="excluirCurso('${chave}')" class="btn-acao btn-excluir" title="Excluir módulo"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     `;
                 }
 
+                const acaoModulo = moduloLiberado
+                    ? `<button onclick="abrirCurso('${chave}')" class="w-full bg-slate-100 dark:bg-darkBlue-700 hover:bg-brandYellow hover:text-darkBlue-900 text-slate-700 dark:text-slate-200 font-medium py-2 rounded-lg text-sm transition duration-200">Acessar Módulo</button>`
+                    : `<div class="locked-message" aria-label="Módulo ainda não liberado">🔒 Em preparação — aguarde a liberação</div>`;
+
                 cardDiv.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${curso.tagNeon || 'neon-badge-yellow'}">${curso.tag || 'Módulo'}</span>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${etiqueta}">${escaparHtml(modulo.tag || 'Módulo')}</span>
                         </div>
-                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">${curso.titulo}</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 card-description">${curso.descricao}</p>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">${escaparHtml(modulo.titulo)}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 card-description">${escaparHtml(modulo.descricao)}</p>
                     </div>
                     <div>
-                        <button onclick="abrirCurso('${chave}')" class="w-full bg-slate-100 dark:bg-darkBlue-700 hover:bg-brandYellow hover:text-darkBlue-900 text-slate-700 dark:text-slate-200 font-medium py-2 rounded-lg text-sm transition duration-200">
-                            Acessar Módulo
-                        </button>
+                        ${acaoModulo}
                         ${botoesAdmin}
                     </div>
                 `;
@@ -1651,41 +1955,81 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             });
         }
 
-        function abrirCurso(chave) {
-            const curso = configCursos[chave];
-            if (!curso) return;
+        let aberturaDeModulo = 0;
+
+        function adicionarItemMenuAula(menuUl, texto, aoClicar) {
+            const li = document.createElement('li');
+            const btn = document.createElement('button');
+            btn.className = 'w-full text-left px-3 py-2 rounded-lg transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkBlue-700 text-xs sm:text-sm';
+            btn.textContent = texto;
+            btn.onclick = () => aoClicar(btn);
+            li.appendChild(btn);
+            menuUl.appendChild(li);
+            return btn;
+        }
+
+        function marcarAulaAtiva(botaoAtivo) {
+            const classesAtivo = ['bg-amber-100', 'dark:bg-darkBlue-700', 'text-amber-700', 'dark:text-brandYellow', 'font-bold'];
+            document.querySelectorAll('#menu-curso button').forEach(b => b.classList.remove(...classesAtivo));
+            botaoAtivo.classList.add(...classesAtivo);
+        }
+
+        async function abrirCurso(chave) {
+            const modulo = obterModulo(chave);
+            if (!modulo) return;
+            const tentativa = ++aberturaDeModulo;
 
             document.getElementById('dashboard-content').classList.add('hidden');
             document.getElementById('curso-content').classList.remove('hidden');
 
             const menuUl = document.getElementById('menu-curso');
+            const tituloAula = document.getElementById('titulo-aula');
+            const textoAula = document.getElementById('texto-aula');
             menuUl.innerHTML = '';
-            const chavesAulas = Object.keys(curso.aulas);
 
-            chavesAulas.forEach((nomeAula, index) => {
-                const li = document.createElement('li');
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left px-3 py-2 rounded-lg transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-darkBlue-700 text-xs sm:text-sm';
-                btn.textContent = nomeAula;
-                btn.onclick = () => {
-                    document.querySelectorAll('#menu-curso button').forEach(b => {
-                        b.classList.remove('bg-amber-100', 'dark:bg-darkBlue-700', 'text-amber-700', 'dark:text-brandYellow', 'font-bold');
-                    });
-                    btn.classList.add('bg-amber-100', 'dark:bg-darkBlue-700', 'text-amber-700', 'dark:text-brandYellow', 'font-bold');
-                    document.getElementById('titulo-aula').textContent = nomeAula;
-                    document.getElementById('texto-aula').innerHTML = curso.aulas[nomeAula];
+            if (modulo.tipo === 'quiz') {
+                adicionarItemMenuAula(menuUl, '1 - Quiz Interativo', botao => {
+                    marcarAulaAtiva(botao);
+                    tituloAula.textContent = '1 - Quiz Interativo';
+                    textoAula.innerHTML = TEMPLATE_QUIZ;
+                    iniciarQuiz();
+                }).click();
+                return;
+            }
 
-                    if (chave === 'quiz_umbanda') {
-                        iniciarQuiz();
-                    }
-                };
-                li.appendChild(btn);
-                menuUl.appendChild(li);
+            tituloAula.textContent = modulo.titulo;
+            textoAula.innerHTML = '<p class="text-slate-500 dark:text-slate-400">Carregando aulas...</p>';
 
-                if (index === 0) {
-                    btn.click();
+            let aulas;
+            try {
+                aulas = await carregarAulas(chave);
+            } catch (err) {
+                console.error('Erro ao carregar as aulas:', err);
+                if (tentativa === aberturaDeModulo) {
+                    textoAula.innerHTML = '<p class="text-slate-500 dark:text-slate-400">Não foi possível carregar as aulas deste módulo. Tente novamente em alguns minutos.</p>';
                 }
+                return;
+            }
+            if (tentativa !== aberturaDeModulo) return;
+
+            if (aulas.length === 0) {
+                textoAula.innerHTML = '<p class="text-slate-500 dark:text-slate-400">Este módulo ainda não tem aulas.</p>';
+                return;
+            }
+
+            let primeiraAula = null;
+            aulas.forEach((aula, indice) => {
+                const tituloNumerado = `${indice + 1} - ${aula.titulo}`;
+                const botao = adicionarItemMenuAula(menuUl, tituloNumerado, b => {
+                    marcarAulaAtiva(b);
+                    tituloAula.textContent = tituloNumerado;
+                    textoAula.innerHTML = aula.conteudo
+                        ? limparHtml(aula.conteudo)
+                        : '<p class="text-slate-500 dark:text-slate-400">Esta aula ainda não tem conteúdo.</p>';
+                });
+                if (indice === 0) primeiraAula = botao;
             });
+            primeiraAula.click();
         }
 
         function voltarAoDashboard() {
@@ -1716,67 +2060,749 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             }
         }
 
-        function abrirModalNovoCurso() { document.getElementById('add-course-modal').classList.remove('hidden'); }
+        // ---------- Criar módulo ----------
+        function abrirModalNovoCurso() {
+            if (modulos.length === 0) {
+                alert('Antes de criar um módulo novo, importe os módulos atuais para o banco de dados (botão "Importar módulos para o banco de dados", no Painel do Administrador).');
+                return;
+            }
+            document.getElementById('add-course-modal').classList.remove('hidden');
+        }
         function fecharModalNovoCurso() { document.getElementById('add-course-modal').classList.add('hidden'); }
 
-        function salvarNovoCurso(event) {
-            event.preventDefault();
-            const chave = document.getElementById('new-course-key').value.trim().toLowerCase().replace(/\s+/g, '-');
-            const titulo = document.getElementById('new-course-title').value.trim();
-            const desc = document.getElementById('new-course-desc').value.trim();
-            const conteudoHtml = document.getElementById('new-course-content').value.trim();
+        async function gerarChaveUnica(titulo) {
+            const base = gerarChaveModulo(titulo);
+            let chave = base;
+            let numero = 2;
+            while (obterModulo(chave) || (await window.fb.getDoc(window.fb.doc(db, 'cursos', chave))).exists()) {
+                chave = `${base}-${numero++}`;
+            }
+            return chave;
+        }
 
-            if (configCursos[chave]) {
-                alert('Já existe um curso com essa chave identificadora.');
+        async function salvarNovoCurso(event) {
+            event.preventDefault();
+            const form = event.target;
+            const titulo = document.getElementById('new-course-title').value.trim();
+            const descricao = document.getElementById('new-course-desc').value.trim();
+            const tituloPrimeiraAula = document.getElementById('new-course-first-lesson').value.trim();
+            if (!titulo || !tituloPrimeiraAula) return;
+
+            const botao = document.getElementById('botao-criar-modulo');
+            botao.disabled = true;
+            botao.textContent = 'Criando...';
+            try {
+                const chave = await gerarChaveUnica(titulo);
+                const ordem = modulos.reduce((maior, m) => Math.max(maior, m.ordem || 0), 0) + 1;
+                const lote = window.fb.writeBatch(db);
+                lote.set(window.fb.doc(db, 'cursos', chave), {
+                    titulo,
+                    descricao,
+                    tag: 'Novo Módulo',
+                    tagNeon: 'neon-badge-yellow',
+                    ordem,
+                    tipo: 'conteudo',
+                    atualizadoEm: window.fb.serverTimestamp()
+                });
+                lote.set(window.fb.doc(window.fb.collection(db, 'cursos', chave, 'aulas')), {
+                    titulo: tituloPrimeiraAula,
+                    conteudo: '',
+                    ordem: 1,
+                    atualizadoEm: window.fb.serverTimestamp()
+                });
+                await lote.commit();
+
+                form.reset();
+                fecharModalNovoCurso();
+                await carregarModulos();
+                renderizarGradesCursos(usuarioAtual);
+                abrirGerenciarModulo(chave);
+            } catch (err) {
+                console.error('Erro ao criar o módulo:', err);
+                alert('Não foi possível criar o módulo. Verifique sua conexão e tente novamente.');
+            } finally {
+                botao.disabled = false;
+                botao.textContent = 'Criar módulo';
+            }
+        }
+
+        // ---------- Importação inicial (cursosPadrao -> Firestore) ----------
+        function montarAulasParaImportacao(aulasAntigas) {
+            return Object.entries(aulasAntigas || {}).map(([nome, valor]) => {
+                if (valor && typeof valor === 'object' && valor.tipo === 'submenu') {
+                    // Aula com submenu (ex.: Orações) vira uma aula só, com um título para cada item.
+                    const conteudo = Object.entries(valor.itens || {}).map(([nomeItem, html]) =>
+                        `<h3 class="text-lg font-semibold text-amber-600 dark:text-brandYellow">${escaparHtml(removerNumeroDoTitulo(nomeItem))}</h3>\n${html}`
+                    ).join('\n');
+                    return { titulo: removerNumeroDoTitulo(nome), conteudo };
+                }
+                return { titulo: removerNumeroDoTitulo(nome), conteudo: typeof valor === 'string' ? valor : '' };
+            });
+        }
+
+        async function gravarModulosImportados(lista, ordemInicial) {
+            if (!window.DOMPurify) throw new Error('DOMPurify não carregou; importação cancelada para não gravar aulas vazias.');
+            const operacoes = [];
+            let totalAulas = 0;
+            lista.forEach(({ chave, curso, tipo }, i) => {
+                const refModulo = window.fb.doc(db, 'cursos', chave);
+                operacoes.push(lote => lote.set(refModulo, {
+                    titulo: curso.titulo || chave,
+                    descricao: curso.descricao || '',
+                    tag: curso.tag || 'Módulo',
+                    tagNeon: ETIQUETAS_NEON.includes(curso.tagNeon) ? curso.tagNeon : 'neon-badge-yellow',
+                    ordem: ordemInicial + i,
+                    tipo,
+                    atualizadoEm: window.fb.serverTimestamp()
+                }));
+                if (tipo === 'quiz') return;
+                montarAulasParaImportacao(curso.aulas).forEach((aula, j) => {
+                    const refAula = window.fb.doc(window.fb.collection(db, 'cursos', chave, 'aulas'));
+                    operacoes.push(lote => lote.set(refAula, {
+                        titulo: aula.titulo,
+                        conteudo: limparHtml(aula.conteudo),
+                        ordem: j + 1,
+                        atualizadoEm: window.fb.serverTimestamp()
+                    }));
+                    totalAulas++;
+                });
+            });
+            await executarEmLotes(operacoes);
+            return { totalModulos: lista.length, totalAulas };
+        }
+
+        function listarModulosLocais(chaves) {
+            return chaves.map(chave => `"${modulosLocaisAntigos[chave].titulo || chave}"`).join(', ');
+        }
+
+        async function importarModulos() {
+            if (!usuarioAtual || !usuarioAtual.isAdmin) return;
+            const chavesLocais = Object.keys(modulosLocaisAntigos);
+            let incluirLocais = false;
+            if (chavesLocais.length > 0) {
+                incluirLocais = confirm(
+                    `Encontramos ${plural(chavesLocais.length, 'módulo criado', 'módulos criados')} neste navegador pelo botão "Adicionar Novo Curso": ${listarModulosLocais(chavesLocais)}.\n\n` +
+                    'Deseja importar também?\n\n(Se escolher "Cancelar", eles não serão importados e serão descartados deste navegador.)'
+                );
+            }
+
+            const botao = document.getElementById('botao-importar-modulos');
+            botao.disabled = true;
+            botao.textContent = 'Importando, aguarde...';
+            try {
+                const existentes = await window.fb.getDocs(window.fb.query(window.fb.collection(db, 'cursos'), window.fb.limit(1)));
+                if (!existentes.empty) {
+                    alert('Os módulos já estão no banco de dados (talvez outro administrador tenha feito a importação). A lista será atualizada.');
+                } else {
+                    const lista = Object.entries(cursosPadrao).map(([chave, curso]) => ({
+                        chave, curso, tipo: chave === 'quiz_umbanda' ? 'quiz' : 'conteudo'
+                    }));
+                    if (incluirLocais) {
+                        chavesLocais.forEach(chave => lista.push({ chave: chaveValida(chave), curso: modulosLocaisAntigos[chave], tipo: 'conteudo' }));
+                    }
+                    const { totalModulos, totalAulas } = await gravarModulosImportados(lista, 1);
+                    descartarModulosLocaisAntigos();
+                    alert(`Importação concluída: ${plural(totalModulos, 'módulo', 'módulos')} e ${plural(totalAulas, 'aula', 'aulas')} importados.`);
+                }
+                await exibirModulos(usuarioAtual);
+            } catch (err) {
+                console.error('Erro ao importar os módulos:', err);
+                alert('Não foi possível importar os módulos. Verifique sua conexão e tente novamente.');
+            } finally {
+                botao.disabled = false;
+                botao.textContent = 'Importar módulos para o banco de dados';
+            }
+        }
+
+        // Módulos criados neste navegador por versões antigas, quando o banco já foi preenchido.
+        async function oferecerImportacaoModulosLocais() {
+            const chavesLocais = Object.keys(modulosLocaisAntigos).filter(chave => !obterModulo(chaveValida(chave)));
+            if (chavesLocais.length === 0) {
+                descartarModulosLocaisAntigos();
+                return;
+            }
+            const importar = confirm(
+                `Encontramos neste navegador ${plural(chavesLocais.length, 'módulo antigo', 'módulos antigos')} que ainda não ${chavesLocais.length === 1 ? 'está' : 'estão'} no banco de dados: ${listarModulosLocais(chavesLocais)}.\n\n` +
+                'Deseja importar agora?\n\n(Se escolher "Cancelar", eles serão descartados deste navegador.)'
+            );
+            if (importar) {
+                try {
+                    const ordemInicial = modulos.reduce((maior, m) => Math.max(maior, m.ordem || 0), 0) + 1;
+                    const lista = chavesLocais.map(chave => ({ chave: chaveValida(chave), curso: modulosLocaisAntigos[chave], tipo: 'conteudo' }));
+                    const { totalModulos, totalAulas } = await gravarModulosImportados(lista, ordemInicial);
+                    alert(`Importação concluída: ${plural(totalModulos, 'módulo', 'módulos')} e ${plural(totalAulas, 'aula', 'aulas')} importados.`);
+                    await carregarModulos();
+                    renderizarGradesCursos(usuarioAtual);
+                } catch (err) {
+                    console.error('Erro ao importar os módulos deste navegador:', err);
+                    alert('Não foi possível importar os módulos deste navegador. Você poderá tentar de novo na próxima vez que entrar.');
+                    return;
+                }
+            }
+            descartarModulosLocaisAntigos();
+        }
+
+        // ---------- Excluir módulo ----------
+        async function excluirCurso(chave) {
+            if (!confirm('Tem certeza que deseja excluir este módulo de estudo?')) return;
+            try {
+                const snapAulas = await window.fb.getDocs(window.fb.collection(db, 'cursos', chave, 'aulas'));
+                const operacoes = snapAulas.docs.map(aulaDoc => lote => lote.delete(aulaDoc.ref));
+                operacoes.push(lote => lote.delete(window.fb.doc(db, 'cursos', chave)));
+                await executarEmLotes(operacoes);
+                modulos = modulos.filter(m => m.id !== chave);
+                delete aulasPorModulo[chave];
+                renderizarGradesCursos(usuarioAtual);
+            } catch (err) {
+                console.error('Erro ao excluir o módulo:', err);
+                alert('Não foi possível excluir o módulo. Verifique sua conexão e tente novamente.');
+            }
+        }
+
+        // ---------- Gerenciar módulo (nome, descrição e aulas) ----------
+        let moduloEmGestao = null;
+        let listaAulasOrdenavel = null;
+
+        function itemListaMensagem(texto) {
+            return `<li class="px-3 py-4 text-center text-sm text-slate-500 dark:text-slate-400 border border-dashed border-slate-300 dark:border-darkBlue-700 rounded-lg">${texto}</li>`;
+        }
+
+        async function abrirGerenciarModulo(cursoId) {
+            const modulo = obterModulo(cursoId);
+            if (!modulo) return;
+            moduloEmGestao = cursoId;
+            document.getElementById('gm-titulo').value = modulo.titulo || '';
+            document.getElementById('gm-descricao').value = modulo.descricao || '';
+            document.getElementById('gm-status').textContent = '';
+            const ehQuiz = modulo.tipo === 'quiz';
+            document.getElementById('gm-aviso-quiz').classList.toggle('hidden', !ehQuiz);
+            document.getElementById('gm-secao-aulas').classList.toggle('hidden', ehQuiz);
+            document.getElementById('gerenciar-modulo-modal').classList.remove('hidden');
+            if (ehQuiz) return;
+
+            const lista = document.getElementById('gm-lista-aulas');
+            lista.innerHTML = itemListaMensagem('Carregando aulas...');
+            try {
+                await carregarAulas(cursoId, true);
+            } catch (err) {
+                console.error('Erro ao carregar as aulas:', err);
+                lista.innerHTML = itemListaMensagem('Não foi possível carregar as aulas. Feche esta janela e tente novamente.');
+                return;
+            }
+            if (moduloEmGestao === cursoId) renderizarListaAulasGestao();
+        }
+
+        function fecharGerenciarModulo() {
+            document.getElementById('gerenciar-modulo-modal').classList.add('hidden');
+            if (listaAulasOrdenavel) {
+                listaAulasOrdenavel.destroy();
+                listaAulasOrdenavel = null;
+            }
+            moduloEmGestao = null;
+        }
+
+        async function salvarDadosModulo(event) {
+            event.preventDefault();
+            const modulo = obterModulo(moduloEmGestao);
+            if (!modulo) return;
+            const titulo = document.getElementById('gm-titulo').value.trim();
+            const descricao = document.getElementById('gm-descricao').value.trim();
+            if (!titulo) return;
+            const status = document.getElementById('gm-status');
+            status.className = 'text-xs text-slate-500 dark:text-slate-400';
+            status.textContent = 'Salvando...';
+            try {
+                await window.fb.updateDoc(window.fb.doc(db, 'cursos', modulo.id), {
+                    titulo, descricao, atualizadoEm: window.fb.serverTimestamp()
+                });
+                modulo.titulo = titulo;
+                modulo.descricao = descricao;
+                renderizarGradesCursos(usuarioAtual);
+                status.className = 'text-xs font-medium text-emerald-600 dark:text-emerald-400';
+                status.textContent = 'Alterações salvas.';
+            } catch (err) {
+                console.error('Erro ao salvar os dados do módulo:', err);
+                status.className = 'text-xs font-medium text-red-600 dark:text-red-400';
+                status.textContent = 'Não foi possível salvar. Tente novamente.';
+            }
+        }
+
+        function renderizarListaAulasGestao() {
+            const lista = document.getElementById('gm-lista-aulas');
+            const aulas = aulasPorModulo[moduloEmGestao] || [];
+            if (listaAulasOrdenavel) {
+                listaAulasOrdenavel.destroy();
+                listaAulasOrdenavel = null;
+            }
+            if (aulas.length === 0) {
+                lista.innerHTML = itemListaMensagem('Este módulo ainda não tem aulas. Clique em "Adicionar aula" para criar a primeira.');
+                return;
+            }
+            const classeBotao = 'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-darkBlue-700 transition';
+            lista.innerHTML = aulas.map((aula, indice) => `
+                <li data-id="${aula.id}" class="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2.5 bg-slate-50 dark:bg-darkBlue-900 border border-slate-200 dark:border-darkBlue-700 rounded-lg">
+                    <span class="alca-arrastar touch-none cursor-grab active:cursor-grabbing px-1.5 py-1 text-slate-400 hover:text-amber-600 dark:hover:text-brandYellow" title="Segure e arraste para mudar a ordem" aria-label="Arrastar aula"><i class="fas fa-grip-vertical"></i></span>
+                    <span class="numero-aula w-6 text-center text-sm font-bold text-amber-600 dark:text-brandYellow">${indice + 1}</span>
+                    <span class="flex-1 min-w-[8rem] text-sm font-medium text-slate-800 dark:text-slate-100 break-words">${escaparHtml(aula.titulo)}</span>
+                    <span class="flex flex-wrap items-center gap-1 text-xs">
+                        <button type="button" onclick="abrirEditorAula('${aula.id}')" class="${classeBotao} hover:text-blue-600 dark:hover:text-blue-300"><i class="fas fa-pen"></i> Editar</button>
+                        <button type="button" onclick="renomearAula('${aula.id}')" class="${classeBotao} hover:text-amber-600 dark:hover:text-brandYellow"><i class="fas fa-i-cursor"></i> Renomear</button>
+                        <button type="button" onclick="excluirAula('${aula.id}')" class="${classeBotao} hover:text-red-600 dark:hover:text-red-300"><i class="fas fa-trash"></i> Excluir</button>
+                    </span>
+                </li>`).join('');
+
+            listaAulasOrdenavel = Sortable.create(lista, {
+                handle: '.alca-arrastar',
+                animation: 150,
+                onEnd: evento => {
+                    if (evento.oldIndex !== evento.newIndex) salvarOrdemAulas();
+                }
+            });
+        }
+
+        function atualizarNumeracaoAulas() {
+            document.querySelectorAll('#gm-lista-aulas .numero-aula').forEach((el, indice) => { el.textContent = indice + 1; });
+        }
+
+        async function gravarOrdemAulas(cursoId, aulas) {
+            await executarEmLotes(aulas.map(aula => lote =>
+                lote.update(window.fb.doc(db, 'cursos', cursoId, 'aulas', aula.id), { ordem: aula.ordem })
+            ));
+        }
+
+        async function salvarOrdemAulas() {
+            const cursoId = moduloEmGestao;
+            const porId = new Map((aulasPorModulo[cursoId] || []).map(aula => [aula.id, aula]));
+            const novaOrdem = Array.from(document.querySelectorAll('#gm-lista-aulas > li[data-id]'))
+                .map(li => porId.get(li.dataset.id))
+                .filter(Boolean);
+            novaOrdem.forEach((aula, indice) => { aula.ordem = indice + 1; });
+            aulasPorModulo[cursoId] = novaOrdem;
+            atualizarNumeracaoAulas();
+            try {
+                await gravarOrdemAulas(cursoId, novaOrdem);
+            } catch (err) {
+                console.error('Erro ao salvar a nova ordem das aulas:', err);
+                alert('Não foi possível salvar a nova ordem das aulas. A lista será recarregada.');
+                await carregarAulas(cursoId, true);
+                if (moduloEmGestao === cursoId) renderizarListaAulasGestao();
+            }
+        }
+
+        async function adicionarAula() {
+            const cursoId = moduloEmGestao;
+            if (!cursoId) return;
+            const titulo = (prompt('Qual é o título da nova aula?') || '').trim();
+            if (!titulo) return;
+            const aulas = aulasPorModulo[cursoId] || [];
+            const nova = { titulo, conteudo: '', ordem: aulas.reduce((maior, a) => Math.max(maior, a.ordem || 0), 0) + 1 };
+            try {
+                const ref = await window.fb.addDoc(window.fb.collection(db, 'cursos', cursoId, 'aulas'), {
+                    ...nova, atualizadoEm: window.fb.serverTimestamp()
+                });
+                aulasPorModulo[cursoId] = [...aulas, { id: ref.id, ...nova }];
+                renderizarListaAulasGestao();
+                abrirEditorAula(ref.id);
+            } catch (err) {
+                console.error('Erro ao criar a aula:', err);
+                alert('Não foi possível criar a aula. Verifique sua conexão e tente novamente.');
+            }
+        }
+
+        async function renomearAula(aulaId) {
+            const cursoId = moduloEmGestao;
+            const aula = (aulasPorModulo[cursoId] || []).find(a => a.id === aulaId);
+            if (!aula) return;
+            const titulo = (prompt('Digite o novo título da aula:', aula.titulo) || '').trim();
+            if (!titulo || titulo === aula.titulo) return;
+            try {
+                await window.fb.updateDoc(window.fb.doc(db, 'cursos', cursoId, 'aulas', aulaId), {
+                    titulo, atualizadoEm: window.fb.serverTimestamp()
+                });
+                aula.titulo = titulo;
+                renderizarListaAulasGestao();
+            } catch (err) {
+                console.error('Erro ao renomear a aula:', err);
+                alert('Não foi possível renomear a aula. Verifique sua conexão e tente novamente.');
+            }
+        }
+
+        async function excluirAula(aulaId) {
+            const cursoId = moduloEmGestao;
+            const aulas = aulasPorModulo[cursoId] || [];
+            const aula = aulas.find(a => a.id === aulaId);
+            if (!aula) return;
+            if (!confirm(`Tem certeza que deseja excluir a aula '${aula.titulo}'? Esta ação não pode ser desfeita.`)) return;
+            try {
+                await window.fb.deleteDoc(window.fb.doc(db, 'cursos', cursoId, 'aulas', aulaId));
+                const restantes = aulas.filter(a => a.id !== aulaId);
+                const foraDeOrdem = restantes.filter((a, indice) => a.ordem !== indice + 1);
+                restantes.forEach((a, indice) => { a.ordem = indice + 1; });
+                aulasPorModulo[cursoId] = restantes;
+                renderizarListaAulasGestao();
+                if (foraDeOrdem.length > 0) await gravarOrdemAulas(cursoId, foraDeOrdem);
+            } catch (err) {
+                console.error('Erro ao excluir a aula:', err);
+                alert('Não foi possível excluir a aula. Verifique sua conexão e tente novamente.');
+            }
+        }
+
+        // ---------- Editor visual da aula (Quill) ----------
+        const TAGS_DO_EDITOR = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'A', 'IMG', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'BR', 'SPAN', 'SUB', 'SUP', 'SMALL', 'CODE']);
+        const TAGS_DE_BLOCO = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'BLOCKQUOTE', 'DIV']);
+
+        let editorQuill = null;
+        let aulaEmEdicao = null;
+        let editorComAlteracoes = false;
+        let temporizadorDicaEditor = null;
+
+        function mostrarDicaEditor(texto) {
+            const dica = document.getElementById('editor-aula-dica');
+            dica.textContent = texto;
+            dica.classList.remove('hidden');
+            clearTimeout(temporizadorDicaEditor);
+            temporizadorDicaEditor = setTimeout(ocultarDicaEditor, 8000);
+        }
+
+        function ocultarDicaEditor() {
+            document.getElementById('editor-aula-dica').classList.add('hidden');
+        }
+
+        function avisarImagemDoComputador() {
+            mostrarDicaEditor('Não é possível colar ou arrastar imagens do computador. Para inserir uma imagem, clique no botão de imagem da barra de ferramentas e cole o endereço (link) dela.');
+        }
+
+        function pedirImagemPorLink() {
+            const posicao = editorQuill.getSelection(true);
+            const endereco = (prompt('Cole aqui o endereço (link) da imagem.\nExemplo: https://site.com/foto.jpg') || '').trim();
+            if (!endereco) return;
+            if (!/^https?:\/\//i.test(endereco)) {
+                alert('O endereço da imagem precisa começar com http:// ou https://');
+                return;
+            }
+            const indice = posicao ? posicao.index : editorQuill.getLength();
+            editorQuill.insertEmbed(indice, 'image', endereco, 'user');
+            editorQuill.setSelection(indice + 1, 0, 'silent');
+        }
+
+        function inserirLink(ativar) {
+            if (!ativar) {
+                editorQuill.format('link', false, 'user');
+                return;
+            }
+            const selecao = editorQuill.getSelection(true);
+            if (!selecao || selecao.length === 0) {
+                mostrarDicaEditor('Para criar um link, primeiro selecione com o mouse o texto que deve virar link e depois clique no botão de link.');
+                return;
+            }
+            editorQuill.theme.tooltip.edit('link', 'https://');
+        }
+
+        function alternarCaixaDestaque() {
+            const selecao = editorQuill.getSelection(true);
+            if (!selecao) return;
+            const formatos = editorQuill.getFormat(selecao);
+            editorQuill.format('caixa', formatos.caixa ? false : 'destaque', 'user');
+        }
+
+        function criarEditorQuill() {
+            if (editorQuill) return editorQuill;
+
+            const Parchment = Quill.import('parchment');
+            const Delta = Quill.import('delta');
+            // "Caixa de destaque": marca cada linha dentro da caixa; ao salvar, as linhas seguidas viram um único card.
+            const CaixaDestaque = new Parchment.ClassAttributor('caixa', 'ql-caixa', {
+                scope: Parchment.Scope.BLOCK,
+                whitelist: ['destaque']
+            });
+            Quill.register(CaixaDestaque, true);
+
+            editorQuill = new Quill('#editor-aula', {
+                theme: 'snow',
+                bounds: '#editor-aula-container',
+                placeholder: 'Escreva aqui o conteúdo da aula...',
+                formats: ['header', 'bold', 'italic', 'underline', 'list', 'blockquote', 'link', 'image', 'align', 'caixa'],
+                modules: {
+                    toolbar: {
+                        container: [
+                            [{ header: 2 }, { header: 3 }],
+                            ['bold', 'italic', 'underline'],
+                            [{ list: 'bullet' }, { list: 'ordered' }],
+                            ['blockquote', 'caixa'],
+                            [{ align: '' }, { align: 'center' }, { align: 'right' }],
+                            ['link', 'image'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            image: pedirImagemPorLink,
+                            link: inserirLink,
+                            caixa: alternarCaixaDestaque
+                        }
+                    },
+                    uploader: {
+                        mimetypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp'],
+                        handler: avisarImagemDoComputador
+                    }
+                }
+            });
+
+            // Imagens coladas de outros lugares só entram se forem links (http/https), nunca arquivos embutidos.
+            editorQuill.clipboard.addMatcher('IMG', (no, delta) => {
+                if (/^https?:\/\//i.test(no.getAttribute('src') || '')) return delta;
+                avisarImagemDoComputador();
+                return new Delta();
+            });
+
+            editorQuill.on('text-change', (delta, anterior, origem) => {
+                if (origem === 'user') editorComAlteracoes = true;
+            });
+
+            const barra = editorQuill.getModule('toolbar').container;
+            barra.querySelector('.ql-caixa').innerHTML = '<svg viewBox="0 0 18 18"><rect class="ql-stroke" x="2.5" y="3" width="13" height="12" rx="2"></rect><line class="ql-stroke" x1="5.5" y1="7" x2="12.5" y2="7"></line><line class="ql-stroke" x1="5.5" y1="11" x2="10.5" y2="11"></line></svg>';
+            const dicas = {
+                '.ql-header[value="2"]': 'Título',
+                '.ql-header[value="3"]': 'Subtítulo',
+                '.ql-bold': 'Negrito',
+                '.ql-italic': 'Itálico',
+                '.ql-underline': 'Sublinhado',
+                '.ql-list[value="bullet"]': 'Lista com marcadores',
+                '.ql-list[value="ordered"]': 'Lista numerada',
+                '.ql-blockquote': 'Citação',
+                '.ql-caixa': 'Caixa de destaque (para separar duas caixas, deixe uma linha vazia entre elas)',
+                '.ql-align[value=""]': 'Alinhar à esquerda',
+                '.ql-align[value="center"]': 'Centralizar',
+                '.ql-align[value="right"]': 'Alinhar à direita',
+                '.ql-link': 'Link (selecione o texto antes)',
+                '.ql-image': 'Imagem (por link)',
+                '.ql-clean': 'Limpar formatação'
+            };
+            Object.entries(dicas).forEach(([seletor, texto]) => {
+                barra.querySelectorAll(seletor).forEach(botao => {
+                    botao.title = texto;
+                    botao.setAttribute('aria-label', texto);
+                });
+            });
+
+            return editorQuill;
+        }
+
+        function ehCardAntigo(el) {
+            if (el.tagName !== 'DIV') return false;
+            if (el.classList.contains('caixa-destaque')) return true;
+            const classes = Array.from(el.classList);
+            return classes.some(c => /(^|:)bg-/.test(c))
+                && classes.some(c => /(^|:)border($|-)/.test(c))
+                && classes.some(c => /(^|:)rounded($|-)/.test(c));
+        }
+
+        function ehDivDeEspacamento(el) {
+            return el.tagName === 'DIV'
+                && Array.from(el.classList).every(c => /^(aula-editor|space-[xy]-\d+|[mp][trblxy]?-\d+(\.\d+)?)$/.test(c));
+        }
+
+        function ehLinhaDeCaixa(no) {
+            if (!no || no.nodeType !== Node.ELEMENT_NODE) return false;
+            if (no.classList.contains('ql-caixa-destaque')) return true;
+            return (no.tagName === 'UL' || no.tagName === 'OL')
+                && !!no.lastElementChild && no.lastElementChild.classList.contains('ql-caixa-destaque');
+        }
+
+        // Converte um card antigo (div com fundo/borda/cantos) para o formato "Caixa de destaque" do editor.
+        // Cards vizinhos ganham uma linha vazia entre si para continuarem sendo caixas separadas.
+        function converterCardEmCaixa(card) {
+            const separarDaCaixaAnterior = ehLinhaDeCaixa(card.previousElementSibling);
+            const classesNovas = ['ql-caixa-destaque'];
+            if (card.classList.contains('text-center')) classesNovas.push('ql-align-center');
+            else if (card.classList.contains('text-right')) classesNovas.push('ql-align-right');
+            const italico = card.classList.contains('italic');
+            const manterQuebrasDeLinha = /whitespace-pre/.test(card.className);
+
+            const blocos = [];
+            let paragrafoSolto = null;
+            Array.from(card.childNodes).forEach(no => {
+                if (no.nodeType === Node.ELEMENT_NODE && TAGS_DE_BLOCO.has(no.tagName)) {
+                    paragrafoSolto = null;
+                    blocos.push(no);
+                    return;
+                }
+                if (no.nodeType !== Node.ELEMENT_NODE && no.nodeType !== Node.TEXT_NODE) return;
+                if (no.nodeType === Node.TEXT_NODE && !no.textContent.trim()) {
+                    if (paragrafoSolto && !manterQuebrasDeLinha) paragrafoSolto.appendChild(no);
+                    return;
+                }
+                if (!paragrafoSolto) {
+                    paragrafoSolto = document.createElement('p');
+                    blocos.push(paragrafoSolto);
+                }
+                if (no.nodeType === Node.TEXT_NODE && manterQuebrasDeLinha) {
+                    const texto = no.textContent.replace(/^[ \t]*\n+/, '').replace(/\n+[ \t]*$/, '');
+                    texto.split(/\n+/).forEach((linha, indice) => {
+                        if (indice > 0) paragrafoSolto.appendChild(document.createElement('br'));
+                        paragrafoSolto.appendChild(document.createTextNode(indice === 0 ? linha.trimEnd() : linha.trim()));
+                    });
+                } else {
+                    paragrafoSolto.appendChild(no);
+                }
+            });
+
+            blocos.forEach(bloco => {
+                const alvos = (bloco.tagName === 'UL' || bloco.tagName === 'OL') ? Array.from(bloco.children) : [bloco];
+                alvos.forEach(alvo => {
+                    alvo.classList.add(...classesNovas);
+                    if (italico && !alvo.classList.contains('not-italic')) {
+                        const enfase = document.createElement('em');
+                        enfase.append(...Array.from(alvo.childNodes));
+                        alvo.appendChild(enfase);
+                    }
+                });
+            });
+            if (separarDaCaixaAnterior) {
+                const separador = document.createElement('p');
+                separador.appendChild(document.createElement('br'));
+                blocos.unshift(separador);
+            }
+            card.replaceWith(...blocos);
+        }
+
+        function prepararHtmlParaEditor(html) {
+            const modelo = document.createElement('template');
+            modelo.innerHTML = limparHtml(html);
+            const raiz = modelo.content;
+
+            Array.from(raiz.querySelectorAll('div')).reverse()
+                .filter(ehDivDeEspacamento)
+                .forEach(div => div.replaceWith(...Array.from(div.childNodes)));
+            Array.from(raiz.querySelectorAll('div')).filter(ehCardAntigo).forEach(converterCardEmCaixa);
+
+            const temLayoutEspecial = Array.from(raiz.querySelectorAll('*')).some(el => !TAGS_DO_EDITOR.has(el.tagName));
+            const saida = document.createElement('div');
+            saida.appendChild(raiz);
+            return { html: saida.innerHTML, temLayoutEspecial };
+        }
+
+        function removerClasse(el, classe) {
+            el.classList.remove(classe);
+            if (el.classList.length === 0) el.removeAttribute('class');
+        }
+
+        // O Quill guarda todos os itens de lista dentro de <ol data-list="...">; aqui viram <ul>/<ol> comuns.
+        function converterListaDoEditor(listaDoEditor) {
+            const fragmento = document.createDocumentFragment();
+            let listaAtual = null;
+            let tipoAtual = '';
+            Array.from(listaDoEditor.children).forEach(item => {
+                const tag = item.getAttribute('data-list') === 'ordered' ? 'ol' : 'ul';
+                const naCaixa = item.classList.contains('ql-caixa-destaque');
+                const tipo = `${tag}|${naCaixa}`;
+                if (tipo !== tipoAtual) {
+                    listaAtual = document.createElement(tag);
+                    if (naCaixa) listaAtual.className = 'ql-caixa-destaque';
+                    fragmento.appendChild(listaAtual);
+                    tipoAtual = tipo;
+                }
+                item.removeAttribute('data-list');
+                removerClasse(item, 'ql-caixa-destaque');
+                listaAtual.appendChild(item);
+            });
+            listaDoEditor.replaceWith(fragmento);
+        }
+
+        function ehParagrafoVazio(no) {
+            return no.nodeType === Node.ELEMENT_NODE && no.tagName === 'P' && !no.textContent.trim() && !no.querySelector('img');
+        }
+
+        function serializarConteudoDoEditor() {
+            const raiz = editorQuill.root.cloneNode(true);
+            raiz.querySelectorAll('.ql-ui').forEach(el => el.remove());
+            Array.from(raiz.querySelectorAll('ol')).forEach(converterListaDoEditor);
+
+            const conteudo = document.createElement('div');
+            conteudo.className = 'aula-editor';
+            let caixaAtual = null;
+            const nos = Array.from(raiz.childNodes);
+            nos.forEach((no, indice) => {
+                const naCaixa = no.nodeType === Node.ELEMENT_NODE && no.classList.contains('ql-caixa-destaque');
+                if (!naCaixa) {
+                    const separaDuasCaixas = caixaAtual && ehParagrafoVazio(no) && ehLinhaDeCaixa(nos[indice + 1]);
+                    caixaAtual = null;
+                    if (!separaDuasCaixas) conteudo.appendChild(no);
+                    return;
+                }
+                removerClasse(no, 'ql-caixa-destaque');
+                if (!caixaAtual) {
+                    caixaAtual = document.createElement('div');
+                    caixaAtual.className = CLASSES_CAIXA_DESTAQUE;
+                    conteudo.appendChild(caixaAtual);
+                }
+                caixaAtual.appendChild(no);
+            });
+            while (conteudo.lastChild && ehParagrafoVazio(conteudo.lastChild)) conteudo.lastChild.remove();
+            if (!conteudo.textContent.trim() && !conteudo.querySelector('img')) return '';
+            return limparHtml(conteudo.outerHTML);
+        }
+
+        function abrirEditorAula(aulaId) {
+            const cursoId = moduloEmGestao;
+            const aulas = aulasPorModulo[cursoId] || [];
+            const aula = aulas.find(a => a.id === aulaId);
+            if (!aula) return;
+            if (!window.Quill || !window.DOMPurify) {
+                alert('O editor não pôde ser carregado. Verifique sua conexão com a internet e recarregue a página.');
                 return;
             }
 
-            configCursos[chave] = {
-                titulo,
-                descricao: desc,
-                tag: 'Novo Módulo',
-                tagNeon: 'neon-badge-yellow',
-                aulas: { '1 - Introdução': conteudoHtml }
-            };
+            aulaEmEdicao = { cursoId, aulaId };
+            document.getElementById('editor-aula-titulo').textContent = `${aulas.indexOf(aula) + 1} - ${aula.titulo}`;
+            document.getElementById('editor-aula-modal').classList.remove('hidden');
+            ocultarDicaEditor();
 
-            salvarCursos();
-            fecharModalNovoCurso();
-            renderizarGradesCursos(usuarioAtual);
-            event.target.reset();
+            const quill = criarEditorQuill();
+            const { html, temLayoutEspecial } = prepararHtmlParaEditor(aula.conteudo || '');
+            quill.setContents(quill.clipboard.convert({ html }), 'silent');
+            quill.history.clear();
+            editorComAlteracoes = false;
+            document.getElementById('editor-aula-rolagem').scrollTop = 0;
+
+            const avisoLayout = document.getElementById('editor-aula-aviso-layout');
+            avisoLayout.classList.toggle('hidden', !temLayoutEspecial);
+            avisoLayout.innerHTML = temLayoutEspecial
+                ? `<i class="fas fa-triangle-exclamation mr-1"></i> A aula <strong>"${escaparHtml(aula.titulo)}"</strong> tem um layout especial. Ao salvar pelo editor, o visual será simplificado (textos, títulos e listas são mantidos).`
+                : '';
         }
 
-        function abrirModalEdicao(chave) {
-            const curso = configCursos[chave];
-            if (!curso) return;
-            document.getElementById('edit-course-key').value = chave;
-            document.getElementById('edit-course-title').value = curso.titulo;
-            const primeiraAulaChave = Object.keys(curso.aulas)[0];
-            document.getElementById('edit-course-content').value = curso.aulas[primeiraAulaChave] || '';
-            document.getElementById('edit-course-modal').classList.remove('hidden');
+        function fecharEditorAula() {
+            document.getElementById('editor-aula-modal').classList.add('hidden');
+            aulaEmEdicao = null;
+            editorComAlteracoes = false;
         }
 
-        function fecharModalEdicao() { document.getElementById('edit-course-modal').classList.add('hidden'); }
-
-        function salvarEdicaoCurso() {
-            const chave = document.getElementById('edit-course-key').value;
-            const novoTitulo = document.getElementById('edit-course-title').value.trim();
-            const novoConteudo = document.getElementById('edit-course-content').value;
-
-            if (configCursos[chave]) {
-                configCursos[chave].titulo = novoTitulo;
-                const primeiraAulaChave = Object.keys(configCursos[chave].aulas)[0] || '1 - Aula Principal';
-                configCursos[chave].aulas[primeiraAulaChave] = novoConteudo;
-                salvarCursos();
-                fecharModalEdicao();
-                renderizarGradesCursos(usuarioAtual);
-            }
+        function cancelarEdicaoAula() {
+            if (editorComAlteracoes && !confirm('Você fez alterações que ainda não foram salvas. Deseja sair mesmo assim?')) return;
+            fecharEditorAula();
         }
 
-        function excluirCurso(chave) {
-            if (confirm('Tem certeza que deseja excluir este módulo de estudo?')) {
-                delete configCursos[chave];
-                salvarCursos();
-                renderizarGradesCursos(usuarioAtual);
+        async function salvarAula() {
+            if (!aulaEmEdicao) return;
+            const { cursoId, aulaId } = aulaEmEdicao;
+            const aula = (aulasPorModulo[cursoId] || []).find(a => a.id === aulaId);
+            if (!aula) return;
+
+            const botao = document.getElementById('botao-salvar-aula');
+            const conteudo = serializarConteudoDoEditor();
+            botao.disabled = true;
+            botao.textContent = 'Salvando...';
+            try {
+                await window.fb.updateDoc(window.fb.doc(db, 'cursos', cursoId, 'aulas', aulaId), {
+                    conteudo, atualizadoEm: window.fb.serverTimestamp()
+                });
+                aula.conteudo = conteudo;
+                fecharEditorAula();
+            } catch (err) {
+                console.error('Erro ao salvar a aula:', err);
+                alert('Não foi possível salvar a aula. Verifique sua conexão e tente novamente.');
+            } finally {
+                botao.disabled = false;
+                botao.textContent = 'Salvar';
             }
         }
 
@@ -1790,6 +2816,9 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
             const tbody = document.getElementById('tabela-alunos-corpo');
             tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-4 text-center text-slate-400 text-xs">Carregando...</td></tr>';
 
+            if (promessaModulos) {
+                try { await promessaModulos; } catch (err) { /* o erro já foi exibido na grade de módulos */ }
+            }
             const snap = await window.fb.getDocs(window.fb.collection(db, 'usuarios'));
             tbody.innerHTML = '';
 
@@ -1802,12 +2831,12 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                 const tr = document.createElement('tr');
                 if (!ativo) tr.classList.add('opacity-50');
                 let checkboxesModulos = '';
-                Object.keys(configCursos).forEach(chaveCurso => {
-                    const checked = u.modulosPermitidos && u.modulosPermitidos.includes(chaveCurso) ? 'checked' : '';
+                modulos.forEach(modulo => {
+                    const checked = u.modulosPermitidos && u.modulosPermitidos.includes(modulo.id) ? 'checked' : '';
                     checkboxesModulos += `
                         <label class="inline-flex items-center mr-3 mb-1 text-xs cursor-pointer">
-                            <input type="checkbox" ${checked} onchange="alternarPermissaoModulo('${uid}', '${chaveCurso}')" class="rounded border-slate-300 text-amber-600 focus:ring-brandYellow mr-1">
-                            ${configCursos[chaveCurso].titulo}
+                            <input type="checkbox" ${checked} onchange="alternarPermissaoModulo('${uid}', '${modulo.id}')" class="rounded border-slate-300 text-amber-600 focus:ring-brandYellow mr-1">
+                            ${escaparHtml(modulo.titulo)}
                         </label>
                     `;
                 });
@@ -1855,7 +2884,7 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
                 permitidos.forEach(chave => {
                     const item = document.createElement('span');
                     item.className = 'px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-brandYellow text-xs font-medium';
-                    item.textContent = configCursos[chave]?.titulo || chave;
+                    item.textContent = obterModulo(chave)?.titulo || chave;
                     modulos.appendChild(item);
                 });
             }
@@ -2508,3 +3537,5 @@ Nosso objetivo é ser um refúgio de conhecimento e luz, onde possamos caminhar 
     </script>
 </body>
 </html>
+
+
