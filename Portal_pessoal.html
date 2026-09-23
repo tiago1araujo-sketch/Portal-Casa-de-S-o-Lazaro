@@ -142,6 +142,38 @@
         .dark #editor-aula-container .ql-snow .ql-tooltip { background: #1C2541; color: #e2e8f0; border-color: #3A506B; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
         .dark #editor-aula-container .ql-snow .ql-tooltip input[type=text] { background: #0B132B; color: #ffffff; border-color: #3A506B; }
 
+        /* ===== Abas recolhíveis (tela do aluno) ===== */
+        .aba-recolhivel { margin: 0 0 0.75rem; interpolate-size: allow-keywords; }
+        .aba-recolhivel > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1rem; background: #F4A261; color: #0B132B; font-weight: 700; line-height: 1.4; border-radius: 0.75rem; cursor: pointer; user-select: none; transition: background-color 0.2s ease, border-radius 0.2s ease; }
+        .aba-recolhivel > summary::-webkit-details-marker { display: none; }
+        .aba-recolhivel > summary::marker { content: ''; }
+        .aba-recolhivel > summary:hover { background: #E9C46A; }
+        .aba-recolhivel > summary:focus-visible { outline: 2px solid #d97706; outline-offset: 2px; }
+        .aba-recolhivel[open] > summary { border-radius: 0.75rem 0.75rem 0 0; }
+        .aba-recolhivel .aba-seta { flex-shrink: 0; font-size: 0.85rem; transition: transform 0.2s ease; }
+        .aba-recolhivel[open] .aba-seta { transform: rotate(180deg); }
+        .aba-recolhivel .aba-conteudo { padding: 1rem 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-top: 0; border-radius: 0 0 0.75rem 0.75rem; }
+        .dark .aba-recolhivel .aba-conteudo { background: rgba(11, 19, 43, 0.5); border-color: #3A506B; }
+        .aba-recolhivel .aba-conteudo > :first-child { margin-top: 0; }
+        .aba-recolhivel .aba-conteudo > :last-child { margin-bottom: 0; }
+        .aba-recolhivel[open] .aba-conteudo { animation: abrirAba 0.2s ease-out; }
+        @keyframes abrirAba { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+        /* Navegadores mais novos também animam a altura ao abrir e fechar; os demais só ignoram. */
+        .aba-recolhivel::details-content { block-size: 0; overflow: hidden; transition: block-size 0.25s ease, content-visibility 0.25s allow-discrete; }
+        .aba-recolhivel[open]::details-content { block-size: auto; }
+
+        /* ===== Título recolhível e Fim da aba (dentro do editor) ===== */
+        #editor-aula-container .ql-editor h3.titulo-recolhivel { position: relative; margin: 1rem 0 0.5rem; padding: 0.4rem 0.75rem 0.4rem 2rem; background: rgba(244, 162, 97, 0.18); border-radius: 0.5rem; color: #b45309; }
+        #editor-aula-container .ql-editor h3.titulo-recolhivel::before { content: "\25BE"; position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #d97706; }
+        #editor-aula-container .ql-editor hr.fim-secao { height: 0; margin: 1.25rem 0; border: 0; border-top: 2px dotted #94a3b8; overflow: visible; text-align: center; }
+        #editor-aula-container .ql-editor hr.fim-secao::after { content: "fim da aba"; position: relative; top: -0.8em; padding: 0 0.5rem; font-size: 0.75rem; color: #64748b; background: #ffffff; }
+        #editor-aula-container .ql-toolbar button.ql-ajuda { color: #d97706; font-size: 15px; line-height: 1; }
+        .dark #editor-aula-container .ql-editor h3.titulo-recolhivel { background: rgba(244, 162, 97, 0.15); color: #F4A261; }
+        .dark #editor-aula-container .ql-editor h3.titulo-recolhivel::before { color: #F4A261; }
+        .dark #editor-aula-container .ql-editor hr.fim-secao { border-top-color: #3A506B; }
+        .dark #editor-aula-container .ql-editor hr.fim-secao::after { color: #94a3b8; background: #0B132B; }
+        .dark #editor-aula-container .ql-toolbar button.ql-ajuda { color: #F4A261; }
+
         /* Lista de aulas arrastável (SortableJS) */
         #gm-lista-aulas .sortable-ghost { opacity: 0.4; }
     </style>
@@ -293,6 +325,9 @@
 
             <div id="editor-aula-aviso-layout" class="hidden mx-5 mt-4 p-3 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 text-sm"></div>
             <div id="editor-aula-dica" class="hidden mx-5 mt-4 p-3 rounded-lg border border-slate-300 dark:border-darkBlue-600 bg-slate-50 dark:bg-darkBlue-900 text-slate-700 dark:text-slate-200 text-sm"></div>
+            <div id="editor-aula-ajuda" class="hidden mx-5 mt-4 p-3 rounded-lg border border-amber-300 dark:border-brandYellow/40 bg-amber-50 dark:bg-darkBlue-900/60 text-slate-700 dark:text-slate-200 text-sm">
+                <p><i class="fas fa-circle-question text-amber-600 dark:text-brandYellow mr-1"></i> <strong>Abas recolhíveis:</strong> marque uma linha como 'Título recolhível'. Tudo abaixo dela fica dentro da aba até o próximo título ou até um 'Fim da aba'. Para o aluno, a aba aparece fechada e abre ao clicar.</p>
+            </div>
 
             <div id="editor-aula-rolagem" class="flex-1 overflow-y-auto px-5 py-4">
                 <div id="editor-aula-container">
@@ -1974,6 +2009,41 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
             botaoAtivo.classList.add(...classesAtivo);
         }
 
+        function encerraAbaRecolhivel(no) {
+            return no.nodeType === Node.ELEMENT_NODE
+                && (/^H[1-3]$/.test(no.tagName) || no.matches('hr.fim-secao'));
+        }
+
+        // Só na exibição (depois da limpeza pelo DOMPurify): cada <h3 class="titulo-recolhivel"> vira um
+        // <details> com tudo o que vem abaixo dele, até o próximo título de nível igual/superior ou um "fim da aba".
+        function montarAbasRecolhiveis(raiz) {
+            raiz.querySelectorAll('h3.titulo-recolhivel').forEach(titulo => {
+                const aba = document.createElement('details');
+                aba.className = 'aba-recolhivel';
+                const barra = document.createElement('summary');
+                const texto = document.createElement('span');
+                texto.append(...Array.from(titulo.childNodes));
+                const seta = document.createElement('i');
+                seta.className = 'fas fa-chevron-down aba-seta';
+                seta.setAttribute('aria-hidden', 'true');
+                barra.append(texto, seta);
+                const conteudo = document.createElement('div');
+                conteudo.className = 'aba-conteudo';
+
+                let proximo = titulo.nextSibling;
+                while (proximo && !encerraAbaRecolhivel(proximo)) {
+                    const atual = proximo;
+                    proximo = proximo.nextSibling;
+                    conteudo.appendChild(atual);
+                }
+                if (proximo && proximo.matches('hr.fim-secao')) proximo.remove();
+
+                aba.append(barra, conteudo);
+                titulo.replaceWith(aba);
+            });
+            raiz.querySelectorAll('hr.fim-secao').forEach(hr => hr.remove());
+        }
+
         async function abrirCurso(chave) {
             const modulo = obterModulo(chave);
             if (!modulo) return;
@@ -2026,6 +2096,7 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
                     textoAula.innerHTML = aula.conteudo
                         ? limparHtml(aula.conteudo)
                         : '<p class="text-slate-500 dark:text-slate-400">Esta aula ainda não tem conteúdo.</p>';
+                    montarAbasRecolhiveis(textoAula);
                 });
                 if (indice === 0) primeiraAula = botao;
             });
@@ -2448,8 +2519,8 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
         }
 
         // ---------- Editor visual da aula (Quill) ----------
-        const TAGS_DO_EDITOR = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'A', 'IMG', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'BR', 'SPAN', 'SUB', 'SUP', 'SMALL', 'CODE']);
-        const TAGS_DE_BLOCO = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'BLOCKQUOTE', 'DIV']);
+        const TAGS_DO_EDITOR = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'A', 'IMG', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'BR', 'SPAN', 'SUB', 'SUP', 'SMALL', 'CODE', 'HR']);
+        const TAGS_DE_BLOCO = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'BLOCKQUOTE', 'DIV', 'HR']);
 
         let editorQuill = null;
         let aulaEmEdicao = null;
@@ -2505,6 +2576,21 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
             editorQuill.format('caixa', formatos.caixa ? false : 'destaque', 'user');
         }
 
+        // Insere o "Fim da aba" logo abaixo da linha em que está o cursor.
+        function inserirFimDaAba() {
+            const selecao = editorQuill.getSelection(true);
+            if (!selecao) return;
+            const [linha] = editorQuill.getLine(selecao.index + selecao.length);
+            const posicao = editorQuill.getIndex(linha) + linha.length();
+            editorQuill.insertEmbed(posicao, 'fimsecao', true, 'user');
+            if (posicao + 1 >= editorQuill.getLength()) editorQuill.insertText(editorQuill.getLength(), '\n', 'user');
+            editorQuill.setSelection(posicao + 1, 0, 'user');
+        }
+
+        function alternarAjudaEditor() {
+            document.getElementById('editor-aula-ajuda').classList.toggle('hidden');
+        }
+
         function criarEditorQuill() {
             if (editorQuill) return editorQuill;
 
@@ -2517,26 +2603,83 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
             });
             Quill.register(CaixaDestaque, true);
 
+            // "Título recolhível" e "Fim da aba": marcam as seções que viram abas (<details>) na tela do aluno.
+            const Bloco = Quill.import('blots/block');
+            const BlocoEmbutido = Quill.import('blots/block/embed');
+            class TituloRecolhivel extends Bloco {
+                static blotName = 'recolhivel';
+                static tagName = 'H3';
+                static className = 'titulo-recolhivel';
+            }
+            class FimDaAba extends BlocoEmbutido {
+                static blotName = 'fimsecao';
+                static tagName = 'HR';
+                static className = 'fim-secao';
+                static value(no) {
+                    return no.classList.contains('fim-secao') ? true : undefined;
+                }
+            }
+            Quill.register(TituloRecolhivel, true);
+            Quill.register(FimDaAba, true);
+
             editorQuill = new Quill('#editor-aula', {
                 theme: 'snow',
                 bounds: '#editor-aula-container',
                 placeholder: 'Escreva aqui o conteúdo da aula...',
-                formats: ['header', 'bold', 'italic', 'underline', 'list', 'blockquote', 'link', 'image', 'align', 'caixa'],
+                formats: ['header', 'recolhivel', 'fimsecao', 'bold', 'italic', 'underline', 'list', 'blockquote', 'link', 'image', 'align', 'caixa'],
                 modules: {
                     toolbar: {
                         container: [
                             [{ header: 2 }, { header: 3 }],
+                            ['recolhivel', 'fimsecao'],
                             ['bold', 'italic', 'underline'],
                             [{ list: 'bullet' }, { list: 'ordered' }],
                             ['blockquote', 'caixa'],
                             [{ align: '' }, { align: 'center' }, { align: 'right' }],
                             ['link', 'image'],
-                            ['clean']
+                            ['clean'],
+                            ['ajuda']
                         ],
                         handlers: {
                             image: pedirImagemPorLink,
                             link: inserirLink,
-                            caixa: alternarCaixaDestaque
+                            caixa: alternarCaixaDestaque,
+                            fimsecao: inserirFimDaAba,
+                            ajuda: alternarAjudaEditor
+                        }
+                    },
+                    keyboard: {
+                        bindings: {
+                            // Enter no fim de um título recolhível: a linha nova volta a ser texto normal.
+                            'recolhivel enter': {
+                                key: 'Enter',
+                                collapsed: true,
+                                format: ['recolhivel'],
+                                suffix: /^$/,
+                                handler(range, context) {
+                                    const [linha, deslocamento] = this.quill.getLine(range.index);
+                                    const delta = new Delta()
+                                        .retain(range.index)
+                                        .insert('\n', context.format)
+                                        .retain(linha.length() - deslocamento - 1)
+                                        .retain(1, { recolhivel: null });
+                                    this.quill.updateContents(delta, 'user');
+                                    this.quill.setSelection(range.index + 1, 'silent');
+                                    return false;
+                                }
+                            },
+                            // Delete no fim da linha apaga o "Fim da aba" logo abaixo (o Quill não faz isso sozinho).
+                            'fim da aba delete': {
+                                key: 'Delete',
+                                collapsed: true,
+                                suffix: /^$/,
+                                handler(range) {
+                                    const [proxima] = this.quill.getLine(range.index + 1);
+                                    if (!proxima || proxima.statics.blotName !== 'fimsecao') return true;
+                                    this.quill.deleteText(range.index + 1, 1, 'user');
+                                    return false;
+                                }
+                            }
                         }
                     },
                     uploader: {
@@ -2559,9 +2702,15 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
 
             const barra = editorQuill.getModule('toolbar').container;
             barra.querySelector('.ql-caixa').innerHTML = '<svg viewBox="0 0 18 18"><rect class="ql-stroke" x="2.5" y="3" width="13" height="12" rx="2"></rect><line class="ql-stroke" x1="5.5" y1="7" x2="12.5" y2="7"></line><line class="ql-stroke" x1="5.5" y1="11" x2="10.5" y2="11"></line></svg>';
+            barra.querySelector('.ql-recolhivel').innerHTML = '<svg viewBox="0 0 18 18"><rect class="ql-stroke" x="2" y="3" width="14" height="5" rx="1.5"></rect><polyline class="ql-stroke" points="11.5 5 12.75 6.25 14 5"></polyline><line class="ql-stroke" x1="4" y1="11.5" x2="14" y2="11.5"></line><line class="ql-stroke" x1="4" y1="14.5" x2="11" y2="14.5"></line></svg>';
+            barra.querySelector('.ql-fimsecao').innerHTML = '<svg viewBox="0 0 18 18"><line class="ql-stroke" x1="4" y1="5" x2="14" y2="5"></line><line class="ql-stroke" x1="1.5" y1="10" x2="16.5" y2="10" stroke-dasharray="1.5 2"></line><line class="ql-stroke" x1="4" y1="14.5" x2="14" y2="14.5"></line></svg>';
+            barra.querySelector('.ql-ajuda').innerHTML = '<i class="fas fa-circle-question"></i>';
             const dicas = {
                 '.ql-header[value="2"]': 'Título',
                 '.ql-header[value="3"]': 'Subtítulo',
+                '.ql-recolhivel': 'Título recolhível (cria uma aba que abre e fecha)',
+                '.ql-fimsecao': 'Fim da aba (encerra a aba recolhível atual)',
+                '.ql-ajuda': 'Ajuda: como criar abas recolhíveis',
                 '.ql-bold': 'Negrito',
                 '.ql-italic': 'Itálico',
                 '.ql-underline': 'Sublinhado',
@@ -2649,7 +2798,7 @@ Glorioso São Jorge, em nome de Deus, estenda-me o seu escudo e as suas poderosa
                 const alvos = (bloco.tagName === 'UL' || bloco.tagName === 'OL') ? Array.from(bloco.children) : [bloco];
                 alvos.forEach(alvo => {
                     alvo.classList.add(...classesNovas);
-                    if (italico && !alvo.classList.contains('not-italic')) {
+                    if (italico && alvo.tagName !== 'HR' && !alvo.classList.contains('not-italic')) {
                         const enfase = document.createElement('em');
                         enfase.append(...Array.from(alvo.childNodes));
                         alvo.appendChild(enfase);
